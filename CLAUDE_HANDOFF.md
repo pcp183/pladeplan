@@ -4,14 +4,14 @@ This package contains the complete current source for the Pladeplan Danish sheet
 
 ## Files
 
-- `index.html` — main app: markup, styling, UI behavior, board optimization, local projects, AI-assisted text import, price comparison, and subscription UI.
+- `index.html` — main app: markup, styling, UI behavior, board optimization, local skæresedler, share-via-URL, AI-assisted text import, price comparison, and subscription UI.
 - `dist/index.html` — deployed static copy of the app. Keep it identical to `index.html` when changing the app.
 - `.openai/hosting.json` — current Sites static-output configuration. Its project ID points to the existing Pladeplan site; preserve it when continuing this deployment.
 - `CLAUDE_HANDOFF.md` — product scope, implementation notes, and outstanding production work.
 
 ## Run locally
 
-Open `index.html` directly in a browser, or serve the folder with any static web server. The app has no package manager or build step. Projects are stored in browser `localStorage` on the current device.
+Open `index.html` directly in a browser, or serve the folder with any static web server. The app has no package manager or build step. Skæresedler (projects) are stored in browser `localStorage` on the current device. Share links encode the plan in the URL hash (deflate + base64url) with no backend.
 
 ## Important accuracy notes
 
@@ -24,6 +24,12 @@ Open `index.html` directly in a browser, or serve the folder with any static web
 ## Handoff goal
 
 Continue from these files and preserve the existing Pladeplan product and Danish language. Before implementing production billing, add authenticated server-side checkout, verified Stripe webhooks, durable customer/subscription storage, customer self-service cancellation/payment updates, and server-enforced access checks. Configure secrets only through the hosting provider's secure environment-variable settings, never in browser code or committed files.
+
+## Changelog — 26 September 2026 (skæreseddel save / delete / share)
+
+- **Gem / slet:** knapper omdøbt til «Gem skæreseddel» og «Slet»; «Mine skæresedler» bibliotek med åbn/omdøb/duplikér/slet. Slet nuværende planen (fra bibliotek hvis gemt, ellers nulstil) med fortryd.
+- **Del uden backend:** «Del» åbner dialog med komprimeret share-URL (`#p=` + deflate-raw/base64url), «Kopiér link», Web Share API når tilgængelig, JSON-eksport og genvej til Udskriv/PDF. Link indlæses automatisk ved åbning — ingen konto/server.
+- **Deploy:** `index.html` = `dist/index.html`; packing-algoritme uændret. Pro forbliver «Kommer snart». Live: https://pcp183.github.io/pladeplan/
 
 ## Changelog — 26 September 2026 (review & fixes)
 
