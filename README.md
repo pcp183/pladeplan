@@ -79,7 +79,21 @@ GitHub Pages kan ikke køre Clerk eller API-ruterne. Den tidligere statiske `ind
 - **Uden login:** beregn, del via link, CSV, udskrift og lokale skæresedler som før.
 - **Med login:** «Gem», omdøb, duplikér og slet skriver til kontoen. En kladde, der ikke er gemt, bliver i browseren.
 - **Første login:** hvis enheden har lokale skæresedler, kan de flyttes til kontoen.
-- **Konto** (`/konto`): profil, log ud, plan «Gratis», Pro «Kommer snart».
+- **Konto** (`/konto`): profil, log ud, plan «Gratis», Pro «Kommer snart», hent data og slet konto.
+- **Privatliv** (`/privatliv`): hvad der gemmes, formål, retsgrundlag, opbevaring og rettigheder. Link i sidefoden og på kontoen.
+
+## GDPR og sletning
+
+«Slet konto» kræver, at brugeren skriver sin e-mail. Serveren:
+
+1. Sletter alle rækker i `pladeplan_projects` for Clerk-`userId` og tjekker, at ingen række er tilbage.
+2. Sletter derefter Clerk-brugeren med `users.deleteUser`.
+
+Der laves ingen arkivkopi, papirkurv eller soft-delete. Mislykkes sletningen af skæresedlerne, slettes Clerk-brugeren ikke. Uden `DATABASE_URL` ligger der ingen skæresedler på serveren, og kun Clerk-brugeren slettes. Browseren, hvor der trykkes slet, rydder også `localStorage`-nøglerne `pladeplan` og `pladeplan-projects`.
+
+«Hent mine data (JSON)» er indsigt og udtræk af profil og gemte skæresedler.
+
+Valgfri kontaktmail på privatlivssiden: `PLADEPLAN_CONTACT_EMAIL`. Uden den vises GitHub-projektet som kontakt.
 
 ## Stripe
 

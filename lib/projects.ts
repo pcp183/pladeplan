@@ -1,4 +1,4 @@
-import { ensureSchema, getSql } from './db';
+import { DatabaseNotConfiguredError, ensureSchema, getSql } from './db';
 import { parseProject, type StoredProject } from './project-record';
 
 export { parseProject, parseProjectList, MAX_PROJECTS, MAX_PART_ROWS } from './project-record';
@@ -31,6 +31,18 @@ export async function listProjects(userId: string): Promise<StoredProject[]> {
     if (project) projects.push(project);
   }
   return projects;
+}
+
+/** Hard-delete every saved sheet for this user. Throws if any row remains. */
+export async function deleteAllProjects(userId: string): Promise<number> {
+  await ensureSchema();
+  const sql = getSql();
+  if (!sql) throw new DatabaseNotConfiguredError();
+  const existing = await sql`SELECT id FROM pladeplan_projects WHERE user_id = ${userId}`;
+  await sql`DELETE FROM pladeplan_projects WHERE user_id = ${userId}`;
+  const left = await sql`SELECT id FROM pladeplan_projects WHERE user_id = ${userId} LIMIT 1`;
+  if (left.length > 0) throw new Error('PROJECTS_REMAIN');
+  return existing.length;
 }
 
 export async function replaceProjects(userId: string, projects: StoredProject[]): Promise<void> {

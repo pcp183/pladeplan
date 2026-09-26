@@ -1,5 +1,6 @@
 import { auth, currentUser } from '@clerk/nextjs/server';
 import { redirect } from 'next/navigation';
+import { AccountData } from '@/components/AccountData';
 import { SignOutControl } from '@/components/SignOutControl';
 import { SiteHeader } from '@/components/SiteHeader';
 import { SetupNotice } from '@/components/SetupNotice';
@@ -89,6 +90,7 @@ export default async function AccountPage() {
               </div>
             )}
           </section>
+          <AccountData email={email === '—' ? null : email} />
         </div>
       </main>
     </div>

@@ -3,6 +3,8 @@ import { daDK } from '@clerk/localizations';
 import type { Metadata } from 'next';
 import { Inter } from 'next/font/google';
 import type { ReactNode } from 'react';
+import { DeletedNotice } from '@/components/DeletedNotice';
+import { SiteFooter } from '@/components/SiteFooter';
 import { clerkConfigured } from '@/lib/env';
 import '@/styles/planner.css';
 
@@ -32,7 +34,11 @@ const appearance = {
 export default function RootLayout({ children }: { children: ReactNode }) {
   const body = (
     <html lang="da" className={inter.variable}>
-      <body>{children}</body>
+      <body>
+        <DeletedNotice />
+        {children}
+        <SiteFooter />
+      </body>
     </html>
   );
 
@@ -50,7 +56,9 @@ export default function RootLayout({ children }: { children: ReactNode }) {
           signUpFallbackRedirectUrl="/"
           afterSignOutUrl="/"
         >
+          <DeletedNotice />
           {children}
+          <SiteFooter />
         </ClerkProvider>
       </body>
     </html>

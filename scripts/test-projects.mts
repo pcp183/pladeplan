@@ -1,4 +1,5 @@
 import assert from 'node:assert/strict';
+import { confirmationMatches } from '../lib/confirm.ts';
 import { parseProject, parseProjectList } from '../lib/project-record.ts';
 
 const project = parseProject({
@@ -41,4 +42,8 @@ if ('projects' in list) {
 }
 
 assert.equal('error' in parseProjectList({ projects: [{ id: 'bad id' }] }), true);
+assert.equal(confirmationMatches('Peter@Example.com', ' peter@example.com '), true);
+assert.equal(confirmationMatches('peter@example.com', 'anden@example.com'), false);
+assert.equal(confirmationMatches(null, 'SLET'), true);
+assert.equal(confirmationMatches(null, 'slet'), false);
 console.log('projects ok');
