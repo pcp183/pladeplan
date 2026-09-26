@@ -77,7 +77,7 @@ Continue from these files and preserve the existing Pladeplan product and Danish
 - **Byt om:** knap bytter pladens bredde/længde; emne-areal (m²) vises i emnetælleren.
 - **Flere plader:** «Hop til»-genveje til plade 1…N; klik på emne i tegningen scroller snitlisten.
 - **Mobil/a11y:** toast flyttes op over sticky Beregn; skjult aria-live ved færdig plan.
-- **Deploy:** `index.html` = `dist/index.html`; packing-algoritme uændret. Pro forbliver «Kommer snart». Live: https://pcp183.github.io/pladeplan/
+- **Deploy:** `index.html` = `dist/index.html`; pushed to `pcp183/pladeplan` (`074ead4`); packing-algoritme uændret. Pro forbliver «Kommer snart». Live: https://pcp183.github.io/pladeplan/
 
 ## Changelog — 26 September 2026 (5th UI/UX polish — brugervenlighed)
 
