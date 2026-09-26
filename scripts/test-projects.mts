@@ -20,7 +20,40 @@ const project = parseProject({
 
 assert.ok(project);
 assert.equal(project.n, 'Køkken');
+assert.equal(project.m, 1);
+assert.equal(project.mid, undefined);
+assert.equal(project.pr, undefined);
 assert.deepEqual(project.p[1], ['Bund', '564', '580', '1']);
+
+const withPlate = parseProject({
+  id: 'p-melamin',
+  n: 'Hvide skabe',
+  m: 25,
+  mid: 'melamin-18-2070x2800',
+  pr: '275,50',
+  w: '2070',
+  h: '2800',
+  p: [],
+  updatedAt: '2026-09-26T12:00:00.000Z',
+});
+assert.ok(withPlate);
+assert.equal(withPlate.m, 25);
+assert.equal(withPlate.mid, 'melamin-18-2070x2800');
+assert.equal(withPlate.pr, '275,50');
+
+const rejectedPlate = parseProject({
+  id: 'p-bad-plate',
+  n: 'x',
+  m: 81,
+  mid: '<script>',
+  pr: 'ikke-en-pris',
+  p: [],
+  updatedAt: '2026-09-26T12:00:00.000Z',
+});
+assert.ok(rejectedPlate);
+assert.equal(rejectedPlate.m, 0);
+assert.equal(rejectedPlate.mid, undefined);
+assert.equal(rejectedPlate.pr, undefined);
 
 assert.equal(parseProject({ id: '../etc', n: 'x' }), null);
 assert.equal(parseProject({ id: '', n: 'x' }), null);
