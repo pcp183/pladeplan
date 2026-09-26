@@ -29,7 +29,7 @@ Continue from these files and preserve the existing Pladeplan product and Danish
 
 - **Gem / slet:** knapper omdøbt til «Gem skæreseddel» og «Slet»; «Mine skæresedler» bibliotek med åbn/omdøb/duplikér/slet. Slet nuværende planen (fra bibliotek hvis gemt, ellers nulstil) med fortryd.
 - **Del uden backend:** «Del» åbner dialog med komprimeret share-URL (`#p=` + deflate-raw/base64url), «Kopiér link», Web Share API når tilgængelig, JSON-eksport og genvej til Udskriv/PDF. Link indlæses automatisk ved åbning — ingen konto/server.
-- **Deploy:** `index.html` = `dist/index.html`; packing-algoritme uændret. Pro forbliver «Kommer snart». Live: https://pcp183.github.io/pladeplan/
+- **Deploy:** `index.html` = `dist/index.html`; pushed to `pcp183/pladeplan` (`a4cff85`); packing-algoritme uændret. Pro forbliver «Kommer snart». Live: https://pcp183.github.io/pladeplan/
 
 ## Changelog — 26 September 2026 (review & fixes)
 
