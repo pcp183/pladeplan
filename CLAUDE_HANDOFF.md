@@ -25,6 +25,17 @@ Open `index.html` directly in a browser, or serve the folder with any static web
 
 Continue from these files and preserve the existing Pladeplan product and Danish language. Before implementing production billing, add authenticated server-side checkout, verified Stripe webhooks, durable customer/subscription storage, customer self-service cancellation/payment updates, and server-enforced access checks. Configure secrets only through the hosting provider's secure environment-variable settings, never in browser code or committed files.
 
+## Changelog — 26 September 2026 (simplification pass)
+
+- **Radical UI cleanup (no new features):** fewer competing CTAs; one clear path Plade → Emner → Beregn → Resultat.
+- **Header:** only «Gem» + «Mere»-menu (Mine skæresedler, Del, Nyt, Slet) — five always-visible buttons collapsed.
+- **Resultat:** «Del» + «Eksport»-menu (Kopiér snitliste, CSV, Udskriv/PDF) i stedet for fire knapper side om side.
+- **Onboarding:** kortere coach («Sådan gør du»); flow-bjælke skjules efter første beregning eller «Skjul» (samme localStorage).
+- **Avanceret skjult:** hurtige pladeformater under «Hurtige formater»; zoom kun ved hover (skjult på mobil); «Byt om» kortere; kortere tips/tagline/privacy.
+- **Mobil:** sticky «Beregn skæreplan» tydeligere; mindre chrome-kollision med toast/sticky.
+- **Uændret:** packing-algoritme (`packOnce`/`pack`), Pro «Kommer snart», `index.html` ≡ `dist/index.html`.
+- **Deploy:** `index.html` = `dist/index.html`; pushed to `pcp183/pladeplan` (`bbf80dc`); packing-algoritme uændret. Pro forbliver «Kommer snart». Live: https://pcp183.github.io/pladeplan/
+
 ## Changelog — 26 September 2026 (skæreseddel save / delete / share)
 
 - **Gem / slet:** knapper omdøbt til «Gem skæreseddel» og «Slet»; «Mine skæresedler» bibliotek med åbn/omdøb/duplikér/slet. Slet nuværende planen (fra bibliotek hvis gemt, ellers nulstil) med fortryd.
