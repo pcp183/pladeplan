@@ -1,24 +1,37 @@
 # Pladeplan — Claude handoff
 
-This package contains the complete current source for the Pladeplan Danish sheet-cutting planner, as published on 26 September 2026. It is a single-page static HTML application.
+## Accounts — 26 September 2026
+
+The app is now a Next.js App Router project (see `README.md`). The planner UI and `pack` / `packOnce` behaviour are preserved in `public/planner.js` and `styles/planner.css`. Anonymous use still works.
+
+- Clerk: sign-up, sign-in, `UserButton`, Danish localization where Clerk provides it.
+- `/konto`: profile, sign-out, plan **Gratis**, Pro **Kommer snart**. No Stripe checkout and no claim that payment works.
+- Signed-in skæresedler: `PUT/GET /api/projects`, keyed by Clerk `userId`, stored in Neon (`DATABASE_URL` or `POSTGRES_URL`). Guest `localStorage` remains the fallback. On login, local sheets can be moved to the account.
+- If Clerk or the database is missing, `npm run build` still succeeds. The planner stays usable; account storage explains the missing setup.
+- Real Stripe subscription checkout, webhooks, and server-enforced Pro access are future work. Do not take payment until those exist.
+- GDPR: `/privatliv` describes the processing. `/konto` can export JSON and delete the account. Delete removes every `pladeplan_projects` row for that Clerk user id, checks none remain, then calls `users.deleteUser`. There is no archive, soft-delete, or silent retention. The browser that confirms deletion also clears local `pladeplan` and `pladeplan-projects`. Optional contact address: `PLADEPLAN_CONTACT_EMAIL`.
+
+## Earlier static snapshot
+
+This package previously contained the complete static source for the Pladeplan Danish sheet-cutting planner, as published on 26 September 2026. That single-page HTML app is now the planner inside the Next.js app. `index.html` and `dist/` are no longer the deployment.
 
 ## Files
 
-- `index.html` — main app: markup, styling, UI behavior, board optimization, local skæresedler, share-via-URL, AI-assisted text import, price comparison, and subscription UI.
-- `dist/index.html` — deployed static copy of the app. Keep it identical to `index.html` when changing the app.
-- `.openai/hosting.json` — current Sites static-output configuration. Its project ID points to the existing Pladeplan site; preserve it when continuing this deployment.
-- `CLAUDE_HANDOFF.md` — product scope, implementation notes, and outstanding production work.
+- `public/planner.js` — planner behaviour, including `pack` / `packOnce`, local fallback, and cloud sync when signed in.
+- `styles/planner.css` and `lib/planner-markup.ts` — planner styling and markup.
+- `app/` — Next.js routes: planner, `/konto`, `/sign-in`, `/sign-up`, `/api/projects`.
+- `README.md` — Clerk keys, database, and deploy to the Vercel project `pladeplan`.
 
 ## Run locally
 
-Open `index.html` directly in a browser, or serve the folder with any static web server. The app has no package manager or build step. Skæresedler (projects) are stored in browser `localStorage` on the current device. Share links encode the plan in the URL hash (deflate + base64url) with no backend.
+`npm install`, copy `.env.example` to `.env.local`, then `npm run dev`. Without keys the planner still runs. Share links still encode the plan in the URL hash (deflate + base64url). Signed-in skæresedler use the database.
 
 ## Important accuracy notes
 
 - The current price table is a manually maintained snapshot, not a live supplier feed. Check each retailer's linked product page and update the price/stock/date before representing prices as current.
 - AI import can call `/api/ai-import` if that endpoint exists; otherwise it uses its built-in local text parser. Do not describe the local parser as a production AI model.
 - The subscription dialog is an honest "coming soon" preview: all current features are free, Pro is labelled "Kommer snart", and no trial or payment is promised.
-- The subscription dialog is a UI preview only. There is no real Stripe checkout, subscription record, webhook, billing portal, login, or server-side Pro access enforcement yet. Do not claim a trial or payment is active. Complete those parts before accepting money.
+- The subscription dialog is a UI preview only. Login and account-saved skæresedler exist. There is still no real Stripe checkout, subscription record, webhook, billing portal, or server-side Pro access enforcement. Do not claim a trial or payment is active. Complete those parts before accepting money.
 - MobilePay is not suitable for recurring Stripe subscriptions; use a recurring-capable payment method for subscriptions and offer MobilePay only for an appropriate one-time purchase if configured.
 
 ## Handoff goal

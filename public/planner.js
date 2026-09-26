@@ -1,352 +1,3 @@
-<!doctype html><html lang="da"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="theme-color" content="#15392a"><title>Pladeplan — dansk skæreplanlægger</title><meta name="description" content="Gratis dansk skæreplanlægger til plader: beregn skæreplan, udnyttelse og pladeforbrug, og sammenlign MDF-priser hos danske forhandlere."><link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 40 40'%3E%3Crect width='40' height='40' rx='10' fill='%2315392a'/%3E%3Cpath d='M10 9h20v22H10zM10 21h20M21 9v22' fill='none' stroke='%23f1c55b' stroke-width='2'/%3E%3C/svg%3E">
-<style>
-:root{--g:#15392a;--g2:#23503d;--ink:#17231d;--muted:#68766e;--line:#dce4de;--paper:#f6f8f5;--yellow:#f1c55b;--shadow:0 7px 25px #163a2b12}*{box-sizing:border-box}body{margin:0;background:var(--paper);color:var(--ink);font:15px Inter,ui-sans-serif,system-ui,-apple-system,"Segoe UI",sans-serif}button,input,select,textarea{font:inherit}button{cursor:pointer}button:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-visible{outline:3px solid #9fc2ad;outline-offset:2px}.top{height:64px;background:var(--g);color:white;display:flex;align-items:center;justify-content:space-between;padding:0 max(18px,calc((100vw - 1400px)/2));position:sticky;top:0;z-index:5}.brand{display:flex;align-items:center;gap:10px;font-size:18px;font-weight:800;letter-spacing:-.03em}.logo{width:32px;height:32px;border-radius:8px;background:var(--yellow);color:var(--g);display:grid;place-items:center}.meta{display:flex;gap:16px;color:#ccdad2;font-size:12px}.saved:before{content:"";display:inline-block;width:7px;height:7px;border-radius:50%;background:#85ca99;margin-right:6px}.app{max-width:1400px;margin:auto;padding:25px 24px 55px}.head{display:flex;justify-content:space-between;align-items:start;gap:15px;margin-bottom:18px}.head h1{margin:0 0 5px}.project{border:0;background:transparent;font-size:27px;font-weight:800;letter-spacing:-.045em;width:360px;color:var(--ink);padding:0}.project:hover{background:#edf2ee}.head p{margin:0;color:var(--muted);font-size:13px}.btn{min-height:39px;border:1px solid var(--line);border-radius:8px;background:white;padding:8px 13px;color:var(--ink);font-weight:700;font-size:12px;display:inline-flex;align-items:center;justify-content:center;gap:6px}.btn:hover{border-color:#aab9af}.btn.primary{background:var(--g);border-color:var(--g);color:white}.btn.primary:hover{background:var(--g2)}.btn.yellow{background:var(--yellow);border-color:#e4b746}.btn.small{min-height:34px;padding:6px 10px}.progress{display:none}.step{display:flex;align-items:center;gap:7px;color:#78847d;font-size:12px;font-weight:700;white-space:nowrap}.step.on{color:var(--g)}.num{width:24px;height:24px;border-radius:50%;background:#edf1ee;display:grid;place-items:center;font-size:11px}.step.on .num,.step.done .num{background:var(--g);color:white}.step.done .num{font-size:0}.step.done .num:after{content:"✓";font-size:11px}.line{height:1px;background:var(--line);flex:1;margin:0 12px}.layout{display:grid;grid-template-columns:minmax(450px,520px) minmax(0,1fr);gap:18px;align-items:start}.left{display:flex;flex-direction:column;gap:13px}.card{background:white;border:1px solid #dfe6e0;border-radius:12px;box-shadow:var(--shadow)}.pad{padding:18px}.section{display:flex;justify-content:space-between;align-items:start;gap:10px;margin-bottom:14px}.section h2{font-size:15px;margin:0 0 3px}.section p{font-size:11px;color:var(--muted);margin:0}.title{display:flex;align-items:center;gap:8px}.badge{width:24px;height:24px;border-radius:7px;background:#e9f0eb;color:var(--g);display:grid;place-items:center;font-size:11px;font-weight:800}.field{margin-bottom:12px}.row{display:grid;grid-template-columns:1fr 1fr;gap:10px}.label{display:flex;justify-content:space-between;font-size:11px;color:#526159;font-weight:700;margin-bottom:5px}.label em{font-style:normal;font-weight:400;color:#8a968f}.input,.select,.textarea{width:100%;border:1px solid #d3ddd5;border-radius:7px;background:white;color:var(--ink)}.input,.select{height:40px;padding:0 10px}.textarea{min-height:125px;padding:11px;resize:vertical;line-height:1.45}.unit{position:relative}.unit input{padding-right:40px}.unit span{position:absolute;right:10px;top:11px;color:#829087;font-size:11px}.advanced{border-top:1px solid #edf0ed;margin-top:3px}.advanced summary{padding:11px 0 2px;cursor:pointer;list-style:none;font-size:12px;font-weight:700;color:#56645c}.advanced summary:after{content:"⌄";float:right}.switchrow{display:flex;justify-content:space-between;align-items:center;margin-top:11px}.switchrow b{display:block;font-size:12px}.switchrow small{color:var(--muted)}.switch{appearance:none;width:39px;height:23px;background:#cad4cd;border-radius:20px;position:relative}.switch:before{content:"";position:absolute;width:17px;height:17px;border-radius:50%;background:white;top:3px;left:3px;transition:.2s}.switch:checked{background:var(--g2)}.switch:checked:before{left:19px}.parts{overflow:hidden}.parts .section{padding:17px 18px 9px;margin:0}.ai{background:#f4ebff;color:#593580;border-color:#dfcdf1}.tablewrap{overflow:auto}.table{width:100%;border-collapse:collapse;table-layout:fixed}.table th{border-top:1px solid #edf0ed;text-align:left;padding:8px 5px;font-size:9px;text-transform:uppercase;letter-spacing:.07em;color:#829087}.table td{padding:5px 4px}.table th:first-child,.table td:first-child{padding-left:17px;width:35%}.table th:nth-child(2),.table td:nth-child(2),.table th:nth-child(3),.table td:nth-child(3){width:18%}.table th:nth-child(4),.table td:nth-child(4){width:16%}.table th:last-child,.table td:last-child{width:37px;padding-right:12px}.table .input{height:35px;padding:0 7px;font-size:11px}.del{border:0;background:transparent;color:#94a098;width:29px;height:29px;border-radius:6px;font-size:18px}.del:hover{background:#fbece9;color:#a3483b}.partsfoot{display:flex;justify-content:space-between;align-items:center;padding:9px 17px 14px}.add{border:0;background:transparent;color:var(--g);font-size:12px;font-weight:750;padding:6px 0}.count{font-size:10px;color:var(--muted)}.calculate{width:100%;min-height:48px;font-size:14px;box-shadow:0 5px 15px #163a2b20}.privacy{text-align:center;color:#8a968f;font-size:10px;margin:8px 0 0}.result{min-width:0;position:sticky;top:82px;overflow:clip}.resulthead{padding:16px 18px;display:flex;justify-content:space-between;align-items:center;border-bottom:1px solid #e7ece8}.resulthead h2{font-size:15px;margin:0 0 3px}.resulthead p{font-size:11px;color:var(--muted);margin:0}.actions{display:flex;gap:7px}.stats{display:grid;grid-template-columns:repeat(4,1fr);background:#e5ebe6;gap:1px}.stat{background:white;padding:12px 14px}.stat span{display:block;color:#77857d;font-size:10px;margin-bottom:4px}.stat strong{font-size:19px;letter-spacing:-.04em}.stat.good strong{color:#3d7451}.stat em{font-style:normal;font-size:10px;color:#7d8982}.error{display:none;margin:11px 17px 0;padding:9px 11px;background:#fff0ed;color:#984236;border-radius:7px;font-size:11px}.error.show{display:block}.boardarea{padding:15px 17px 18px}.boardlabel{display:flex;justify-content:space-between;margin-bottom:10px;font-size:11px}.boardlabel span{color:var(--muted)}.boards{display:flex;flex-direction:column;gap:12px;max-height:min(70vh,calc(100vh - 300px));overflow:auto;scrollbar-gutter:stable}.board{border:1px solid #dfe6e0;border-radius:9px;overflow:hidden}.boardhead{display:flex;justify-content:space-between;padding:8px 10px;background:#fafbfa;border-bottom:1px solid #e7ece8;font-size:10px}.boardhead span{color:var(--muted)}.svgwrap{padding:11px;display:flex;justify-content:center}.boardsvg{width:min(100%,610px);height:auto}.empty{text-align:center;padding:70px 15px;color:#6c7b72}.emptyicon{width:48px;height:48px;margin:0 auto 12px;border-radius:13px;background:#edf3ee;display:grid;place-items:center;color:#426b52;font-size:21px}.empty strong{display:block;color:var(--ink);font-size:13px;margin-bottom:5px}.empty span{font-size:11px;line-height:1.45;display:inline-block;max-width:260px}dialog{border:0;padding:0;border-radius:15px;width:min(650px,calc(100vw - 28px));color:var(--ink);box-shadow:0 25px 80px #10251b52}dialog::backdrop{background:#10251b88;backdrop-filter:blur(2px)}.modalhead{display:flex;justify-content:space-between;padding:19px 21px 15px;border-bottom:1px solid #e7ece8}.modaltitle{display:flex;gap:10px}.aiicon{width:38px;height:38px;border-radius:10px;background:#efe4fa;color:#684293;display:grid;place-items:center;font-size:18px}.modalhead h2{font-size:16px;margin:0 0 3px}.modalhead p{font-size:11px;color:var(--muted);margin:0}.close{border:0;border-radius:7px;width:31px;height:31px;background:#f0f3f1;color:#65736b;font-size:18px}.modalbody{padding:18px 21px}.example{font-size:10px;color:#647169;background:#f5f7f5;border-radius:7px;padding:9px 10px;margin:8px 0 13px;line-height:1.45}.status{display:none;align-items:center;gap:8px;background:#f5f0fa;color:#5b4077;border-radius:7px;padding:10px 11px;margin-top:11px;font-size:11px}.status.show{display:flex}.spinner{width:15px;height:15px;border:2px solid #d7c4e8;border-top-color:#684293;border-radius:50%;animation:spin .7s linear infinite}@keyframes spin{to{transform:rotate(360deg)}}.review{display:none;margin-top:14px}.review.show{display:block}.reviewtitle{font-size:11px;font-weight:700;margin-bottom:7px}.reviewlist{border:1px solid var(--line);border-radius:8px;max-height:210px;overflow:auto}.reviewrow{display:grid;grid-template-columns:1fr auto;gap:8px;border-bottom:1px solid #edf0ed;padding:9px 10px;font-size:11px}.reviewrow:last-child{border:0}.reviewrow span:last-child{font-weight:700;color:#4d6055}.note{color:#79867e;font-size:10px;margin-top:7px}.modalactions{display:flex;justify-content:flex-end;gap:7px;margin-top:13px}.toast{position:fixed;left:50%;bottom:20px;transform:translate(-50%,18px);opacity:0;background:var(--g);color:white;padding:10px 14px;border-radius:8px;font-size:11px;transition:.2s;z-index:20}.toast.show{opacity:1;transform:translate(-50%,0)}
-.tools{display:flex;gap:7px}.planbtn{border:1px solid #ffffff36;background:#ffffff12;color:#fff;border-radius:20px;padding:6px 10px;font-size:11px;font-weight:750}.planbtn:hover{background:#ffffff20}.billingnotice{display:none;margin-top:12px;padding:11px 12px;border-radius:8px;background:#fff4dd;color:#604816;font-size:11px;line-height:1.45}.billingnotice.show{display:block}.billingnotice b{display:block;margin-bottom:3px}.libraryintro{font-size:11px;color:var(--muted);margin:0 0 13px}.projectlist{border:1px solid var(--line);border-radius:9px;overflow:hidden;max-height:380px;overflow-y:auto}.projectitem{display:grid;grid-template-columns:1fr auto;gap:12px;align-items:center;padding:12px;border-bottom:1px solid #e9edea}.projectitem:last-child{border-bottom:0}.projectitem:hover{background:#f7f9f7}.projectitem h3{font-size:12px;margin:0 0 4px}.projectitem p{font-size:10px;color:var(--muted);margin:0}.projectempty{text-align:center;padding:38px 15px;color:var(--muted);font-size:11px}.projectempty strong{display:block;color:var(--ink);font-size:13px;margin-bottom:4px}.billingtabs{display:grid;grid-template-columns:1fr 1fr;gap:4px;background:#edf1ee;border-radius:9px;padding:4px;margin-bottom:15px}.billingtab{border:0;background:transparent;border-radius:6px;padding:8px;font-size:11px;font-weight:750;color:#66746c}.billingtab.on{background:white;color:var(--g);box-shadow:0 2px 7px #173b2c16}.plans{display:grid;grid-template-columns:1fr 1fr;gap:11px}.plancard{border:1px solid var(--line);border-radius:11px;padding:16px;position:relative}.plancard.pro{border:2px solid var(--g);padding:15px;background:#fbfdfb}.popular{position:absolute;right:10px;top:10px;background:var(--yellow);color:#493b13;border-radius:20px;padding:4px 7px;font-size:9px;font-weight:800}.plancard h3{margin:0 0 8px;font-size:15px}.planprice{font-size:26px;font-weight:850;letter-spacing:-.04em}.planprice small{font-size:10px;color:var(--muted);font-weight:600;letter-spacing:0}.plandesc{color:var(--muted);font-size:10px;min-height:30px;margin:6px 0 12px}.planfeatures{list-style:none;margin:0 0 15px;padding:0;display:grid;gap:7px;font-size:10px}.planfeatures li:before{content:'✓';color:#3e7952;font-weight:900;margin-right:6px}.checkout{width:100%}.paymentmethods{margin-top:13px;padding:11px;border-radius:8px;background:#f4f7f4;text-align:center;color:#647169;font-size:10px}.paymentmethods b{display:block;color:var(--ink);margin-bottom:4px}.trialnote{text-align:center;color:#748078;font-size:9px;margin:8px 0 0}.price-details{border-top:1px solid #e7ece8;background:#fbfcfb}.price-details>summary{display:flex;justify-content:space-between;align-items:center;padding:13px 17px;cursor:pointer;list-style:none;font-size:13px;color:var(--g);font-weight:750}.price-details>summary::-webkit-details-marker{display:none}.price-details>summary:after{content:"+";font-size:18px;color:#708078}.price-details[open]>summary:after{content:"−"}.price-details>summary span{font-weight:500;color:var(--muted);font-size:12px}.prices{border-top:1px solid #e7ece8;background:#fbfcfb}.pricehead{display:flex;align-items:center;justify-content:space-between;padding:12px 17px}.pricehead div:first-child{display:flex;align-items:center;gap:7px;font-size:11px;font-weight:800}.pricehead small{font-size:9px;font-weight:500;color:var(--muted)}.pricebadge{font-size:9px;color:#315d43;background:#e6f0e8;padding:4px 6px;border-radius:20px;font-weight:700}.pricelist{border-top:1px solid #e7ece8}.pricerow{display:grid;grid-template-columns:105px minmax(120px,1fr) 85px 95px 24px;align-items:center;gap:8px;padding:10px 17px;border-bottom:1px solid #edf0ed;color:inherit;text-decoration:none;font-size:10px}.pricerow:last-child{border-bottom:0}.pricerow:hover{background:#f5f8f5}.store{font-size:11px;font-weight:800}.store small{display:block;margin-top:2px;color:#6f7d75;font-size:8px;font-weight:600}.format{color:#5f6e66}.unitprice{color:#6b7971}.total{text-align:right;font-weight:800;font-size:11px}.total small{display:block;color:#77847c;font-size:8px;font-weight:500;margin-top:2px}.arrow{color:#859188;text-align:right;font-size:14px}.best .total{color:#39744d}.best .store:after{content:"Billigst";display:inline-block;font-size:8px;color:#39744d;background:#e4f2e7;margin-left:5px;padding:2px 4px;border-radius:4px}.pricefoot{padding:9px 17px;color:#7b8880;font-size:9px;line-height:1.4}.noprice{padding:14px 17px;border-top:1px solid #e7ece8;color:#68766e;font-size:10px}.source-time{font-variant-numeric:tabular-nums}.result.stale .boards{opacity:.55}.result.stale #resultSubtitle{color:#9a6a12;font-weight:700}.pricerow.impossible{opacity:.55}.projectitem .actions{display:flex;gap:6px}.planstatus{display:inline-block;margin-left:6px;font-size:9px;font-weight:800;color:#7a5a12;background:#fff4dd;border-radius:20px;padding:3px 7px;vertical-align:middle}.sharebox{display:grid;gap:12px}.shareurl{width:100%;border:1px solid #d3ddd5;border-radius:7px;padding:10px 11px;font-size:11px;font-family:ui-monospace,SFMono-Regular,Menlo,monospace;background:#f7f9f7;color:var(--ink);word-break:break-all}.sharehint{font-size:10px;color:var(--muted);margin:0;line-height:1.45}.shareacts{display:flex;flex-wrap:wrap;gap:7px}.shareacts .btn{flex:1;min-width:120px}.btndanger{color:#984236!important;border-color:#e7c4bd!important}.btndanger:hover{background:#fbece9!important;border-color:#d9a79c!important}.sharemeta{font-size:10px;color:#66746c;background:#f5f7f5;border-radius:7px;padding:8px 10px}@media(max-width:1000px){.layout{grid-template-columns:410px 1fr}.app{padding-left:15px;padding-right:15px}.stat{padding:10px}.stat strong{font-size:16px}.boards{max-height:none}}@media(max-width:780px){.head{flex-wrap:wrap}.tools{flex-wrap:wrap}.project{max-width:100%}.pricerow{grid-template-columns:minmax(0,1fr) 78px auto 12px;gap:6px;padding:10px 12px}.pricerow .unitprice{display:none}.format{font-size:9px}.top{padding:0 14px}.meta>span:nth-child(2){display:none}.planbtn{white-space:nowrap}.app{padding:18px 11px 40px}.project{width:min(280px,65vw);font-size:22px}.head .btn span{display:none}.progress{padding:9px 10px}.step{font-size:10px}.line{margin:0 7px}.layout{grid-template-columns:1fr}.result{position:static;grid-row:2}.stats{grid-template-columns:1fr 1fr}.boardarea{padding:13px 7px}.svgwrap{padding:7px 2px}.modalbody,.modalhead{padding-left:15px;padding-right:15px}.plans{grid-template-columns:1fr}}@media(max-width:430px){.step span:last-child{display:none}.table th:first-child,.table td:first-child{width:33%}.table th:nth-child(2),.table td:nth-child(2),.table th:nth-child(3),.table td:nth-child(3){width:19%}.meta .saved{display:none}.resulthead{align-items:flex-start}.actions{flex-direction:column}}/* print rules moved to 2nd polish block */
-
-.btn:disabled,.btn[aria-disabled="true"]{opacity:.45;cursor:not-allowed;pointer-events:none}
-.stalebar{display:none;align-items:center;justify-content:space-between;gap:10px;margin:0;padding:10px 17px;background:#fff4dd;color:#6a4d12;font-size:11px;font-weight:700;border-bottom:1px solid #f0e0b8}
-.stalebar.show{display:flex}
-.result.stale .stats{opacity:.55}
-.result.stale .stalebar{display:flex}
-.partempty{text-align:center;padding:22px 14px;color:var(--muted);font-size:11px;line-height:1.45}
-.partempty strong{display:block;color:var(--ink);font-size:12px;margin-bottom:4px}
-.partempty .btn{margin-top:10px}
-.advanced summary::-webkit-details-marker{display:none}
-.switch:focus-visible{outline:3px solid #9fc2ad;outline-offset:2px}
-.project{width:min(360px,100%);max-width:100%}
-.modalactions{flex-wrap:wrap}
-.calculate.needs-update{box-shadow:0 5px 18px #c4922033;background:#2a5a3d}
-@media(max-width:780px){
-.app{padding:14px 10px 36px}
-.card.pad{padding:14px}
-.parts .section{padding:12px 12px 6px}
-.table th:first-child,.table td:first-child{padding-left:10px}
-.table th:last-child,.table td:last-child{padding-right:8px}
-.partsfoot{padding:8px 12px 12px}
-.stat{padding:10px 11px}
-.stalebar{flex-wrap:wrap;padding:10px 12px}
-.empty{padding:42px 12px}
-.boardarea{padding:12px 8px 14px}
-.price-details>summary{padding:12px 12px}
-.pricerow{padding:10px 12px}
-.meta{gap:8px}
-.calculate{min-height:46px}
-}
-@media(max-width:430px){
-.table .input{font-size:12px;padding:0 5px}
-.table th{font-size:8px;letter-spacing:.04em}
-.btn.small{padding:6px 8px}
-}
-
-/* --- 2nd UX polish --- */
-.btn.busy{pointer-events:none;opacity:.85}
-.btn.busy .calcspin{display:inline-block;width:14px;height:14px;border:2px solid #ffffff55;border-top-color:#fff;border-radius:50%;animation:spin .7s linear infinite;vertical-align:-2px;margin-right:6px}
-.partacts{display:flex;gap:2px;justify-content:flex-end;align-items:center}
-.partacts .del,.partacts .dup{border:0;background:transparent;color:#94a098;width:28px;height:29px;border-radius:6px;font-size:15px;line-height:1;padding:0}
-.partacts .dup{font-size:13px;font-weight:800;color:#6a7d70}
-.partacts .dup:hover{background:#eef4f0;color:var(--g)}
-.partacts .del:hover{background:#fbece9;color:#a3483b}
-.table .input.invalid{border-color:#c96b5c;background:#fff7f5;box-shadow:0 0 0 2px #f0c7c055}
-.table th:last-child,.table td:last-child{width:64px;padding-right:8px}
-.sectip{font-size:11px;color:var(--muted);margin:0 0 12px;line-height:1.45}
-.sectip strong{color:#526159;font-weight:700}
-.customhint{display:none;font-size:10px;color:#6a5a28;background:#fff8e8;border-radius:6px;padding:7px 9px;margin:-2px 0 10px}
-.customhint.show{display:block}
-.partsfoot{gap:8px;flex-wrap:wrap}
-.partsfoot .footacts{display:flex;gap:10px;align-items:center}
-.clearparts{border:0;background:transparent;color:#8a6a62;font-size:11px;font-weight:650;padding:6px 0}
-.clearparts:hover{color:#a3483b;text-decoration:underline}
-.clearparts:disabled{opacity:.4;pointer-events:none;text-decoration:none}
-.skiplink{position:absolute;left:-9999px;top:auto;width:1px;height:1px;overflow:hidden}
-.skiplink:focus{left:12px;top:12px;width:auto;height:auto;z-index:30;background:white;color:var(--g);padding:8px 12px;border-radius:8px;font-weight:750;font-size:12px;outline:3px solid #9fc2ad}
-.printonly{display:none}
-.importmeta{font-size:10px;color:#79867e;margin:0 0 8px}
-@media print{
-.top,.head,.progress,.left,.actions,.boardlabel,.stalebar,.price-details,.privacy,.toast,dialog,.skiplink{display:none!important}
-.app{padding:0;max-width:none}
-.layout{display:block}
-.result{position:static;border:0;box-shadow:none;overflow:visible}
-.boards{max-height:none;overflow:visible}
-.board{break-inside:avoid;page-break-inside:avoid;margin-bottom:10px}
-.boardarea{padding:8px 0}
-.printonly{display:block!important;margin:0 0 14px;padding-bottom:10px;border-bottom:2px solid var(--g)}
-.printonly h1{margin:0 0 4px;font-size:18px;letter-spacing:-.03em}
-.printonly p{margin:0;font-size:11px;color:#526159}
-.stats{border:1px solid #dfe6e0;margin-bottom:12px}
-.resulthead{border:0;padding:0 0 8px}
-.error{display:none!important}
-}
-@media(max-width:780px){
-.table th:last-child,.table td:last-child{width:56px}
-.partacts .del,.partacts .dup{width:26px}
-.sectip{font-size:10px}
-}
-
-/* --- 3rd UX polish --- */
-.toast{display:flex;align-items:center;gap:10px;max-width:min(420px,calc(100vw - 28px))}
-.toastundo{border:0;background:#ffffff22;color:#fff;border-radius:6px;padding:5px 10px;font-size:11px;font-weight:800;cursor:pointer;white-space:nowrap}
-.toastundo:hover{background:#ffffff33}
-.toastundo:focus-visible{outline:2px solid #f1c55b;outline-offset:2px}
-.presets{display:flex;flex-wrap:wrap;gap:6px;margin:-2px 0 12px}
-.preset{border:1px solid #d3ddd5;background:#f7faf7;color:#3d5246;border-radius:20px;padding:5px 10px;font-size:10px;font-weight:750;min-height:28px}
-.preset:hover{border-color:#aab9af;background:#eef4f0}
-.preset.on{background:var(--g);border-color:var(--g);color:#fff}
-.preset:focus-visible{outline:3px solid #9fc2ad;outline-offset:2px}
-.partacts{gap:1px}
-.partacts .move{border:0;background:transparent;color:#94a098;width:24px;height:29px;border-radius:6px;font-size:11px;line-height:1;padding:0;font-weight:800}
-.partacts .move:hover{background:#eef4f0;color:var(--g)}
-.partacts .move:disabled{opacity:.28;pointer-events:none}
-.table th:last-child,.table td:last-child{width:108px;padding-right:6px}
-.board{display:grid;grid-template-columns:minmax(0,1fr);gap:0}
-.boardbody{display:grid;grid-template-columns:minmax(0,1.4fr) minmax(140px,.7fr);gap:0;align-items:stretch}
-.cutlist{margin:0;padding:10px 12px;list-style:none;border-left:1px solid #e7ece8;background:#fafbfa;font-size:10px;max-height:100%;overflow:auto}
-.cutlist li{display:flex;align-items:flex-start;gap:7px;padding:4px 0;border-bottom:1px solid #eef1ee;color:#3d5246;line-height:1.35}.cutlist li.cutmeta{align-items:center;padding:0 0 6px;margin-bottom:2px;border-bottom:1px solid #e2e8e3;color:#79867e}
-.cutlist li:last-child{border-bottom:0}
-.cutlist .swatch{width:10px;height:10px;border-radius:3px;border:1px solid #506b5b55;flex:0 0 auto;margin-top:2px}
-.cutlist b{font-weight:750;color:var(--ink)}
-.cutlist .dims{color:#6a7a70;font-weight:500}
-.cutmeta{display:flex;justify-content:space-between;gap:8px;padding:0 0 6px;font-size:9px;color:#79867e;font-weight:700;text-transform:uppercase;letter-spacing:.06em}
-@media(max-width:900px){
-.boardbody{grid-template-columns:1fr}
-.cutlist{border-left:0;border-top:1px solid #e7ece8;max-height:160px}
-}
-@media(max-width:780px){
-.table th:last-child,.table td:last-child{width:96px}
-.partacts .move{width:22px}
-.presets{gap:5px}
-.preset{padding:5px 8px;font-size:9px}
-}
-@media print{
-.cutlist{border:0;background:transparent;max-height:none;overflow:visible;padding:6px 0 0}
-.boardbody{display:block}
-.cutlist li{break-inside:avoid}
-}
-
-/* --- 4th UX polish --- */
-.advtip{font-size:10px;color:#66746c;line-height:1.45;margin:10px 0 0;padding:8px 10px;background:#f4f7f4;border-radius:7px;border:1px solid #e3ebe5}
-.advtip strong{color:var(--ink);font-weight:750;font-variant-numeric:tabular-nums}
-.boardhead{align-items:center;gap:8px;background:#eef3ef;border-bottom-color:#d5ded7}
-.boardhead b{font-weight:800;color:#1f3a2c}
-.boardtools{display:flex;align-items:center;gap:3px;margin-left:auto}
-.zbtn{border:1px solid #c9d5cc;background:#fff;color:#3d5246;border-radius:6px;min-width:28px;height:26px;padding:0 7px;font-size:12px;font-weight:800;line-height:1}
-.zbtn:hover{background:#e8f0ea;border-color:#a7b9ad}
-.zbtn:focus-visible{outline:3px solid #9fc2ad;outline-offset:1px}
-.zbtn.fit{font-size:10px;font-weight:750;padding:0 8px}
-.svgwrap{overflow:auto;max-height:min(70vh,620px);overscroll-behavior:contain}
-.svgwrap .boardsvg{transform-origin:top left;transition:transform .12s ease}
-.cutlist li{cursor:default;border-radius:4px;padding-left:4px;padding-right:4px;margin:0 -4px}
-.cutlist li:not(.cutmeta):hover,.cutlist li.hot{background:#e7f0ea}
-.boardsvg .piecerect{transition:stroke-width .1s,filter .1s}
-.boardsvg .piecerect.hot{stroke:#1b5c38;stroke-width:2.4;filter:brightness(.96)}
-.projectitem{grid-template-columns:1fr auto;gap:10px}
-.projectitem .actions{flex-wrap:wrap;justify-content:flex-end}
-.projectitem .actions .btn{font-size:10px;padding:5px 8px}
-.projectitem h3{cursor:text;border-radius:4px;padding:1px 3px;margin-left:-3px}
-.projectitem h3:hover{background:#eef3ef}
-.renameinput{width:100%;border:1px solid var(--g);border-radius:6px;padding:5px 8px;font-size:12px;font-weight:750;font-family:inherit;background:#fff}
-.renameinput:focus{outline:3px solid #9fc2ad}
-.projectempty{padding:42px 18px}
-.projectempty .emptyicon{font-size:28px;margin-bottom:8px;opacity:.55}
-.stat{border:1px solid #e4ebe5}
-.stat strong{letter-spacing:-.03em}
-.error.show{border-left:3px solid #c96b5c;padding-left:12px}
-.actions .btn[disabled]{opacity:.45}
-@media(max-width:780px){
-.boardtools{order:3;width:100%;justify-content:flex-end;margin-top:4px}
-.zbtn{min-width:32px;height:30px}
-.svgwrap{max-height:55vh}
-.projectitem .actions{width:100%;margin-top:2px}
-}
-@media print{
-.boardtools,.zbtn{display:none!important}
-.svgwrap{overflow:visible;max-height:none}
-.svgwrap .boardsvg{transform:none!important}
-}
-
-/* --- 5th UX polish (brugervenlighed) --- */
-.tagline{margin:2px 0 0;color:var(--muted);font-size:12px;max-width:34em}
-@media(max-width:780px){.tagline{font-size:11px;max-width:100%}}
-
-.coach{display:none;align-items:flex-start;gap:12px;margin:0 0 14px;padding:12px 14px;background:linear-gradient(135deg,#eaf3ec,#f7faf7);border:1px solid #c5d9cb;border-radius:11px;box-shadow:0 3px 12px #163a2b0a}
-.coach.show{display:flex}
-.coachsteps{display:flex;flex-wrap:wrap;gap:6px 10px;margin:6px 0 0;padding:0;list-style:none}
-.coachsteps li{display:flex;align-items:center;gap:6px;font-size:11px;font-weight:700;color:#3d5246;background:#fff;border:1px solid #d5e0d8;border-radius:20px;padding:4px 10px}
-.coachsteps .cnum{width:18px;height:18px;border-radius:50%;background:var(--g);color:#fff;display:grid;place-items:center;font-size:10px}
-.coach b{display:block;font-size:13px;color:var(--ink);margin-bottom:2px}
-.coach p{margin:0;font-size:11px;color:#56645c;line-height:1.45}
-.coach .coachdismiss{margin-left:auto;flex:0 0 auto;align-self:center}
-.flowbar{display:flex;align-items:center;gap:8px;margin:0 0 14px;padding:8px 12px;background:#fff;border:1px solid #e0e7e2;border-radius:10px;font-size:11px;color:#66746c;flex-wrap:wrap}
-.flowbar .flowstep{display:inline-flex;align-items:center;gap:5px;font-weight:750;color:#78847d}
-.flowbar .flowstep.on{color:var(--g)}
-.flowbar .flowstep.done{color:#3d7451}
-.flowbar .fnum{width:18px;height:18px;border-radius:50%;background:#edf1ee;display:grid;place-items:center;font-size:10px;font-weight:800}
-.flowbar .flowstep.on .fnum,.flowbar .flowstep.done .fnum{background:var(--g);color:#fff}
-.flowbar .flowstep.done .fnum{font-size:0}
-.flowbar .flowstep.done .fnum:after{content:"✓";font-size:10px}
-.flowbar .fsep{flex:0 0 12px;height:1px;background:var(--line)}
-.flowbar .flowhint{margin-left:auto;font-size:10px;color:#8a968f;font-weight:600}
-.calcwrap{position:relative}
-.calcsub{text-align:center;color:#748078;font-size:10px;margin:7px 0 0;line-height:1.4}
-.examplechip{display:none;align-items:center;gap:8px;margin:0 17px 8px;padding:7px 10px;background:#f5f8f5;border:1px dashed #c5d3c9;border-radius:7px;font-size:10px;color:#56645c}
-.examplechip.show{display:flex}
-.examplechip strong{color:var(--ink);font-weight:750}
-.examplechip button{border:0;background:transparent;color:var(--g);font-weight:750;font-size:10px;padding:0;text-decoration:underline;cursor:pointer}
-.stats.flash .stat{animation:statflash .9s ease}
-@keyframes statflash{0%{background:#e8f5ec}100%{background:#fff}}
-.okbar{display:none;align-items:center;justify-content:space-between;gap:10px;margin:0;padding:9px 17px;background:#e8f5ec;color:#245538;font-size:11px;font-weight:700;border-bottom:1px solid #c9e2d1}
-.okbar.show{display:flex}
-.okbar span{flex:1}
-.stickycalc{display:none;position:fixed;left:0;right:0;bottom:0;z-index:15;padding:10px 12px calc(10px + env(safe-area-inset-bottom,0px));background:linear-gradient(180deg,#f6f8f5ee,#f6f8f5);border-top:1px solid #d5ded7;box-shadow:0 -6px 20px #163a2b14}
-.stickycalc .btn{width:100%;min-height:48px;font-size:14px;box-shadow:0 5px 15px #163a2b25}
-.stickycalc .btn.needs-update{background:#2a5a3d}
-body.has-stickycalc{padding-bottom:78px}
-.errfix{display:none;margin-top:6px;font-size:10px;font-weight:650}
-.error.show .errfix{display:block}
-.errfix button{border:0;background:transparent;color:#7a3a30;font-weight:800;text-decoration:underline;padding:0;cursor:pointer;font-size:10px}
-.sectip{max-width:42em}
-.primary-cta{box-shadow:0 6px 18px #163a2b28}
-.label .hint{font-weight:400;color:#8a968f;font-style:normal}
-@media(max-width:780px){
-.coach{padding:11px 12px;margin-bottom:12px}
-.coach .coachdismiss{width:100%;margin:8px 0 0}
-.coach{flex-wrap:wrap}
-.flowbar{padding:8px 10px;gap:6px}
-.flowbar .flowhint{width:100%;margin:2px 0 0;text-align:left}
-.stickycalc{display:block}
-.calcwrap .calculate{display:none}
-.calcwrap .privacy,.calcwrap .calcsub{display:none}
-.examplechip{margin:0 10px 8px}
-.okbar{padding:9px 12px;flex-wrap:wrap}
-.partacts .move,.partacts .dup,.partacts .del{width:30px;height:34px}
-.table th:last-child,.table td:last-child{width:120px}
-}
-@media(min-width:781px){
-.stickycalc{display:none!important}
-body.has-stickycalc{padding-bottom:0}
-}
-@media print{
-.coach,.flowbar,.stickycalc,.examplechip,.okbar,.boardjump,.swaprow{display:none!important}
-}
-
-/* --- 6th UX polish --- */
-.swaprow{display:flex;align-items:center;gap:8px;margin:-4px 0 10px}
-.swapbtn{border:1px solid #d3ddd5;background:#f7faf7;color:#3d5246;border-radius:7px;padding:5px 10px;font-size:10px;font-weight:750;min-height:28px}
-.swapbtn:hover{border-color:#aab9af;background:#eef4f0}
-.swapbtn:focus-visible{outline:3px solid #9fc2ad;outline-offset:2px}
-.table .input.oversize{border-color:#d4a017;background:#fffbf0;box-shadow:0 0 0 2px #f0e0b855}
-.fitnote{font-size:10px;color:#9a6a12;font-weight:650}
-.count .fitnote{display:inline;margin-left:6px}
-.boardjump{display:none;flex-wrap:wrap;gap:6px;align-items:center;margin:0 0 10px;padding:0}
-.boardjump.show{display:flex}
-.boardjump span{font-size:10px;color:#79867e;font-weight:700;margin-right:2px}
-.jbtn{border:1px solid #c9d5cc;background:#fff;color:#3d5246;border-radius:16px;min-width:28px;height:26px;padding:0 9px;font-size:10px;font-weight:800}
-.jbtn:hover{background:#e8f0ea;border-color:#a7b9ad}
-.jbtn:focus-visible{outline:3px solid #9fc2ad;outline-offset:1px}
-.actions .btn.copycut{border-color:#c5d9cb}
-.sr-live{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}
-.cutlist li.hot b{color:#1b5c38}
-@media(max-width:780px){
-.toast{bottom:calc(72px + env(safe-area-inset-bottom,0px))}
-.swaprow{margin-bottom:8px}
-.jbtn{min-width:34px;height:30px}
-.boardjump{margin-bottom:8px}
-}
-@media(min-width:781px){
-.toast{bottom:20px}
-}
-@media print{
-.boardjump,.swapbtn,.copycut{display:none!important}
-}
-
-
-/* --- simplification pass --- */
-.tools{align-items:center;gap:6px}
-.tools .btn{font-weight:650;background:#f7faf7;color:#3d5246}
-.tools #saveProject{background:#fff;border-color:#c5d3c9}
-.moremenu,.exportmenu{position:relative;display:inline-block}
-.moremenu>summary,.exportmenu>summary{list-style:none;cursor:pointer}
-.moremenu>summary::-webkit-details-marker,.exportmenu>summary::-webkit-details-marker{display:none}
-.morebtn{min-width:auto}
-.morepanel,.exportpanel{position:absolute;right:0;top:calc(100% + 4px);z-index:20;min-width:200px;background:#fff;border:1px solid #d5ded7;border-radius:10px;box-shadow:0 10px 28px #163a2b22;padding:6px;display:flex;flex-direction:column;gap:2px}
-.menuitem{border:0;background:transparent;text-align:left;padding:9px 11px;border-radius:7px;font-size:12px;font-weight:650;color:var(--ink);width:100%;cursor:pointer}
-.menuitem:hover{background:#eef4f0}
-.menuitem.danger{color:#a3483b}
-.menuitem.danger:hover{background:#fbece9}
-.menuitem:disabled{opacity:.4;cursor:not-allowed;pointer-events:none}
-.btn.quiet{background:transparent;border-color:transparent;color:#56645c;font-weight:650;box-shadow:none}
-.btn.quiet:hover{background:#eef4f0;border-color:#d5ded7}
-.actions{gap:4px;align-items:center}
-.exportmenu .btn.quiet{min-height:34px}
-.coach{background:#f4f7f4;border:1px solid #e0e7e2;box-shadow:none;padding:10px 12px;margin-bottom:10px;gap:10px}
-.coach b{font-size:12px;margin-bottom:1px}
-.coach p{font-size:11px}
-.flowbar{background:transparent;border:0;border-bottom:1px solid #e7ece8;border-radius:0;padding:4px 2px 10px;margin-bottom:12px;box-shadow:none}
-.flowbar.soft-hide{display:none!important}
-.flowbar .flowhint{font-weight:500;color:#9aa59d}
-.presets-wrap{margin:-2px 0 12px;border:0}
-.presets-wrap>summary{cursor:pointer;list-style:none;font-size:11px;font-weight:700;color:#66746c;padding:4px 0;user-select:none}
-.presets-wrap>summary::-webkit-details-marker{display:none}
-.presets-wrap>summary:after{content:" ⌄";font-weight:400;color:#9aa59d}
-.presets-wrap[open]>summary:after{content:" ⌃"}
-.presets-wrap .presets{margin:6px 0 0}
-.swaprow{margin:-2px 0 8px}
-.swapbtn{background:transparent;border-color:transparent;color:#66746c;padding:4px 6px;min-height:24px}
-.swapbtn:hover{background:#eef4f0;border-color:#d5ded7}
-.boardtools{opacity:0;pointer-events:none;transition:opacity .15s}
-.board:hover .boardtools,.board:focus-within .boardtools{opacity:1;pointer-events:auto}
-.examplechip{background:transparent;border-style:solid;border-color:#e7ece8;padding:5px 8px}
-.okbar{background:#f0f6f1;font-weight:650}
-.sectip{margin:0 0 10px;color:#7a8780}
-.layout{gap:20px}
-.left{gap:16px}
-.calcwrap{margin-top:2px}
-.primary-cta{font-size:15px;min-height:50px}
-.tagline{font-size:12px;letter-spacing:.01em}
-.head{margin-bottom:12px;align-items:center}
-.resulthead h2{font-size:15px}
-.boardjump{opacity:.85}
-.privacy{font-size:10px;margin-top:6px}
-@media(max-width:780px){
-.tools{gap:5px}
-.tools #saveProject span{display:inline}
-.head .btn span{display:inline}
-.morepanel,.exportpanel{min-width:180px;right:0}
-.boardtools{display:none!important}
-.coach{margin-bottom:8px}
-.flowbar{padding-bottom:8px;margin-bottom:8px}
-.stickycalc{padding:8px 10px calc(8px + env(safe-area-inset-bottom,0px));background:#f6f8f5f2}
-.stickycalc .btn{min-height:50px;font-size:15px}
-body.has-stickycalc{padding-bottom:70px}
-.toast{bottom:calc(64px + env(safe-area-inset-bottom,0px))}
-.actions{flex-wrap:wrap;justify-content:flex-end}
-.exportmenu{order:3}
-.presets-wrap{margin-bottom:10px}
-.left{gap:12px}
-}
-@media(min-width:781px){
-.boardtools{margin-left:auto}
-}
-@media print{
-.moremenu,.exportmenu,.presets-wrap{display:none!important}
-}
-
-</style></head><body>
-<a class="skiplink" href="#optimize">Spring til beregn</a>
-<header class="top"><div class="brand"><div class="logo">P</div>Pladeplan</div><div class="meta"><span class="saved" id="saveState">Kladde gemt lokalt</span><span class="units">Dansk · millimeter</span><button type="button" class="planbtn" id="subscriptionBtn">Gratis · Se Pro</button></div></header>
-<main class="app"><div class="head"><div><h1><input id="projectName" class="project" value="Nyt skæreprojekt" aria-label="Projektnavn"></h1><p class="tagline" id="appTagline">Plade → Emner → Beregn</p></div><div class="tools"><button type="button" class="btn" id="saveProject" aria-label="Gem skæreseddel">✓ <span>Gem</span></button><details class="moremenu" id="moreMenu"><summary class="btn morebtn" aria-label="Flere handlinger">Mere</summary><div class="morepanel" role="menu"><button type="button" class="menuitem" id="projectsBtn" role="menuitem">▣ Mine skæresedler</button><button type="button" class="menuitem" id="sharePlan" role="menuitem">↗ Del</button><button type="button" class="menuitem" id="newProject" role="menuitem">＋ Nyt projekt</button><button type="button" class="menuitem danger" id="deleteProject" role="menuitem">⌫ Slet</button></div></details></div></div>
-<div class="coach" id="coach" role="region" aria-label="Kom godt i gang"><div><b>Sådan gør du</b><p>1 Plade → 2 Emner → 3 Beregn. Så får du skæreplanen.</p></div><button type="button" class="btn small coachdismiss" id="coachDismiss">Skjul</button></div>
-<nav class="flowbar" id="flowBar" aria-label="Forløb"><span class="flowstep on" id="flow1"><span class="fnum">1</span>Plade</span><span class="fsep" aria-hidden="true"></span><span class="flowstep" id="flow2"><span class="fnum">2</span>Emner</span><span class="fsep" aria-hidden="true"></span><span class="flowstep" id="flow3"><span class="fnum">3</span>Beregn</span><span class="flowhint" id="flowHint">Start med plademål</span></nav>
-
-<div class="layout"><section class="left">
-<div class="card pad"><div class="section"><div><div class="title"><span class="badge">1</span><h2>Plade</h2></div><p class="sectip">Vælg materiale eller egne mål. Avanceret (savsnit, kant, rotation) åbnes nedenfor ved behov.</p></div></div><div class="field"><label class="label" for="material">Materiale</label><select id="material" class="select"><option data-w="1220" data-h="2440" data-price="mdf19">19 mm MDF — 1220 × 2440</option><option data-w="1220" data-h="2440">16 mm spånplade — 1220 × 2440</option><option data-w="1250" data-h="2500">19 mm birkekrydsfiner — 1250 × 2500</option><option data-w="1220" data-h="2440">12 mm MDF — 1220 × 2440</option><option>Egne mål</option></select></div><div class="customhint" id="customHint" role="status">Egne mål — ret bredde og længde nedenfor. Prissammenligning gælder kun 19 mm MDF.</div><div class="row"><div class="field"><label class="label" for="sheetW">Bredde</label><div class="unit"><input class="input" id="sheetW" type="number" min="1" value="1220"><span>mm</span></div></div><div class="field"><label class="label" for="sheetH">Længde</label><div class="unit"><input class="input" id="sheetH" type="number" min="1" value="2440"><span>mm</span></div></div></div><div class="swaprow"><button type="button" class="swapbtn" id="swapSheet" title="Byt bredde og længde" aria-label="Byt pladens bredde og længde">⇄ Byt om</button></div><details class="presets-wrap" id="presetsWrap"><summary>Hurtige formater</summary><div class="presets" id="sheetPresets" role="group" aria-label="Hurtige pladeformater"><button type="button" class="preset" data-w="1220" data-h="2440">1220 × 2440</button><button type="button" class="preset" data-w="1250" data-h="2500">1250 × 2500</button><button type="button" class="preset" data-w="1220" data-h="2745">1220 × 2745</button><button type="button" class="preset" data-w="1525" data-h="3050">1525 × 3050</button></div></details><details class="advanced" id="advancedPanel"><summary>Savsnit, kant &amp; rotation</summary><div class="row"><div class="field"><label class="label" for="kerf">Savsnit <em>klingebredde</em></label><div class="unit"><input class="input" id="kerf" type="number" min="0" step=".1" value="3.2"><span>mm</span></div></div><div class="field"><label class="label" for="trim">Kantfraskær <em>alle 4 kanter</em></label><div class="unit"><input class="input" id="trim" type="number" min="0" value="10"><span>mm</span></div></div></div><div class="switchrow"><div><b>Tillad rotation</b><small>Emner må vendes 90° for bedre udnyttelse</small></div><input class="switch" id="rotate" type="checkbox" checked aria-label="Tillad rotation"></div><p class="advtip" id="advTip">Savsnit er klingebredden (typisk 2,5–3,5 mm) og trækkes mellem hvert snit. Kantfraskær fjernes fra alle fire kanter — brugbart areal: <strong id="usableSize">—</strong>.</p></details></div>
-<div class="card parts"><div class="section"><div><div class="title"><span class="badge">2</span><h2>Emner</h2></div><p class="sectip">Navn, mål og antal — eller brug Smart import.</p></div><button type="button" class="btn small ai" id="openAI">✦ Smart import</button></div><div class="examplechip" id="exampleChip" role="status"><span><strong>Eksempel-emner</strong> — ret målene, eller ryd listen og start forfra.</span><button type="button" id="dismissExample">Skjul tip</button></div><div class="tablewrap"><table class="table"><thead><tr><th>Navn</th><th>Bredde (mm)</th><th>Længde (mm)</th><th>Antal</th><th></th></tr></thead><tbody id="parts"></tbody></table></div><div class="partsfoot"><div class="footacts"><button type="button" class="add" id="addPart">＋ Tilføj emne</button><button type="button" class="clearparts" id="clearParts" title="Fjern alle emner">Ryd liste</button></div><span class="count" id="partCount"></span></div></div>
-<div class="calcwrap"><button type="button" class="btn primary calculate primary-cta" id="optimize">Beregn skæreplan →</button><p class="calcsub" id="calcSub">Placerer emnerne på færrest mulige plader</p><p class="privacy">Gemmes lokalt · del via link</p></div></section>
-<section class="card result"><div class="printonly" id="printHeader"><h1 id="printTitle">Skæreplan</h1><p id="printMeta"></p><p id="printDate"></p></div><div class="resulthead"><div><h2>Skæreplan</h2><p id="resultSubtitle">Tryk «Beregn skæreplan» for at se tegningen</p></div><div class="actions"><button type="button" class="btn small quiet" id="sharePlanResult" title="Del skæreseddel via link">Del</button><details class="exportmenu" id="exportMenu"><summary class="btn small quiet" id="exportSummary">Eksport</summary><div class="exportpanel" role="menu"><button type="button" class="menuitem copycut" id="copyCut" disabled aria-disabled="true" title="Beregn planen først" role="menuitem">Kopiér snitliste</button><button type="button" class="menuitem" id="csv" disabled aria-disabled="true" title="Beregn planen først" role="menuitem">↓ CSV</button><button type="button" class="menuitem" id="print" disabled aria-disabled="true" title="Beregn planen først" role="menuitem">Udskriv / PDF</button></div></details></div></div><div class="stalebar" id="staleBar" hidden><span>Planen matcher ikke længere dine emner.</span><button type="button" class="btn small primary" id="restaleOptimize">Opdater plan</button></div><div class="okbar" id="okBar" role="status"><span id="okBarText">Plan klar</span></div><div class="error" id="error" role="alert" aria-live="assertive"></div><div class="stats"><div class="stat"><span>Plader</span><strong id="statSheets">—</strong></div><div class="stat"><span>Emner</span><strong id="statParts">—</strong></div><div class="stat good"><span>Udnyttelse</span><strong id="statYield">—</strong></div><div class="stat"><span>Spild</span><strong id="statWaste">—</strong> <em>m²</em></div></div><div class="boardarea"><div class="boardlabel"><b>Skæretegning + snitliste</b><span id="boardCount">Ingen plan endnu</span></div><div class="boardjump" id="boardJump" aria-label="Hop til plade"></div><div class="boards" id="boards"><div class="empty"><div class="emptyicon">▧</div><strong>Din skæreplan vises her</strong><span>Når du trykker Beregn, ser du tegning og snitliste for hver plade — klar til sav.</span></div></div></div><details class="price-details"><summary><strong>Sammenlign priser</strong><span id="priceSummary">9 forhandlere · 19 mm MDF</span></summary><div class="prices" id="prices"><div class="pricehead"><div>Priser hos 9 forhandlere <small id="priceDate">kontrolleret 26.09.2026</small></div><span class="pricebadge">19 mm MDF</span></div><div class="pricelist" id="priceList"></div><div class="pricefoot">Offentlige onlinepriser inkl. moms, manuelt indsamlet – ikke live. Tjek altid prisen hos forhandleren før køb. Fragt, tilskæring, lokal lagerstatus og medlems-/erhvervsrabatter kan ændre den samlede pris.</div></div></details></section></div></main>
-<dialog id="projectsDialog"><div class="modalhead"><div class="modaltitle"><div class="aiicon">▣</div><div><h2>Mine skæresedler</h2><p>Åbn, omdøb, duplikér eller slet en gemt skæreplan.</p></div></div><button type="button" class="close" id="closeProjects" aria-label="Luk">×</button></div><div class="modalbody"><p class="libraryintro">Skæresedlerne gemmes kun på denne enhed. Brug «Del» for at sende et link til andre — uden konto eller server.</p><div class="projectlist" id="projectList"></div></div></dialog><dialog id="subscriptionDialog"><div class="modalhead"><div class="modaltitle"><div class="aiicon">◆</div><div><h2>Vælg abonnement</h2><p>Pladeplan er gratis at bruge. Pro er under udvikling.</p></div></div><button type="button" class="close" id="closeSubscription" aria-label="Luk">×</button></div><div class="modalbody"><div class="billingtabs" role="group" aria-label="Betalingsperiode"><button type="button" class="billingtab on" aria-pressed="true" data-billing="monthly">Månedligt</button><button type="button" class="billingtab" aria-pressed="false" data-billing="yearly">Årligt · spar 198 kr.</button></div><div class="plans"><div class="plancard"><h3>Gratis</h3><div class="planprice">0 kr.</div><p class="plandesc">Til mindre og enkelte projekter.</p><ul class="planfeatures"><li>Skæreplaner og skæretegninger</li><li>Gem og del skæresedler (lokalt + link)</li><li>Smart import af emnelister</li><li>Prissammenligning, CSV og udskrift</li></ul><button type="button" class="btn checkout" id="keepFree">Fortsæt gratis</button></div><div class="plancard pro"><span class="popular">Kommer snart</span><h3>Pro</h3><div class="planprice"><span id="proPrice">99 kr.</span> <small id="proPeriod">pr. måned</small></div><p class="plandesc" id="proDesc">Forventet pris. Pro kan endnu ikke købes, og der trækkes ingen betaling.</p><ul class="planfeatures"><li>Projekter på tværs af enheder</li><li>Udvidet pris- og projektberegning</li><li>Kommende Pro-funktioner</li></ul><button type="button" class="btn primary checkout" id="startPro">Giv mig besked om Pro</button></div></div><p class="trialnote">Priser er inkl. moms. Pro er ikke lanceret endnu – der oprettes intet abonnement og trækkes ingen betaling.</p><div class="billingnotice" id="billingNotice" role="status"><b>Pro er ikke åbnet for køb endnu</b><span>Alle nuværende funktioner er gratis, så du kan bruge Pladeplan fuldt ud i dag. Pro lanceres senere – der oprettes ikke noget abonnement nu.</span></div></div></dialog><dialog id="aiDialog"><div class="modalhead"><div class="modaltitle"><div class="aiicon">✦</div><div><h2>Smart import</h2><p>Lav tekst om til en emneliste, du kan kontrollere.</p></div></div><button type="button" class="close" id="closeAI" aria-label="Luk">×</button></div><div class="modalbody"><label class="label" for="aiText">Indsæt eller beskriv emnerne</label><textarea id="aiText" class="textarea" placeholder="Fx: To sider på 580 x 720 mm, tre hylder på 564 x 560 og en bund på 564 x 580."></textarea><div class="example"><b>Tip:</b> Kopiér fra en mail, note eller et tilbud. Skriv mål i mm og nævn antal.</div><button type="button" class="btn yellow" id="analyzeAI">✦ Analysér tekst</button><div class="status" id="aiStatus"><span class="spinner"></span>Læser navne, mål og antal…</div><div class="review" id="aiReview"><div class="reviewtitle" id="aiReviewTitle">Fundne emner — kontrollér målene</div><p class="importmeta" id="aiImportMeta"></p><div class="reviewlist" id="aiReviewList"></div><div class="note">Emnerne tilføjes først, når du godkender dem. Kontrollér altid målene, før du skærer.</div><div class="modalactions"><button type="button" class="btn" id="retryAI">Ret teksten</button><button type="button" class="btn" id="replaceAI">Erstat listen</button><button type="button" class="btn primary" id="applyAI">Tilføj til listen</button></div></div></div></dialog><dialog id="shareDialog"><div class="modalhead"><div class="modaltitle"><div class="aiicon">↗</div><div><h2>Del skæreseddel</h2><p>Send planen som link — ingen konto eller server.</p></div></div><button type="button" class="close" id="closeShare" aria-label="Luk">×</button></div><div class="modalbody"><div class="sharebox"><p class="sharehint">Linket indeholder plade, emner og indstillinger. Modtageren åbner det direkte i Pladeplan.</p><label class="label" for="shareUrl">Delbart link</label><textarea id="shareUrl" class="shareurl" rows="3" readonly aria-label="Delbart link"></textarea><div class="sharemeta" id="shareMeta"></div><div class="shareacts"><button type="button" class="btn primary" id="copyShareLink">Kopiér link</button><button type="button" class="btn" id="nativeShare">Del…</button><button type="button" class="btn" id="exportShareJson">↓ JSON</button><button type="button" class="btn" id="printFromShare">Udskriv / PDF</button></div><p class="sharehint">Tip: «Udskriv» kan gemmes som PDF. JSON er en sikkerhedskopi, du kan åbne senere.</p></div></div></dialog>
-<div class="stickycalc" id="stickyCalc" aria-hidden="true"><button type="button" class="btn primary calculate" id="optimizeSticky">Beregn skæreplan →</button></div>
-<div class="sr-live" id="srLive" aria-live="polite" aria-atomic="true"></div>
-<div class="toast" id="toast" role="status" aria-live="polite"></div>
-<script>
 'use strict';
 const DEFAULT_PARTS=[['Side',580,720,2],['Bund',564,580,1],['Hylde',564,560,3]];
 const MAX_PIECES=2000,DEFAULT_NAME='Nyt skæreprojekt';
@@ -670,20 +321,50 @@ function exportCSV(){
 }
 
 /* ---------- Projekter / skæreseddel ---------- */
-function library(){try{let x=JSON.parse(localStorage.getItem('pladeplan-projects'));return Array.isArray(x)?x:[]}catch{return[]}}
+function cloudBridge(){return window.__pladeplanCloud||null}
+function cloudOn(){let b=cloudBridge();return !!(b&&b.signedIn&&b.ready&&!b.degraded)}
+function library(){
+  if(cloudOn())return Array.isArray(cloudBridge().cache)?cloudBridge().cache:[];
+  try{let x=JSON.parse(localStorage.getItem('pladeplan-projects'));return Array.isArray(x)?x:[]}catch{return[]}
+}
 function saveLibrary(){
   let name=$('#projectName').value.trim();
   if(!name||name===DEFAULT_NAME){name='Skæreseddel '+new Date().toLocaleDateString('da-DK');$('#projectName').value=name}
   let id=activeProjectId||('p-'+Date.now()),item={...state(),id,n:name,updatedAt:new Date().toISOString()},all=library().filter(x=>x.id!==id);all.unshift(item);
-  try{localStorage.setItem('pladeplan-projects',JSON.stringify(all))}catch{return toast('Skæresedlen kunne ikke gemmes. Browseren tillader ikke lokal lagring.')}
-  activeProjectId=id;store();$('#saveState').textContent='Skæreseddel gemt';toast('Skæresedlen er gemt på denne enhed.');
+  if(!persistLibrary(all))return;
+  activeProjectId=id;store();
+  $('#saveState').textContent=cloudOn()?'Skæreseddel gemt på din konto':'Skæreseddel gemt';
+  toast(cloudOn()?'Skæresedlen er gemt på din konto.':'Skæresedlen er gemt på denne enhed.');
 }
-function persistLibrary(all){try{localStorage.setItem('pladeplan-projects',JSON.stringify(all));return true}catch{toast('Kunne ikke gemme biblioteket.');return false}}
+function persistLibrary(all){
+  let b=cloudBridge();
+  if(b&&b.signedIn&&!b.degraded){
+    if(!b.ready){toast('Dine skæresedler hentes stadig. Prøv igen om et øjeblik.');return false}
+    b.cache=all.slice();
+    if(typeof b.push==='function')b.push(all);
+    return true;
+  }
+  try{localStorage.setItem('pladeplan-projects',JSON.stringify(all));return true}catch{toast('Kunne ikke gemme biblioteket.');return false}
+}
+function authAvailable(){let b=cloudBridge();return !!(b&&b.authAvailable)}
+function storageDegraded(){let b=cloudBridge();return !!(b&&b.signedIn&&b.degraded)}
+function syncLibraryChrome(){
+  let intro=document.querySelector('.libraryintro');
+  if(intro)intro.textContent=cloudOn()
+    ?'Skæresedlerne gemmes på din konto og kan åbnes, når du er logget ind på en anden enhed. «Del» sender stadig et link.'
+    :storageDegraded()
+      ?'Du er logget ind, men konto-lagring er ikke sat op endnu. Skæresedlerne gemmes på denne enhed, indtil databasen er konfigureret.'
+      :authAvailable()
+        ?'Skæresedlerne gemmes kun på denne enhed. Log ind for at gemme dem på din konto. Brug «Del» for at sende et link til andre.'
+        :'Skæresedlerne gemmes kun på denne enhed. Brug «Del» for at sende et link til andre — uden konto eller server.';
+  let privacy=$('.privacy');
+  if(privacy)privacy.textContent=cloudOn()?'Kladde lokalt · gemte skæresedler på din konto':storageDegraded()?'Kladde lokalt · konto-lagring ikke sat op':'Gemmes lokalt · del via link';
+}
 function deleteCurrentPlan(){
   let name=$('#projectName').value.trim()||'skæreseddel';
   if(activeProjectId){
     let x=library().find(p=>p.id===activeProjectId);
-    if(!x||!confirm(`Slet den gemte skæreseddel “${x.n||name}” fra denne enhed?`))return;
+    if(!x||!confirm(cloudOn()?`Slet den gemte skæreseddel “${x.n||name}” fra din konto?`:`Slet den gemte skæreseddel “${x.n||name}” fra denne enhed?`))return;
     let all=library(),idx=all.findIndex(p=>p.id===x.id),next=all.filter(p=>p.id!==x.id);
     if(!persistLibrary(next))return;
     activeProjectId=null;
@@ -714,7 +395,10 @@ function renameProject(id,h3){
 }
 function renderLibrary(){
   let all=library(),el=$('#projectList');
-  if(!all.length){el.innerHTML='<div class="projectempty"><div class="emptyicon">▣</div><strong>Ingen gemte skæresedler endnu</strong>Tryk «Gem skæreseddel» for at gemme den aktuelle plan på denne enhed. Brug «Del» for at sende et link til andre.</div>';return}
+  syncLibraryChrome();
+  if(!all.length){el.innerHTML=cloudOn()
+    ?'<div class="projectempty"><div class="emptyicon">▣</div><strong>Ingen gemte skæresedler endnu</strong>Tryk «Gem» for at gemme den aktuelle plan på din konto.</div>'
+    :'<div class="projectempty"><div class="emptyicon">▣</div><strong>Ingen gemte skæresedler endnu</strong>'+(storageDegraded()?'Tryk «Gem» for at gemme den aktuelle plan på denne enhed. Konto-lagring er ikke sat op endnu.':authAvailable()?'Tryk «Gem» for at gemme den aktuelle plan på denne enhed. Log ind for at gemme den på din konto. Brug «Del» for at sende et link til andre.':'Tryk «Gem» for at gemme den aktuelle plan på denne enhed. Brug «Del» for at sende et link til andre.')+'</div>';return}
   el.innerHTML=all.map(x=>{let qty=(x.p||[]).reduce((n,r)=>n+(+r[3]||0),0),dt=new Date(x.updatedAt),d=isNaN(dt)?'':' · gemt '+dt.toLocaleString('da-DK',{dateStyle:'medium',timeStyle:'short'});
     return `<div class="projectitem" data-id="${esc(x.id)}"><div><h3 title="Dobbeltklik for at omdøbe">${esc(x.n||'Skæreseddel')}</h3><p>${qty} emner · ${esc(x.w)} × ${esc(x.h)} mm${d}</p></div><div class="actions"><button class="btn small openproject" type="button" data-id="${esc(x.id)}">Åbn</button><button class="btn small dupproject" type="button" data-id="${esc(x.id)}" aria-label="Duplikér ${esc(x.n||'skæreseddel')}">Duplikér</button><button class="btn small renproject" type="button" data-id="${esc(x.id)}" aria-label="Omdøb ${esc(x.n||'skæreseddel')}">Omdøb</button><button class="btn small delproject" type="button" data-id="${esc(x.id)}" aria-label="Slet ${esc(x.n||'skæreseddel')}">Slet</button></div></div>`}).join('');
   el.querySelectorAll('.openproject').forEach(b=>b.onclick=()=>{let x=library().find(p=>p.id===b.dataset.id);if(x){applyState(x);$('#saveState').textContent='Skæreseddel åbnet';projectsDialog.close();toast('Skæresedlen er åbnet.')}});
@@ -946,4 +630,75 @@ $('#closeSubscription').onclick=()=>subscriptionDialog.close();
 document.querySelectorAll('.billingtab').forEach(b=>b.onclick=()=>{document.querySelectorAll('.billingtab').forEach(x=>{x.classList.toggle('on',x===b);x.setAttribute('aria-pressed',x===b)});let yearly=b.dataset.billing==='yearly';$('#proPrice').textContent=yearly?'990 kr.':'99 kr.';$('#proPeriod').textContent=yearly?'pr. år':'pr. måned';});
 $('#keepFree').onclick=()=>{subscriptionDialog.close();toast('Du bruger Gratis-planen.')};
 $('#startPro').onclick=()=>$('#billingNotice').classList.add('show');
-</script></body></html>
+
+/* ---------- Konto / skysynk ---------- */
+function localLibraryRaw(){try{let x=JSON.parse(localStorage.getItem('pladeplan-projects'));return Array.isArray(x)?x:[]}catch{return[]}}
+function showMigrateBar(extra){
+  let bar=$('#migrateBar');if(!bar||!extra.length)return;
+  if(sessionStorage.getItem('pladeplan-migrate-asked')==='1')return;
+  sessionStorage.setItem('pladeplan-migrate-asked','1');
+  bar.hidden=false;
+  bar.innerHTML='<span>'+extra.length+' skæreseddel'+(extra.length===1?'':'er')+' på denne enhed kan flyttes til din konto.</span><button type="button" class="btn small yellow" id="migrateYes">Flyt til konto</button><button type="button" class="btn small" id="migrateNo">Ikke nu</button>';
+  $('#migrateNo').onclick=()=>{bar.hidden=true};
+  $('#migrateYes').onclick=()=>{
+    let b=cloudBridge();if(!b)return;
+    let ids=new Set((b.cache||[]).map(p=>p.id));
+    let add=extra.filter(p=>p&&p.id&&!ids.has(p.id));
+    let merged=add.concat(b.cache||[]);
+    if(!persistLibrary(merged))return;
+    bar.hidden=true;
+    toast(add.length===1?'1 skæreseddel er flyttet til din konto.':add.length+' skæresedler er flyttet til din konto.');
+    if($('#projectsDialog')&&$('#projectsDialog').open)renderLibrary();
+  };
+}
+function installPush(){
+  let b=cloudBridge();if(!b||typeof b.push==='function')return;
+  let timer;
+  b.push=function(all){
+    clearTimeout(timer);
+    let snapshot=all.map(x=>({...x,p:Array.isArray(x.p)?x.p.slice():[]}));
+    timer=setTimeout(async()=>{
+      try{
+        let r=await fetch('/api/projects',{method:'PUT',headers:{'content-type':'application/json'},body:JSON.stringify({projects:snapshot})});
+        if(r.status===503||r.status===401){
+          b.degraded=true;b.ready=false;
+          try{localStorage.setItem('pladeplan-projects',JSON.stringify(snapshot))}catch{}
+          syncLibraryChrome();
+          toast(r.status===401?'Log ind igen for at gemme på din konto. Skæresedlen er gemt på denne enhed.':'Konto-lagring er ikke sat op endnu. Skæresedlen er gemt på denne enhed.');
+          return;
+        }
+        if(!r.ok)throw Error('save');
+      }catch{toast('Kunne ikke gemme skæresedlen på kontoen. Prøv igen.');}
+    },250);
+  };
+}
+window.__pladeplanOnAuth=async function(){
+  installPush();
+  let b=cloudBridge();
+  if(!b||!b.signedIn){if(b){b.ready=false;b.degraded=false}syncLibraryChrome();let bar=$('#migrateBar');if(bar)bar.hidden=true;return}
+  b.ready=false;
+  try{
+    let r=await fetch('/api/projects',{headers:{accept:'application/json'}});
+    if(r.status===503){
+      b.degraded=true;b.ready=false;syncLibraryChrome();
+      if(!b.warned){b.warned=true;toast('Konto-lagring er ikke sat op endnu. Skæresedler gemmes på denne enhed.')}
+      return;
+    }
+    if(!r.ok)throw Error('sync');
+    let j=await r.json();
+    b.cache=Array.isArray(j.projects)?j.projects:[];
+    b.degraded=false;
+    b.ready=true;
+    syncLibraryChrome();
+    let ids=new Set(b.cache.map(p=>p.id));
+    let extra=localLibraryRaw().filter(p=>p&&p.id&&!ids.has(p.id));
+    showMigrateBar(extra);
+    if($('#projectsDialog')&&$('#projectsDialog').open)renderLibrary();
+  }catch{
+    b.ready=false;
+    b.degraded=true;
+    syncLibraryChrome();
+    if(!b.warned){b.warned=true;toast('Kunne ikke hente skæresedler fra kontoen. De gemmes lokalt på denne enhed.')}
+  }
+};
+syncLibraryChrome();
