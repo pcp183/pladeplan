@@ -76,7 +76,7 @@ Continue from these files and preserve the existing Pladeplan product and Danish
 - **Primær handling:** sticky “Beregn skæreplan” på mobil; tydeligere CTA + undertekst; success-bjælke + toast med pladeantal/udnyttelse; kort flash på statistik.
 - **Fejlgenopretning:** berigede fejl med tip/genvej (åbn rotation/kant, tilføj emne); fokus på første ugyldige felt.
 - **Clutter:** kort tagline under projektnavn (skjules når plan findes); Pro forbliver “Kommer snart”.
-- **Deploy:** `index.html` = `dist/index.html`; packing-algoritme uændret. Live: https://pcp183.github.io/pladeplan/
+- **Deploy:** `index.html` = `dist/index.html`; pushed to `pcp183/pladeplan` (`5f70e50`); packing-algoritme uændret. Pro forbliver “Kommer snart”. Live: https://pcp183.github.io/pladeplan/
 
 ## Changelog — 26 September 2026 (4th UI/UX polish)
 
