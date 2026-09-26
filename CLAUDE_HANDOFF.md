@@ -69,6 +69,15 @@ Continue from these files and preserve the existing Pladeplan product and Danish
 - **Visuel polish:** toast-layout, snitliste/board-grid, smaller presets på mobil; print viser snitliste.
 - **Deploy:** `index.html` = `dist/index.html`; pushed to `pcp183/pladeplan` (`8682210`); packing-algoritme uændret. Live: https://pcp183.github.io/pladeplan/
 
+## Changelog — 26 September 2026 (5th UI/UX polish — brugervenlighed)
+
+- **Onboarding:** dismissible “Kom godt i gang”-banner (3 trin) + synlig flow-bjælke (Plade → Emner → Beregn) med statushint; eksempel-tip når standardemnerne Side/Bund/Hylde er aktive.
+- **Sprog:** tydeligere labels (Savsnit = klingebredde, Kantfraskær = alle 4 kanter); avanceret-panel omdøbt til “Savsnit, kant & rotation”; “Rest” → “Spild”; kortere tom-tilstande og tips.
+- **Primær handling:** sticky “Beregn skæreplan” på mobil; tydeligere CTA + undertekst; success-bjælke + toast med pladeantal/udnyttelse; kort flash på statistik.
+- **Fejlgenopretning:** berigede fejl med tip/genvej (åbn rotation/kant, tilføj emne); fokus på første ugyldige felt.
+- **Clutter:** kort tagline under projektnavn (skjules når plan findes); Pro forbliver “Kommer snart”.
+- **Deploy:** `index.html` = `dist/index.html`; packing-algoritme uændret. Live: https://pcp183.github.io/pladeplan/
+
 ## Changelog — 26 September 2026 (4th UI/UX polish)
 
 - **Projekter:** Duplikér og Omdøb i “Mine projekter” (dobbeltklik på navn omdøber inline); tydeligere tom bibliotek-tilstand.
