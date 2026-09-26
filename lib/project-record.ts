@@ -5,11 +5,15 @@ export type StoredProject = {
   id: string;
   n: string;
   m: number;
+  /** Stabilt pladetype-id. Udelades på ældre skæresedler, så indeks 0–4 kan mappes. */
+  mid?: string;
   w: string;
   h: string;
   k: string;
   t: string;
   r: boolean;
+  /** Valgfri pris pr. plade, som brugeren selv har skrevet. */
+  pr?: string;
   p: string[][];
   updatedAt: string;
 };
@@ -38,10 +42,14 @@ export function parseProject(input: unknown): StoredProject | null {
     ]);
   }
   let material = Number(source.m);
-  if (!Number.isInteger(material) || material < 0 || material > 20) material = 0;
+  if (!Number.isInteger(material) || material < 0 || material > 80) material = 0;
+  const midRaw = clip(source.mid, 80).trim();
+  const mid = /^[\w.-]{1,80}$/.test(midRaw) ? midRaw : '';
+  const priceRaw = clip(source.pr, 24).trim();
+  const pr = /^[\d\s.,]{1,24}$/.test(priceRaw) ? priceRaw : '';
   let updatedAt = clip(source.updatedAt, 40);
   if (Number.isNaN(Date.parse(updatedAt))) updatedAt = new Date().toISOString();
-  return {
+  const project: StoredProject = {
     id,
     n: name,
     m: material,
@@ -53,6 +61,9 @@ export function parseProject(input: unknown): StoredProject | null {
     p: parts,
     updatedAt,
   };
+  if (mid) project.mid = mid;
+  if (pr) project.pr = pr;
+  return project;
 }
 
 export function parseProjectList(input: unknown): { projects: StoredProject[] } | { error: string } {

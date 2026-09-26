@@ -371,3 +371,18 @@ code, .mono{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:.9
 @media print{
 .sitefoot,.deletedbar{display:none!important}
 }
+
+/* Lagerplade → emner → resultat */
+.matnote{font-size:11px;color:#66746c;line-height:1.45;margin:-2px 0 12px}
+.sawblock{border-top:1px solid #edf0ed;margin-top:4px;padding-top:12px}
+.sheetprice{max-width:240px;margin-top:12px;margin-bottom:0}
+.unit.kroner input{padding-right:42px}
+.stats{grid-template-columns:repeat(3,1fr)}
+.stats.has-price{grid-template-columns:repeat(4,1fr)}
+.boardhead{flex-wrap:wrap}
+.boardhead b{line-height:1.35}
+select.select{text-overflow:ellipsis}
+@media(max-width:780px){
+.stats,.stats.has-price{grid-template-columns:1fr 1fr}
+.sheetprice{max-width:none}
+}
