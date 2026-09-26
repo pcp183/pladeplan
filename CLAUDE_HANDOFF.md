@@ -69,6 +69,16 @@ Continue from these files and preserve the existing Pladeplan product and Danish
 - **Visuel polish:** toast-layout, snitliste/board-grid, smaller presets på mobil; print viser snitliste.
 - **Deploy:** `index.html` = `dist/index.html`; pushed to `pcp183/pladeplan` (`8682210`); packing-algoritme uændret. Live: https://pcp183.github.io/pladeplan/
 
+## Changelog — 26 September 2026 (6th UI/UX polish)
+
+- **Kopiér snitliste:** ny «Kopiér»-knap ved CSV/Udskriv kopierer en dansk snitliste til udklipsholderen (klar til note/WhatsApp); samme stale/CSV-gate som eksport.
+- **Savhukommelse:** savsnit, kantfraskær og rotation huskes til «Nyt projekt» / første besøg (samme mønster som materialehukommelse).
+- **Pasform-advarsel:** emner der ikke kan være på det brugbare plademål markeres (gult) før beregning; tæller + undertekst under Beregn forklarer hvad der skal rettes.
+- **Byt om:** knap bytter pladens bredde/længde; emne-areal (m²) vises i emnetælleren.
+- **Flere plader:** «Hop til»-genveje til plade 1…N; klik på emne i tegningen scroller snitlisten.
+- **Mobil/a11y:** toast flyttes op over sticky Beregn; skjult aria-live ved færdig plan.
+- **Deploy:** `index.html` = `dist/index.html`; packing-algoritme uændret. Pro forbliver «Kommer snart». Live: https://pcp183.github.io/pladeplan/
+
 ## Changelog — 26 September 2026 (5th UI/UX polish — brugervenlighed)
 
 - **Onboarding:** dismissible “Kom godt i gang”-banner (3 trin) + synlig flow-bjælke (Plade → Emner → Beregn) med statushint; eksempel-tip når standardemnerne Side/Bund/Hylde er aktive.

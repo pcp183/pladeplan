@@ -225,7 +225,37 @@ body.has-stickycalc{padding-bottom:78px}
 body.has-stickycalc{padding-bottom:0}
 }
 @media print{
-.coach,.flowbar,.stickycalc,.examplechip,.okbar{display:none!important}
+.coach,.flowbar,.stickycalc,.examplechip,.okbar,.boardjump,.swaprow{display:none!important}
+}
+
+/* --- 6th UX polish --- */
+.swaprow{display:flex;align-items:center;gap:8px;margin:-4px 0 10px}
+.swapbtn{border:1px solid #d3ddd5;background:#f7faf7;color:#3d5246;border-radius:7px;padding:5px 10px;font-size:10px;font-weight:750;min-height:28px}
+.swapbtn:hover{border-color:#aab9af;background:#eef4f0}
+.swapbtn:focus-visible{outline:3px solid #9fc2ad;outline-offset:2px}
+.table .input.oversize{border-color:#d4a017;background:#fffbf0;box-shadow:0 0 0 2px #f0e0b855}
+.fitnote{font-size:10px;color:#9a6a12;font-weight:650}
+.count .fitnote{display:inline;margin-left:6px}
+.boardjump{display:none;flex-wrap:wrap;gap:6px;align-items:center;margin:0 0 10px;padding:0}
+.boardjump.show{display:flex}
+.boardjump span{font-size:10px;color:#79867e;font-weight:700;margin-right:2px}
+.jbtn{border:1px solid #c9d5cc;background:#fff;color:#3d5246;border-radius:16px;min-width:28px;height:26px;padding:0 9px;font-size:10px;font-weight:800}
+.jbtn:hover{background:#e8f0ea;border-color:#a7b9ad}
+.jbtn:focus-visible{outline:3px solid #9fc2ad;outline-offset:1px}
+.actions .btn.copycut{border-color:#c5d9cb}
+.sr-live{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}
+.cutlist li.hot b{color:#1b5c38}
+@media(max-width:780px){
+.toast{bottom:calc(72px + env(safe-area-inset-bottom,0px))}
+.swaprow{margin-bottom:8px}
+.jbtn{min-width:34px;height:30px}
+.boardjump{margin-bottom:8px}
+}
+@media(min-width:781px){
+.toast{bottom:20px}
+}
+@media print{
+.boardjump,.swapbtn,.copycut{display:none!important}
 }
 
 </style></head><body>
@@ -236,11 +266,12 @@ body.has-stickycalc{padding-bottom:0}
 <nav class="flowbar" id="flowBar" aria-label="Forløb"><span class="flowstep on" id="flow1"><span class="fnum">1</span>Plade</span><span class="fsep" aria-hidden="true"></span><span class="flowstep" id="flow2"><span class="fnum">2</span>Emner</span><span class="fsep" aria-hidden="true"></span><span class="flowstep" id="flow3"><span class="fnum">3</span>Beregn</span><span class="flowhint" id="flowHint">Start med plademål</span></nav>
 
 <div class="layout"><section class="left">
-<div class="card pad"><div class="section"><div><div class="title"><span class="badge">1</span><h2>Plade</h2></div><p class="sectip">Vælg materiale eller et standardformat. Savsnit og kantrens gemmes under «Savsnit, kant &amp; rotation».</p></div></div><div class="field"><label class="label" for="material">Materiale</label><select id="material" class="select"><option data-w="1220" data-h="2440" data-price="mdf19">19 mm MDF — 1220 × 2440</option><option data-w="1220" data-h="2440">16 mm spånplade — 1220 × 2440</option><option data-w="1250" data-h="2500">19 mm birkekrydsfiner — 1250 × 2500</option><option data-w="1220" data-h="2440">12 mm MDF — 1220 × 2440</option><option>Egne mål</option></select></div><div class="customhint" id="customHint" role="status">Egne mål — ret bredde og længde nedenfor. Prissammenligning gælder kun 19 mm MDF.</div><div class="row"><div class="field"><label class="label" for="sheetW">Bredde</label><div class="unit"><input class="input" id="sheetW" type="number" min="1" value="1220"><span>mm</span></div></div><div class="field"><label class="label" for="sheetH">Længde</label><div class="unit"><input class="input" id="sheetH" type="number" min="1" value="2440"><span>mm</span></div></div></div><div class="presets" id="sheetPresets" role="group" aria-label="Hurtige pladeformater"><button type="button" class="preset" data-w="1220" data-h="2440">1220 × 2440</button><button type="button" class="preset" data-w="1250" data-h="2500">1250 × 2500</button><button type="button" class="preset" data-w="1220" data-h="2745">1220 × 2745</button><button type="button" class="preset" data-w="1525" data-h="3050">1525 × 3050</button></div><details class="advanced" id="advancedPanel"><summary>Savsnit, kant &amp; rotation</summary><div class="row"><div class="field"><label class="label" for="kerf">Savsnit <em>klingebredde</em></label><div class="unit"><input class="input" id="kerf" type="number" min="0" step=".1" value="3.2"><span>mm</span></div></div><div class="field"><label class="label" for="trim">Kantfraskær <em>alle 4 kanter</em></label><div class="unit"><input class="input" id="trim" type="number" min="0" value="10"><span>mm</span></div></div></div><div class="switchrow"><div><b>Tillad rotation</b><small>Emner må vendes 90° for bedre udnyttelse</small></div><input class="switch" id="rotate" type="checkbox" checked aria-label="Tillad rotation"></div><p class="advtip" id="advTip">Savsnit er klingebredden (typisk 2,5–3,5 mm) og trækkes mellem hvert snit. Kantfraskær fjernes fra alle fire kanter — brugbart areal: <strong id="usableSize">—</strong>.</p></details></div>
+<div class="card pad"><div class="section"><div><div class="title"><span class="badge">1</span><h2>Plade</h2></div><p class="sectip">Vælg materiale eller et standardformat. Savsnit og kantrens gemmes under «Savsnit, kant &amp; rotation».</p></div></div><div class="field"><label class="label" for="material">Materiale</label><select id="material" class="select"><option data-w="1220" data-h="2440" data-price="mdf19">19 mm MDF — 1220 × 2440</option><option data-w="1220" data-h="2440">16 mm spånplade — 1220 × 2440</option><option data-w="1250" data-h="2500">19 mm birkekrydsfiner — 1250 × 2500</option><option data-w="1220" data-h="2440">12 mm MDF — 1220 × 2440</option><option>Egne mål</option></select></div><div class="customhint" id="customHint" role="status">Egne mål — ret bredde og længde nedenfor. Prissammenligning gælder kun 19 mm MDF.</div><div class="row"><div class="field"><label class="label" for="sheetW">Bredde</label><div class="unit"><input class="input" id="sheetW" type="number" min="1" value="1220"><span>mm</span></div></div><div class="field"><label class="label" for="sheetH">Længde</label><div class="unit"><input class="input" id="sheetH" type="number" min="1" value="2440"><span>mm</span></div></div></div><div class="swaprow"><button type="button" class="swapbtn" id="swapSheet" title="Byt bredde og længde" aria-label="Byt pladens bredde og længde">⇄ Byt om bredde/længde</button></div><div class="presets" id="sheetPresets" role="group" aria-label="Hurtige pladeformater"><button type="button" class="preset" data-w="1220" data-h="2440">1220 × 2440</button><button type="button" class="preset" data-w="1250" data-h="2500">1250 × 2500</button><button type="button" class="preset" data-w="1220" data-h="2745">1220 × 2745</button><button type="button" class="preset" data-w="1525" data-h="3050">1525 × 3050</button></div><details class="advanced" id="advancedPanel"><summary>Savsnit, kant &amp; rotation</summary><div class="row"><div class="field"><label class="label" for="kerf">Savsnit <em>klingebredde</em></label><div class="unit"><input class="input" id="kerf" type="number" min="0" step=".1" value="3.2"><span>mm</span></div></div><div class="field"><label class="label" for="trim">Kantfraskær <em>alle 4 kanter</em></label><div class="unit"><input class="input" id="trim" type="number" min="0" value="10"><span>mm</span></div></div></div><div class="switchrow"><div><b>Tillad rotation</b><small>Emner må vendes 90° for bedre udnyttelse</small></div><input class="switch" id="rotate" type="checkbox" checked aria-label="Tillad rotation"></div><p class="advtip" id="advTip">Savsnit er klingebredden (typisk 2,5–3,5 mm) og trækkes mellem hvert snit. Kantfraskær fjernes fra alle fire kanter — brugbart areal: <strong id="usableSize">—</strong>.</p></details></div>
 <div class="card parts"><div class="section"><div><div class="title"><span class="badge">2</span><h2>Emner</h2></div><p class="sectip">Skriv hver del: navn, bredde, længde og antal. Eller indsæt fra en note med Smart import.</p></div><button type="button" class="btn small ai" id="openAI">✦ Smart import</button></div><div class="examplechip" id="exampleChip" role="status"><span><strong>Eksempel-emner</strong> — ret målene, eller ryd listen og start forfra.</span><button type="button" id="dismissExample">Skjul tip</button></div><div class="tablewrap"><table class="table"><thead><tr><th>Navn</th><th>Bredde (mm)</th><th>Længde (mm)</th><th>Antal</th><th></th></tr></thead><tbody id="parts"></tbody></table></div><div class="partsfoot"><div class="footacts"><button type="button" class="add" id="addPart">＋ Tilføj emne</button><button type="button" class="clearparts" id="clearParts" title="Fjern alle emner">Ryd liste</button></div><span class="count" id="partCount"></span></div></div>
 <div class="calcwrap"><button type="button" class="btn primary calculate primary-cta" id="optimize">Beregn skæreplan →</button><p class="calcsub" id="calcSub">Finder placering på færrest mulige plader</p><p class="privacy">Mål og emner gemmes kun i din browser på denne enhed.</p></div></section>
-<section class="card result"><div class="printonly" id="printHeader"><h1 id="printTitle">Skæreplan</h1><p id="printMeta"></p><p id="printDate"></p></div><div class="resulthead"><div><h2>Skæreplan</h2><p id="resultSubtitle">Tryk «Beregn skæreplan» for at se tegningen</p></div><div class="actions"><button type="button" class="btn small" id="csv" disabled aria-disabled="true" title="Beregn planen først">↓ CSV</button><button type="button" class="btn small" id="print" disabled aria-disabled="true" title="Beregn planen først">Udskriv</button></div></div><div class="stalebar" id="staleBar" hidden><span>Planen matcher ikke længere dine emner.</span><button type="button" class="btn small primary" id="restaleOptimize">Opdater plan</button></div><div class="okbar" id="okBar" role="status"><span id="okBarText">Plan klar</span></div><div class="error" id="error" role="alert" aria-live="assertive"></div><div class="stats"><div class="stat"><span>Plader</span><strong id="statSheets">—</strong></div><div class="stat"><span>Emner</span><strong id="statParts">—</strong></div><div class="stat good"><span>Udnyttelse</span><strong id="statYield">—</strong></div><div class="stat"><span>Spild</span><strong id="statWaste">—</strong> <em>m²</em></div></div><div class="boardarea"><div class="boardlabel"><b>Skæretegning + snitliste</b><span id="boardCount">Ingen plan endnu</span></div><div class="boards" id="boards"><div class="empty"><div class="emptyicon">▧</div><strong>Din skæreplan vises her</strong><span>Når du trykker Beregn, ser du tegning og snitliste for hver plade — klar til sav.</span></div></div></div><details class="price-details"><summary><strong>Sammenlign priser</strong><span id="priceSummary">9 forhandlere · 19 mm MDF</span></summary><div class="prices" id="prices"><div class="pricehead"><div>Priser hos 9 forhandlere <small id="priceDate">kontrolleret 26.09.2026</small></div><span class="pricebadge">19 mm MDF</span></div><div class="pricelist" id="priceList"></div><div class="pricefoot">Offentlige onlinepriser inkl. moms, manuelt indsamlet – ikke live. Tjek altid prisen hos forhandleren før køb. Fragt, tilskæring, lokal lagerstatus og medlems-/erhvervsrabatter kan ændre den samlede pris.</div></div></details></section></div></main>
+<section class="card result"><div class="printonly" id="printHeader"><h1 id="printTitle">Skæreplan</h1><p id="printMeta"></p><p id="printDate"></p></div><div class="resulthead"><div><h2>Skæreplan</h2><p id="resultSubtitle">Tryk «Beregn skæreplan» for at se tegningen</p></div><div class="actions"><button type="button" class="btn small copycut" id="copyCut" disabled aria-disabled="true" title="Beregn planen først">Kopiér</button><button type="button" class="btn small" id="csv" disabled aria-disabled="true" title="Beregn planen først">↓ CSV</button><button type="button" class="btn small" id="print" disabled aria-disabled="true" title="Beregn planen først">Udskriv</button></div></div><div class="stalebar" id="staleBar" hidden><span>Planen matcher ikke længere dine emner.</span><button type="button" class="btn small primary" id="restaleOptimize">Opdater plan</button></div><div class="okbar" id="okBar" role="status"><span id="okBarText">Plan klar</span></div><div class="error" id="error" role="alert" aria-live="assertive"></div><div class="stats"><div class="stat"><span>Plader</span><strong id="statSheets">—</strong></div><div class="stat"><span>Emner</span><strong id="statParts">—</strong></div><div class="stat good"><span>Udnyttelse</span><strong id="statYield">—</strong></div><div class="stat"><span>Spild</span><strong id="statWaste">—</strong> <em>m²</em></div></div><div class="boardarea"><div class="boardlabel"><b>Skæretegning + snitliste</b><span id="boardCount">Ingen plan endnu</span></div><div class="boardjump" id="boardJump" aria-label="Hop til plade"></div><div class="boards" id="boards"><div class="empty"><div class="emptyicon">▧</div><strong>Din skæreplan vises her</strong><span>Når du trykker Beregn, ser du tegning og snitliste for hver plade — klar til sav.</span></div></div></div><details class="price-details"><summary><strong>Sammenlign priser</strong><span id="priceSummary">9 forhandlere · 19 mm MDF</span></summary><div class="prices" id="prices"><div class="pricehead"><div>Priser hos 9 forhandlere <small id="priceDate">kontrolleret 26.09.2026</small></div><span class="pricebadge">19 mm MDF</span></div><div class="pricelist" id="priceList"></div><div class="pricefoot">Offentlige onlinepriser inkl. moms, manuelt indsamlet – ikke live. Tjek altid prisen hos forhandleren før køb. Fragt, tilskæring, lokal lagerstatus og medlems-/erhvervsrabatter kan ændre den samlede pris.</div></div></details></section></div></main>
 <dialog id="projectsDialog"><div class="modalhead"><div class="modaltitle"><div class="aiicon">▣</div><div><h2>Mine projekter</h2><p>Åbn en tidligere gemt skæreplan.</p></div></div><button type="button" class="close" id="closeProjects" aria-label="Luk">×</button></div><div class="modalbody"><p class="libraryintro">Projekterne gemmes på denne enhed og kan åbnes igen senere.</p><div class="projectlist" id="projectList"></div></div></dialog><dialog id="subscriptionDialog"><div class="modalhead"><div class="modaltitle"><div class="aiicon">◆</div><div><h2>Vælg abonnement</h2><p>Pladeplan er gratis at bruge. Pro er under udvikling.</p></div></div><button type="button" class="close" id="closeSubscription" aria-label="Luk">×</button></div><div class="modalbody"><div class="billingtabs" role="group" aria-label="Betalingsperiode"><button type="button" class="billingtab on" aria-pressed="true" data-billing="monthly">Månedligt</button><button type="button" class="billingtab" aria-pressed="false" data-billing="yearly">Årligt · spar 198 kr.</button></div><div class="plans"><div class="plancard"><h3>Gratis</h3><div class="planprice">0 kr.</div><p class="plandesc">Til mindre og enkelte projekter.</p><ul class="planfeatures"><li>Skæreplaner og skæretegninger</li><li>Gem projekter på denne enhed</li><li>Smart import af emnelister</li><li>Prissammenligning, CSV og udskrift</li></ul><button type="button" class="btn checkout" id="keepFree">Fortsæt gratis</button></div><div class="plancard pro"><span class="popular">Kommer snart</span><h3>Pro</h3><div class="planprice"><span id="proPrice">99 kr.</span> <small id="proPeriod">pr. måned</small></div><p class="plandesc" id="proDesc">Forventet pris. Pro kan endnu ikke købes, og der trækkes ingen betaling.</p><ul class="planfeatures"><li>Projekter på tværs af enheder</li><li>Udvidet pris- og projektberegning</li><li>Kommende Pro-funktioner</li></ul><button type="button" class="btn primary checkout" id="startPro">Giv mig besked om Pro</button></div></div><p class="trialnote">Priser er inkl. moms. Pro er ikke lanceret endnu – der oprettes intet abonnement og trækkes ingen betaling.</p><div class="billingnotice" id="billingNotice" role="status"><b>Pro er ikke åbnet for køb endnu</b><span>Alle nuværende funktioner er gratis, så du kan bruge Pladeplan fuldt ud i dag. Pro lanceres senere – der oprettes ikke noget abonnement nu.</span></div></div></dialog><dialog id="aiDialog"><div class="modalhead"><div class="modaltitle"><div class="aiicon">✦</div><div><h2>Smart import</h2><p>Lav tekst om til en emneliste, du kan kontrollere.</p></div></div><button type="button" class="close" id="closeAI" aria-label="Luk">×</button></div><div class="modalbody"><label class="label" for="aiText">Indsæt eller beskriv emnerne</label><textarea id="aiText" class="textarea" placeholder="Fx: To sider på 580 x 720 mm, tre hylder på 564 x 560 og en bund på 564 x 580."></textarea><div class="example"><b>Tip:</b> Kopiér fra en mail, note eller et tilbud. Skriv mål i mm og nævn antal.</div><button type="button" class="btn yellow" id="analyzeAI">✦ Analysér tekst</button><div class="status" id="aiStatus"><span class="spinner"></span>Læser navne, mål og antal…</div><div class="review" id="aiReview"><div class="reviewtitle" id="aiReviewTitle">Fundne emner — kontrollér målene</div><p class="importmeta" id="aiImportMeta"></p><div class="reviewlist" id="aiReviewList"></div><div class="note">Emnerne tilføjes først, når du godkender dem. Kontrollér altid målene, før du skærer.</div><div class="modalactions"><button type="button" class="btn" id="retryAI">Ret teksten</button><button type="button" class="btn" id="replaceAI">Erstat listen</button><button type="button" class="btn primary" id="applyAI">Tilføj til listen</button></div></div></div></dialog><div class="stickycalc" id="stickyCalc" aria-hidden="true"><button type="button" class="btn primary calculate" id="optimizeSticky">Beregn skæreplan →</button></div>
+<div class="sr-live" id="srLive" aria-live="polite" aria-atomic="true"></div>
 <div class="toast" id="toast" role="status" aria-live="polite"></div>
 <script>
 'use strict';
@@ -252,7 +283,7 @@ let result=null,draft=[],toastTimer,activeProjectId=null,undoAction=null,prefMat
 function esc(s){return String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}
 function fmt(n,d=1){return Number(n).toLocaleString('da-DK',{maximumFractionDigits:d})}function dim(n){return Number(n).toLocaleString('da-DK',{maximumFractionDigits:1,useGrouping:false})}
 function toast(s,undo){let e=$('#toast');undoAction=typeof undo==='function'?undo:null;if(undoAction){e.innerHTML=`<span>${esc(s)}</span><button type="button" class="toastundo" id="toastUndo">Fortryd</button>`;$('#toastUndo').onclick=()=>{if(undoAction){let fn=undoAction;undoAction=null;fn()}e.classList.remove('show')}}else{e.textContent=s}e.classList.add('show');clearTimeout(toastTimer);toastTimer=setTimeout(()=>{e.classList.remove('show');undoAction=null},undoAction?6000:2600)}
-function setExportEnabled(on){['#csv','#print'].forEach(id=>{let b=$(id);b.disabled=!on;b.setAttribute('aria-disabled',on?'false':'true');b.title=on?(id==='#csv'?'Hent snitliste som CSV':'Udskriv skæreplan med snitliste'):'Beregn planen først'})}
+function setExportEnabled(on){[['#csv','Hent snitliste som CSV'],['#print','Udskriv skæreplan med snitliste'],['#copyCut','Kopiér snitliste til udklipsholder']].forEach(([id,ok])=>{let b=$(id);if(!b)return;b.disabled=!on;b.setAttribute('aria-disabled',on?'false':'true');b.title=on?ok:'Beregn planen først'})}
 function syncCalcLabel(){let label,needs;if($('.result').classList.contains('stale')&&result){label='Opdater skæreplan →';needs=true}else{label='Beregn skæreplan →';needs=false}['#optimize','#optimizeSticky'].forEach(id=>{let b=$(id);if(!b)return;if(!b.classList.contains('busy'))b.textContent=label;b.classList.toggle('needs-update',needs)})}
 function dismissCoach(){try{localStorage.setItem('pladeplan-coach','1')}catch{}let c=$('#coach');if(c)c.classList.remove('show')}
 function maybeShowCoach(){let c=$('#coach');if(!c)return;try{if(localStorage.getItem('pladeplan-coach')==='1'){c.classList.remove('show');return}}catch{}c.classList.add('show')}
@@ -307,15 +338,64 @@ function add(r=['Nyt emne','','',1],save=true){
   let er=P.querySelector('.partempty-row');if(er)er.remove();P.append(tr);count();syncClearParts();syncMoveButtons();if(save)change();
 }
 function rows(){return dataPartRows().map(r=>[...r.querySelectorAll('input')].map(x=>x.value.trim()))}
-function count(){let n=rows().reduce((a,r)=>a+(Math.floor(+r[3])||0),0);$('#partCount').textContent=`${n} ${n===1?'emne':'emner'} i alt`;syncClearParts()}
+function count(){let {bad,area,n}=softFitCheck();let m2=(area/1e6).toFixed(2).replace('.',',');let base=n?`${n} ${n===1?'emne':'emner'} · ${m2} m²`:`0 emner`;$('#partCount').innerHTML=bad?`${esc(base)} <span class="fitnote">· ${bad} for store</span>`:esc(base);syncClearParts();syncCalcSub()}
 function syncClearParts(){let b=$('#clearParts');if(!b)return;b.disabled=!dataPartRows().length}
 function syncCustomHint(){let o=$('#material').selectedOptions[0],h=$('#customHint');if(!h)return;let custom=!o.dataset.w;h.classList.toggle('show',custom)}
-function syncUsable(){let el=$('#usableSize');if(!el)return;let W=+$('#sheetW').value,H=+$('#sheetH').value,t=+$('#trim').value;if(!(W>0&&H>0)||!(t>=0)){el.textContent='—';return}let uw=W-2*t,uh=H-2*t;el.textContent=(uw>0&&uh>0)?(`${dim(uw)} × ${dim(uh)} mm`):'kantfraskær for stort'}function updatePrintHeader(){let t=$('#printTitle'),m=$('#printMeta'),d=$('#printDate');if(!t)return;t.textContent=$('#projectName').value.trim()||'Skæreplan';if(d)d.textContent='Udskrevet '+new Date().toLocaleString('da-DK',{dateStyle:'medium',timeStyle:'short'});if(!result){m.textContent='';return}m.textContent=`${result.s.length} ${result.s.length===1?'plade':'plader'} · ${result.ps.length} emner · ${dim(result.W)} × ${dim(result.H)} mm · savsnit ${dim(+$('#kerf').value)} mm · kantfraskær ${dim(+$('#trim').value)} mm · udnyttelse ${fmt(result.y)}% · rest ${(result.waste/1e6).toFixed(2).replace('.',',')} m²`}
+function syncUsable(){let el=$('#usableSize');if(!el)return;let W=+$('#sheetW').value,H=+$('#sheetH').value,t=+$('#trim').value;if(!(W>0&&H>0)||!(t>=0)){el.textContent='—';return}let uw=W-2*t,uh=H-2*t;el.textContent=(uw>0&&uh>0)?(`${dim(uw)} × ${dim(uh)} mm`):'kantfraskær for stort'}
+function loadSawPref(){try{let raw=localStorage.getItem('pladeplan-pref-saw');if(!raw)return null;let o=JSON.parse(raw);if(!o||typeof o!=='object')return null;return o}catch{return null}}
+function saveSawPref(){try{localStorage.setItem('pladeplan-pref-saw',JSON.stringify({k:$('#kerf').value,t:$('#trim').value,r:$('#rotate').checked}))}catch{}}
+function announce(msg){let el=$('#srLive');if(!el)return;el.textContent='';requestAnimationFrame(()=>{el.textContent=msg})}
+function usableWH(){let W=+$('#sheetW').value,H=+$('#sheetH').value,t=+$('#trim').value;if(!(W>0&&H>0)||!(t>=0))return null;let uw=W-2*t,uh=H-2*t;return(uw>0&&uh>0)?{uw,uh}:null}
+function softFitCheck(){
+  let u=usableWH(),rot=$('#rotate').checked,bad=0,area=0,n=0;
+  dataPartRows().forEach(tr=>{
+    let [name,wEl,hEl,qEl]=[...tr.querySelectorAll('input')];
+    let w=+wEl.value,h=+hEl.value,q=Math.floor(+qEl.value)||0;
+    wEl.classList.remove('oversize');hEl.classList.remove('oversize');
+    if(!(w>0&&h>0))return;
+    n+=q;area+=w*h*q;
+    if(!u)return;
+    let fits=(w<=u.uw&&h<=u.uh)||(rot&&h<=u.uw&&w<=u.uh);
+    if(!fits){wEl.classList.add('oversize');hEl.classList.add('oversize');bad+=Math.max(1,q)}
+  });
+  return{bad,area,n,u};
+}
+function syncCalcSub(){
+  let sub=$('#calcSub');if(!sub)return;
+  let {bad,area,n}=softFitCheck();
+  if($('.result').classList.contains('stale')&&result){sub.textContent='Emner er ændret — opdater planen';return}
+  if(bad){sub.textContent=`${bad} ${bad===1?'emne':'emner'} passer ikke på pladen — ret mål eller tillad rotation`;return}
+  if(n>0){let m2=(area/1e6).toFixed(2).replace('.',',');sub.textContent=`${n} ${n===1?'emne':'emner'} · ${m2} m² — finder færrest plader`;return}
+  sub.textContent='Finder placering på færrest mulige plader';
+}
+function syncBoardJump(){
+  let el=$('#boardJump');if(!el)return;
+  if(!result||!result.s||result.s.length<2||$('.result').classList.contains('stale')){el.classList.remove('show');el.innerHTML='';return}
+  el.innerHTML='<span>Hop til</span>'+result.s.map((_,i)=>`<button type="button" class="jbtn" data-bi="${i}" aria-label="Hop til plade ${i+1}">${i+1}</button>`).join('');
+  el.classList.add('show');
+  el.querySelectorAll('.jbtn').forEach(b=>b.onclick=()=>{let board=$('#boards')?.querySelector(`.board[data-board="${b.dataset.bi}"]`);board?.scrollIntoView({behavior:'smooth',block:'start'})});
+}
+function copyCutlist(){
+  if(!result||$('.result').classList.contains('stale'))return toast('Beregn planen først.');
+  let name=$('#projectName').value.trim()||'Skæreplan';
+  let lines=[name,`Plade ${dim(result.W)} × ${dim(result.H)} mm · savsnit ${dim(+$('#kerf').value)} mm · kantfraskær ${dim(+$('#trim').value)} mm`,`${result.s.length} ${result.s.length===1?'plade':'plader'} · ${result.ps.length} emner · udnyttelse ${fmt(result.y)}% · spild ${(result.waste/1e6).toFixed(2).replace('.',',')} m²`,''];
+  result.s.forEach((s,i)=>{
+    lines.push(`Plade ${i+1} (${s.pieces.length} stk.)`);
+    s.pieces.forEach((p,j)=>lines.push(`  ${j+1}. ${p.name}: ${dim(p.w)} × ${dim(p.h)} mm${p.turn?' (roteret)':''}`));
+    lines.push('');
+  });
+  let text=lines.join('\n').trim();
+  const done=()=>toast('Snitliste kopieret');
+  if(navigator.clipboard&&navigator.clipboard.writeText){navigator.clipboard.writeText(text).then(done).catch(()=>fallbackCopy(text,done))}
+  else fallbackCopy(text,done);
+}
+function fallbackCopy(text,done){let ta=document.createElement('textarea');ta.value=text;ta.setAttribute('readonly','');ta.style.position='fixed';ta.style.left='-9999px';document.body.append(ta);ta.select();try{document.execCommand('copy');done()}catch{toast('Kunne ikke kopiere — brug CSV i stedet')}ta.remove()}
+function updatePrintHeader(){let t=$('#printTitle'),m=$('#printMeta'),d=$('#printDate');if(!t)return;t.textContent=$('#projectName').value.trim()||'Skæreplan';if(d)d.textContent='Udskrevet '+new Date().toLocaleString('da-DK',{dateStyle:'medium',timeStyle:'short'});if(!result){m.textContent='';return}m.textContent=`${result.s.length} ${result.s.length===1?'plade':'plader'} · ${result.ps.length} emner · ${dim(result.W)} × ${dim(result.H)} mm · savsnit ${dim(+$('#kerf').value)} mm · kantfraskær ${dim(+$('#trim').value)} mm · udnyttelse ${fmt(result.y)}% · rest ${(result.waste/1e6).toFixed(2).replace('.',',')} m²`}
 function state(){return{id:activeProjectId,n:$('#projectName').value,m:$('#material').selectedIndex,w:$('#sheetW').value,h:$('#sheetH').value,k:$('#kerf').value,t:$('#trim').value,r:$('#rotate').checked,p:rows()}}
 function store(){try{localStorage.setItem('pladeplan',JSON.stringify(state()))}catch{}}
 function markStale(){if(result){$('#resultSubtitle').textContent='Ændret – tryk “Opdater skæreplan” for at opdatere';$('.result').classList.add('stale');syncStaleBar();syncCalcLabel();setExportEnabled(false)}}
-function change(){count();ensurePartsEmpty();store();$('#saveState').textContent='Kladde gemt lokalt';markStale();syncPresets();syncUsable();syncFlow();syncExampleChip();hideOkBar();if(result)updatePrintHeader()}
-function clearResult(){result=null;['#statSheets','#statParts','#statYield','#statWaste'].forEach(id=>$(id).textContent='—');$('#resultSubtitle').textContent='Tryk «Beregn skæreplan» for at se tegningen';$('#boardCount').textContent='Ingen plan endnu';$('#boards').innerHTML=EMPTY_BOARDS;$('#error').classList.remove('show');$('.result').classList.remove('stale');syncStaleBar();syncCalcLabel();setExportEnabled(false);renderPrices();updatePrintHeader();hideOkBar();syncFlow();syncExampleChip()}
+function change(){count();ensurePartsEmpty();store();$('#saveState').textContent='Kladde gemt lokalt';markStale();syncPresets();syncUsable();syncFlow();syncExampleChip();syncCalcSub();syncBoardJump();hideOkBar();if(result)updatePrintHeader()}
+function clearResult(){result=null;['#statSheets','#statParts','#statYield','#statWaste'].forEach(id=>$(id).textContent='—');$('#resultSubtitle').textContent='Tryk «Beregn skæreplan» for at se tegningen';$('#boardCount').textContent='Ingen plan endnu';$('#boards').innerHTML=EMPTY_BOARDS;$('#error').classList.remove('show');$('.result').classList.remove('stale');syncStaleBar();syncCalcLabel();setExportEnabled(false);renderPrices();updatePrintHeader();hideOkBar();syncFlow();syncExampleChip();syncCalcSub();syncBoardJump()}
 function loadMaterialPref(){try{let v=+localStorage.getItem('pladeplan-pref-material');return Number.isInteger(v)&&v>=0&&v<$('#material').options.length?v:-1}catch{return-1}}
 function saveMaterialPref(i){try{localStorage.setItem('pladeplan-pref-material',String(i))}catch{}}
 function syncPresets(){let w=+$('#sheetW').value,h=+$('#sheetH').value;document.querySelectorAll('#sheetPresets .preset').forEach(b=>{b.classList.toggle('on',+b.dataset.w===w&&+b.dataset.h===h)})}
@@ -329,9 +409,11 @@ function applyState(x){
   if(x.w!=null||x.h!=null){$('#sheetW').value=x.w||1220;$('#sheetH').value=x.h||2440}
   else if(opt&&opt.dataset.w){$('#sheetW').value=opt.dataset.w;$('#sheetH').value=opt.dataset.h}
   else{$('#sheetW').value=1220;$('#sheetH').value=2440}
-  $('#kerf').value=x.k??3.2;$('#trim').value=x.t??10;$('#rotate').checked=x.r!==false;
+  let saw=loadSawPref();
+  let kDef=saw&&saw.k!=null?saw.k:3.2,tDef=saw&&saw.t!=null?saw.t:10,rDef=saw&&typeof saw.r==='boolean'?saw.r:true;
+  $('#kerf').value=x.k!=null?x.k:kDef;$('#trim').value=x.t!=null?x.t:tDef;$('#rotate').checked=x.r!=null?!!x.r:rDef;
   P.innerHTML='';(Array.isArray(x.p)&&x.p.length?x.p:DEFAULT_PARTS).forEach(r=>add(r,false));
-  count();clearResult();store();syncCustomHint();syncPresets();syncMoveButtons();syncUsable();syncFlow();syncExampleChip();}
+  count();clearResult();store();syncCustomHint();syncPresets();syncMoveButtons();syncUsable();syncFlow();syncExampleChip();syncCalcSub();}
 function load(){try{let x=JSON.parse(localStorage.getItem('pladeplan'));if(!x||typeof x!=='object')return false;applyState(x);return true}catch{return false}}
 
 /* ---------- Validering ---------- */
@@ -422,6 +504,7 @@ function bindBoardUI(root){
       r.style.cursor='pointer';
       r.onmouseenter=()=>light(r.dataset.pi,r.dataset.pj);
       r.onmouseleave=clear;
+      r.onclick=()=>{light(r.dataset.pi,r.dataset.pj);let li=board.querySelector(`.cutlist li[data-pi="${r.dataset.pi}"][data-pj="${r.dataset.pj}"]`);li?.scrollIntoView({behavior:'smooth',block:'nearest'});li?.focus()};
     });
   });
 }
@@ -479,7 +562,7 @@ function render(){
     dataPartRows().forEach(validatePartRow);
     syncFlow();syncExampleChip();dismissCoach();
     let okMsg=`Plan klar · ${s.length} ${s.length===1?'plade':'plader'} · ${fmt(y)}% udnyttelse`;
-    showOkBar(okMsg);toast(okMsg);
+    showOkBar(okMsg);toast(okMsg);announce(okMsg);syncBoardJump();syncCalcSub();
     let statsEl=document.querySelector('.stats');if(statsEl){statsEl.classList.remove('flash');void statsEl.offsetWidth;statsEl.classList.add('flash')}
     if(innerWidth<781)$('.result').scrollIntoView({behavior:'smooth',block:'start'});
   }catch(x){if(!(x instanceof Error)||x instanceof TypeError||x instanceof ReferenceError)console.error(x);let msg=x instanceof Error&&!(x instanceof TypeError||x instanceof ReferenceError)?x.message:'Der opstod en uventet fejl. Kontrollér målene og prøv igen.';e.innerHTML=enrichError(msg);e.classList.add('show');bindErrorFixes();dataPartRows().forEach(validatePartRow);focusFirstInvalid();syncFlow();if(result){$('.result').classList.add('stale');$('#boardCount').textContent='Tegningen er ikke opdateret';syncStaleBar();syncCalcLabel();setExportEnabled(false)}else{['#statSheets','#statParts','#statYield','#statWaste'].forEach(id=>$(id).textContent='—');$('#boardCount').textContent='Ingen plan endnu';$('#boards').innerHTML=EMPTY_BOARDS;setExportEnabled(false);updatePrintHeader()}e.scrollIntoView({behavior:'smooth',block:'nearest'})}
@@ -604,19 +687,22 @@ function applyDraft(replace){
 }
 
 /* ---------- Opstart og hændelser ---------- */
-if(!load()){let pm=loadMaterialPref();if(pm>=0){$('#material').selectedIndex=pm;let o=$('#material').selectedOptions[0];if(o.dataset.w){$('#sheetW').value=o.dataset.w;$('#sheetH').value=o.dataset.h}}DEFAULT_PARTS.forEach(r=>add(r,false));count();syncCustomHint();syncPresets()}
+if(!load()){let pm=loadMaterialPref();if(pm>=0){$('#material').selectedIndex=pm;let o=$('#material').selectedOptions[0];if(o.dataset.w){$('#sheetW').value=o.dataset.w;$('#sheetH').value=o.dataset.h}}let saw=loadSawPref();if(saw){if(saw.k!=null)$('#kerf').value=saw.k;if(saw.t!=null)$('#trim').value=saw.t;if(typeof saw.r==='boolean')$('#rotate').checked=saw.r}DEFAULT_PARTS.forEach(r=>add(r,false));count();syncCustomHint();syncPresets();syncUsable()}
 renderPrices();
 $('#addPart').onclick=()=>{add();P.lastElementChild.querySelector('input').select()};
 $('#clearParts').onclick=()=>{if(!dataPartRows().length)return;if(!confirm('Ryd hele emnelisten?'))return;let snap=rows();P.innerHTML='';ensurePartsEmpty();change();toast('Emnelisten er ryddet',()=>{P.innerHTML='';snap.forEach(r=>add(r,false));change();toast('Emnelisten er gendannet')})};
-['sheetW','sheetH','kerf','trim','projectName'].forEach(id=>$('#'+id).oninput=change);
-$('#rotate').onchange=change;
+['sheetW','sheetH','projectName'].forEach(id=>$('#'+id).oninput=change);
+['kerf','trim'].forEach(id=>$('#'+id).oninput=()=>{saveSawPref();change()});
+$('#rotate').onchange=()=>{saveSawPref();change()};
 $('#material').onchange=e=>{let o=e.target.selectedOptions[0];saveMaterialPref(e.target.selectedIndex);if(o.dataset.w){$('#sheetW').value=o.dataset.w;$('#sheetH').value=o.dataset.h}else{$('#sheetW').focus();$('#sheetW').select()}syncCustomHint();change();renderPrices()};
 $('#optimize').onclick=render;
 let restale=$('#restaleOptimize');if(restale)restale.onclick=render;
 $('#print').onclick=()=>{if(!result||$('.result').classList.contains('stale'))return toast('Beregn planen først.');print()};
 $('#csv').onclick=()=>{if(!result||$('.result').classList.contains('stale'))return toast('Beregn planen først.');exportCSV()};
+let copyBtn=$('#copyCut');if(copyBtn)copyBtn.onclick=()=>copyCutlist();
+let swapBtn=$('#swapSheet');if(swapBtn)swapBtn.onclick=()=>{let w=$('#sheetW').value,h=$('#sheetH').value;$('#sheetW').value=h;$('#sheetH').value=w;let match=[...$('#material').options].findIndex(o=>o.dataset.w===$('#sheetW').value&&o.dataset.h===$('#sheetH').value);if(match>=0){$('#material').selectedIndex=match;saveMaterialPref(match)}else{let custom=[...$('#material').options].findIndex(o=>!o.dataset.w);if(custom>=0){$('#material').selectedIndex=custom;saveMaterialPref(custom)}}syncCustomHint();change();renderPrices();toast('Bredde og længde byttet')};
 document.addEventListener('keydown',ev=>{if(ev.key!=='Enter')return;let t=ev.target;if(!t)return;if((ev.ctrlKey||ev.metaKey)&&t.id!=='aiText'){ev.preventDefault();if(!document.querySelector('dialog[open]'))render();return}if(ev.shiftKey||ev.ctrlKey||ev.metaKey||ev.altKey)return;if(t.id==='aiText'||t.tagName==='TEXTAREA')return;if(t.closest&&t.closest('dialog[open]'))return;if(t.matches&&(t.matches('#parts input')||t.matches('#sheetW,#sheetH,#kerf,#trim,#projectName'))){ev.preventDefault();render()}});
-ensurePartsEmpty();setExportEnabled(false);syncCalcLabel();syncCustomHint();syncClearParts();syncPresets();syncMoveButtons();syncUsable();updatePrintHeader();maybeShowCoach();syncFlow();syncExampleChip();document.body.classList.add('has-stickycalc');
+ensurePartsEmpty();setExportEnabled(false);syncCalcLabel();syncCustomHint();syncClearParts();syncPresets();syncMoveButtons();syncUsable();updatePrintHeader();maybeShowCoach();syncFlow();syncExampleChip();syncCalcSub();syncBoardJump();document.body.classList.add('has-stickycalc');
 let coachBtn=$('#coachDismiss');if(coachBtn)coachBtn.onclick=dismissCoach;
 let exBtn=$('#dismissExample');if(exBtn)exBtn.onclick=()=>{try{localStorage.setItem('pladeplan-example-tip','1')}catch{}syncExampleChip()};
 let sticky=$('#optimizeSticky');if(sticky)sticky.onclick=render;
