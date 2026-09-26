@@ -76,5 +76,5 @@ Continue from these files and preserve the existing Pladeplan product and Danish
 - **Savsnit/kant:** Tip under avanceret med live brugbart areal (efter kantfraskær); mm uden tusindtalsseparator for klarhed.
 - **CSV/print:** CSV med metadata (projekt, dato, plade, savsnit, kant, udnyttelse) + toast; print viser dato og savsnit/kant.
 - **Visuel polish:** Tydeligere boardhead/kontrast, bedre disabled-titler på CSV/Udskriv, forbedret fejlramme.
-- **Deploy:** `index.html` = `dist/index.html`; packing-algoritme uændret. Pro forbliver “Kommer snart”.
+- **Deploy:** `index.html` = `dist/index.html`; pushed to `pcp183/pladeplan` (`ecc7048`); packing-algoritme uændret. Pro forbliver “Kommer snart”. Live: https://pcp183.github.io/pladeplan/
 
