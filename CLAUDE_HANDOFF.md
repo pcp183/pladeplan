@@ -34,7 +34,7 @@ Continue from these files and preserve the existing Pladeplan product and Danish
 - **Avanceret skjult:** hurtige pladeformater under «Hurtige formater»; zoom kun ved hover (skjult på mobil); «Byt om» kortere; kortere tips/tagline/privacy.
 - **Mobil:** sticky «Beregn skæreplan» tydeligere; mindre chrome-kollision med toast/sticky.
 - **Uændret:** packing-algoritme (`packOnce`/`pack`), Pro «Kommer snart», `index.html` ≡ `dist/index.html`.
-- **Deploy:** `index.html` = `dist/index.html`; pushed to `pcp183/pladeplan` (`44af1a1`); packing-algoritme uændret. Pro forbliver «Kommer snart». Live: https://pcp183.github.io/pladeplan/
+- **Deploy:** `index.html` = `dist/index.html`; feature commit `44af1a1`, Pages fix `.nojekyll` `5269f72`; packing-algoritme uændret. Pro forbliver «Kommer snart». Live: https://pcp183.github.io/pladeplan/ (markers: `moremenu`, `exportmenu`, `presets-wrap`, `soft-hide`, `Sådan gør du`, `function coachDone`).
 
 ## Changelog — 26 September 2026 (skæreseddel save / delete / share)
 
