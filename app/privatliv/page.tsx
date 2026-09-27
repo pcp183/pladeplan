@@ -56,11 +56,11 @@ export default function PrivacyPage() {
               <strong>Konto:</strong> e-mail, navn og login håndteres af Clerk. Pladeplan gemmer ikke din adgangskode.
             </li>
             <li>
-              <strong>Skæresedler:</strong> når du er logget ind og trykker Gem, gemmes projektnavn, plademål, emner,
+              <strong>Skæresedler:</strong> når du er logget ind og trykker Gem, gemmes navnet på skæresedlen, plademål, emner,
               savindstillinger og tidspunkt sammen med dit Clerk-bruger-id. Det sker kun, hvis databasen er sat op.
             </li>
             <li>
-              <strong>Kladde på enheden:</strong> browseren kan gemme den aktuelle plan og lokale skæresedler i
+              <strong>Kladde på enheden:</strong> browseren kan gemme kladden og lokale skæresedler i
               localStorage. De sendes ikke til serveren, før du gemmer dem på kontoen.
             </li>
             <li>

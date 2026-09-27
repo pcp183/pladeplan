@@ -6,7 +6,7 @@ The app is now a Next.js App Router project (see `README.md`). The planner UI an
 
 - Clerk: sign-up, sign-in, `UserButton`, Danish localization where Clerk provides it.
 - `/konto`: profile, sign-out, plan **Gratis**, Pro **Kommer snart**. No Stripe checkout and no claim that payment works.
-- Signed-in skæresedler: `PUT/GET /api/projects`, keyed by Clerk `userId`, stored in Neon (`DATABASE_URL` or `POSTGRES_URL`). Guest `localStorage` remains the fallback. On login, local sheets can be moved to the account.
+- Signed-in skæresedler: `PUT/GET /api/projects`, keyed by Clerk `userId`, stored in Neon (`DATABASE_URL` or `POSTGRES_URL`). Guest `localStorage` remains the fallback. On login, local sheets can be moved to the account. The user-facing name is **Skæreseddel** (plural **Skæresedler**). Route paths, table names and storage keys stay as they are.
 - If Clerk or the database is missing, `npm run build` still succeeds. The planner stays usable; account storage explains the missing setup.
 - Real Stripe subscription checkout, webhooks, and server-enforced Pro access are future work. Do not take payment until those exist.
 - GDPR: `/privatliv` describes the processing. `/konto` can export JSON and delete the account. Delete removes every `pladeplan_projects` row for that Clerk user id, checks none remain, then calls `users.deleteUser`. There is no archive, soft-delete, or silent retention. The browser that confirms deletion also clears local `pladeplan` and `pladeplan-projects`. Optional contact address: `PLADEPLAN_CONTACT_EMAIL`.

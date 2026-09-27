@@ -68,8 +68,11 @@ export default async function AccountPage() {
               Pro: <span className="statuspill wait">Kommer snart</span>
             </p>
             <p>
-              Alle nuværende funktioner er gratis, også gemte skæresedler på kontoen
-              {projectCount !== null ? ` (${projectCount} gemt)` : ''}. Pro kommer snart og kan ikke købes.
+              {`Alle nuværende funktioner er gratis, også gemte skæresedler på kontoen${
+                projectCount !== null
+                  ? ` (${projectCount} ${projectCount === 1 ? 'skæreseddel' : 'skæresedler'})`
+                  : ''
+              }. Pro kommer snart og kan ikke købes.`}
             </p>
             <div className="notice">
               <strong>Pro kommer snart.</strong> Der er intet kasseforløb, intet abonnement og ingen betaling knyttet
