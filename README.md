@@ -2,7 +2,7 @@
 
 Dansk skæreplanlægger. Next.js-app med den eksisterende planlægger, Clerk-login og skæresedler gemt på kontoen.
 
-Planlæggeren kan bruges uden login. Gemte skæresedler på serveren og kontosiden kræver login. Pro er **ikke** til salg: status er «Gratis», og Pro står som «Kommer snart». Der er intet Stripe-kasseforløb og ingen betaling.
+Planlæggeren kan bruges uden login. Gemte skæresedler på serveren og kontosiden kræver login. Pro er **Kommer snart** og kan ikke købes. Status i headeren er «Gratis · Pro kommer snart». Der er intet kasseforløb og ingen betaling.
 
 ## Kør lokalt
 

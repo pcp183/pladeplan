@@ -12,19 +12,28 @@ function toast(s,undo){let e=$('#toast');undoAction=typeof undo==='function'?und
 function setExportEnabled(on){[['#csv','Hent snitliste som CSV'],['#print','Udskriv skæreplan med snitliste'],['#copyCut','Kopiér snitliste til udklipsholder']].forEach(([id,ok])=>{let b=$(id);if(!b)return;b.disabled=!on;b.setAttribute('aria-disabled',on?'false':'true');b.title=on?ok:'Beregn planen først'})}
 function syncCalcLabel(){let label,needs;if($('.result').classList.contains('stale')&&result){label='Opdater skæreplan →';needs=true}else{label='Beregn skæreplan →';needs=false}['#optimize','#optimizeSticky'].forEach(id=>{let b=$(id);if(!b)return;if(!b.classList.contains('busy'))b.textContent=label;b.classList.toggle('needs-update',needs)})}
 function coachDone(){try{return localStorage.getItem('pladeplan-coach')==='1'}catch{return false}}
-function dismissCoach(){try{localStorage.setItem('pladeplan-coach','1')}catch{}let c=$('#coach');if(c)c.classList.remove('show');let fb=$('#flowBar');if(fb)fb.classList.add('soft-hide')}
-function maybeShowCoach(){let c=$('#coach'),fb=$('#flowBar');if(coachDone()){if(c)c.classList.remove('show');if(fb)fb.classList.add('soft-hide');return}if(c)c.classList.add('show');if(fb)fb.classList.remove('soft-hide')}
+function dismissCoach(){try{localStorage.setItem('pladeplan-coach','1')}catch{}let c=$('#coach');if(c)c.classList.remove('show')}
+function maybeShowCoach(){let c=$('#coach');if(!c)return;c.classList.toggle('show',!coachDone())}
 function syncExampleChip(){let chip=$('#exampleChip');if(!chip)return;let hide=false;try{hide=localStorage.getItem('pladeplan-example-tip')==='1'}catch{}let rows=dataPartRows();let isDefault=rows.length===3&&rows.every((r,i)=>{let v=[...r.querySelectorAll('input')].map(x=>x.value.trim());let d=DEFAULT_PARTS[i];return v[0]===String(d[0])&&+v[1]===+d[1]&&+v[2]===+d[2]&&+v[3]===+d[3]});chip.classList.toggle('show',!hide&&isDefault&&!result)}
 function syncFlow(){
   let f1=$('#flow1'),f2=$('#flow2'),f3=$('#flow3'),hint=$('#flowHint');if(!f1)return;
   let hasSheet=+$('#sheetW').value>0&&+$('#sheetH').value>0;
   let nParts=dataPartRows().filter(r=>{let v=[...r.querySelectorAll('input')].map(x=>x.value.trim());return +v[1]>0&&+v[2]>0&&+v[3]>=1}).length;
-  let hasPlan=!!result&&!$('.result').classList.contains('stale');
-  f1.className='flowstep'+(hasPlan||nParts?' done':hasSheet?' on':'');
-  f2.className='flowstep'+(hasPlan?' done':nParts?' on':'');
-  f3.className='flowstep'+(hasPlan?' done on':(nParts&&hasSheet?' on':''));
-  if(hint){if(hasPlan)hint.textContent='Plan klar';else if(nParts&&hasSheet)hint.textContent='Klar til beregning';else if(hasSheet)hint.textContent='Tilføj emner';else hint.textContent='Start med lagerpladen'}let tag=$('#appTagline');if(tag)tag.hidden=!!hasPlan
-  let fb=$('#flowBar');if(fb){if(coachDone()||hasPlan)fb.classList.add('soft-hide');else fb.classList.remove('soft-hide')}
+  let stale=!!result&&$('.result').classList.contains('stale');
+  let hasPlan=!!result&&!stale;
+  let ready=!hasPlan&&!stale&&hasSheet&&nParts>0;
+  f1.className='flowstep'+(!hasSheet?' on':' done');
+  f2.className='flowstep'+(nParts?' done':hasSheet?' on':'');
+  f3.className='flowstep'+(hasPlan?' done':(ready||stale)?' on':'');
+  [f1,f2,f3].forEach(el=>el.removeAttribute('aria-current'));
+  let current=hasPlan||stale||ready?f3:(nParts||hasSheet?f2:f1);
+  if(current)current.setAttribute('aria-current','step');
+  if(hint){if(hasPlan)hint.textContent='Plan klar — se resultatet';else if(stale)hint.textContent='Emnerne er ændret — opdater planen';else if(ready)hint.textContent='Trin 3: tryk Beregn';else if(hasSheet)hint.textContent='Trin 2: tilføj emner';else hint.textContent='Trin 1: vælg lagerplade'}
+  let tag=$('#appTagline');if(tag)tag.hidden=!!hasPlan;
+  let sheet=$('#sheetCard'),parts=$('#partsCard'),wrap=$('.calcwrap');
+  if(sheet)sheet.classList.toggle('stepfocus',!hasPlan&&!hasSheet);
+  if(parts)parts.classList.toggle('stepfocus',!hasPlan&&hasSheet&&!nParts);
+  if(wrap)wrap.classList.toggle('ready',ready);
 }
 function showOkBar(msg){let bar=$('#okBar'),t=$('#okBarText');if(!bar)return;if(t)t.textContent=msg;bar.classList.add('show');clearTimeout(showOkBar._t);showOkBar._t=setTimeout(()=>bar.classList.remove('show'),5000)}
 function hideOkBar(){let bar=$('#okBar');if(bar)bar.classList.remove('show')}
@@ -131,9 +140,10 @@ function syncCalcSub(){
   let sub=$('#calcSub');if(!sub)return;
   let {bad,area,n}=softFitCheck();
   if($('.result').classList.contains('stale')&&result){sub.textContent='Emner er ændret — opdater planen';return}
+  if(result){sub.textContent='Planen er beregnet. Ret emnerne, hvis du vil lave den om.';return}
   if(bad){sub.textContent=`${bad} ${bad===1?'emne':'emner'} passer ikke på pladen — ret mål eller tillad rotation`;return}
-  if(n>0){let m2=(area/1e6).toFixed(2).replace('.',',');sub.textContent=`${n} ${n===1?'emne':'emner'} · ${m2} m² — finder færrest plader`;return}
-  sub.textContent='Finder placering på færrest mulige plader';
+  if(n>0){let m2=(area/1e6).toFixed(2).replace('.',',');sub.textContent=`Trin 3 · ${n} ${n===1?'emne':'emner'} · ${m2} m² — tryk Beregn`;return}
+  sub.textContent='Trin 2: tilføj emner, og tryk derefter Beregn';
 }
 function syncBoardJump(){
   let el=$('#boardJump');if(!el)return;
@@ -651,7 +661,7 @@ function applyDraft(replace){
 }
 
 /* ---------- Opstart og hændelser ---------- */
-(async()=>{if(await tryLoadShared())return;if(!load()){let id=loadMaterialPrefId();if(id&&selectMaterialById(id)){let o=materialOption();if(o&&o.dataset.w){$('#sheetW').value=o.dataset.w;$('#sheetH').value=o.dataset.h}}let saw=loadSawPref();if(saw){if(saw.k!=null)$('#kerf').value=saw.k;if(saw.t!=null)$('#trim').value=saw.t;if(typeof saw.r==='boolean')$('#rotate').checked=saw.r}DEFAULT_PARTS.forEach(r=>add(r,false));count();syncCustomHint();syncUsable()}})()
+(async()=>{if(!(await tryLoadShared())&&!load()){let id=loadMaterialPrefId();if(id&&selectMaterialById(id)){let o=materialOption();if(o&&o.dataset.w){$('#sheetW').value=o.dataset.w;$('#sheetH').value=o.dataset.h}}let saw=loadSawPref();if(saw){if(saw.k!=null)$('#kerf').value=saw.k;if(saw.t!=null)$('#trim').value=saw.t;if(typeof saw.r==='boolean')$('#rotate').checked=saw.r}DEFAULT_PARTS.forEach(r=>add(r,false));count();syncCustomHint();syncUsable()}syncFlow();syncExampleChip();syncCalcSub();syncClearParts()})()
 renderPrices();
 $('#addPart').onclick=()=>{add();P.lastElementChild.querySelector('input').select()};
 $('#clearParts').onclick=()=>{if(!dataPartRows().length)return;if(!confirm('Ryd hele emnelisten?'))return;let snap=rows();P.innerHTML='';ensurePartsEmpty();change();toast('Emnelisten er ryddet',()=>{P.innerHTML='';snap.forEach(r=>add(r,false));change();toast('Emnelisten er gendannet')})};
@@ -676,8 +686,9 @@ document.addEventListener('click',e=>{if(!e.target.closest('.moremenu,.exportmen
 let exBtn=$('#dismissExample');if(exBtn)exBtn.onclick=()=>{try{localStorage.setItem('pladeplan-example-tip','1')}catch{}syncExampleChip()};
 let sticky=$('#optimizeSticky');if(sticky)sticky.onclick=render;
 
-const projectsDialog=$('#projectsDialog'),dlg=$('#aiDialog'),subscriptionDialog=$('#subscriptionDialog'),shareDialog=$('#shareDialog');
-[projectsDialog,dlg,subscriptionDialog,shareDialog].forEach(d=>d&&d.addEventListener('click',e=>{if(e.target===d)d.close()}));
+const projectsDialog=$('#projectsDialog'),dlg=$('#aiDialog'),shareDialog=$('#shareDialog');
+[projectsDialog,dlg,shareDialog].forEach(d=>d&&d.addEventListener('click',e=>{if(e.target===d)d.close()}));
+[['#flow1','#sheetCard'],['#flow2','#partsCard'],['#flow3','#optimize']].forEach(([id,target])=>{let b=$(id);if(!b)return;b.onclick=()=>{let el=$(target);if(!el)return;el.scrollIntoView({behavior:'smooth',block:'center'});if(target==='#optimize')el.focus();else{let focus=el.querySelector('select,input,button');if(focus)focus.focus()}}});
 $('#saveProject').onclick=saveLibrary;
 $('#projectsBtn').onclick=()=>{renderLibrary();projectsDialog.showModal();$('#closeProjects').focus()};
 $('#closeProjects').onclick=()=>projectsDialog.close();
@@ -696,12 +707,6 @@ $('#retryAI').onclick=()=>{$('#aiReview').classList.remove('show');$('#aiText').
 $('#analyzeAI').onclick=analyze;
 $('#applyAI').onclick=()=>applyDraft(false);
 $('#replaceAI').onclick=()=>applyDraft(true);
-$('#subscriptionBtn').onclick=()=>{$('#billingNotice').classList.remove('show');subscriptionDialog.showModal();$('#closeSubscription').focus()};
-$('#closeSubscription').onclick=()=>subscriptionDialog.close();
-document.querySelectorAll('.billingtab').forEach(b=>b.onclick=()=>{document.querySelectorAll('.billingtab').forEach(x=>{x.classList.toggle('on',x===b);x.setAttribute('aria-pressed',x===b)});let yearly=b.dataset.billing==='yearly';$('#proPrice').textContent=yearly?'990 kr.':'99 kr.';$('#proPeriod').textContent=yearly?'pr. år':'pr. måned';});
-$('#keepFree').onclick=()=>{subscriptionDialog.close();toast('Du bruger Gratis-planen.')};
-$('#startPro').onclick=()=>$('#billingNotice').classList.add('show');
-
 /* ---------- Konto / skysynk ---------- */
 function localLibraryRaw(){try{let x=JSON.parse(localStorage.getItem('pladeplan-projects'));return Array.isArray(x)?x:[]}catch{return[]}}
 function showMigrateBar(extra){

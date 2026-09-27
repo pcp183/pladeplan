@@ -24,7 +24,7 @@ export default function PrivacyPage() {
         <h1>Privatliv</h1>
         <p className="lead">
           Denne side fortæller, hvilke oplysninger Pladeplan behandler, hvorfor, og hvordan du kan få dem udleveret
-          eller slettet. Pro er ikke til salg, og der behandles ingen betalingsoplysninger.
+          eller slettet. Pro kommer snart og kan ikke købes. Der behandles ingen betalingsoplysninger.
         </p>
 
         <section className="card pad">

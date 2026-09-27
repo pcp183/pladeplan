@@ -69,11 +69,11 @@ export default async function AccountPage() {
             </p>
             <p>
               Alle nuværende funktioner er gratis, også gemte skæresedler på kontoen
-              {projectCount !== null ? ` (${projectCount} gemt)` : ''}. Pro kan ikke købes endnu.
+              {projectCount !== null ? ` (${projectCount} gemt)` : ''}. Pro kommer snart og kan ikke købes.
             </p>
             <div className="notice">
-              <strong>Stripe-betaling er fremtidigt arbejde.</strong> Der er intet kasseforløb, intet abonnement og
-              ingen betaling knyttet til kontoen. Priser i dialogen «Se Pro» er kun en forhåndsvisning.
+              <strong>Pro kommer snart.</strong> Der er intet kasseforløb, intet abonnement og ingen betaling knyttet
+              til kontoen.
             </div>
           </section>
           <section className="card pad">
