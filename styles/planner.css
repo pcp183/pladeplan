@@ -346,6 +346,12 @@ body.has-stickycalc{padding-bottom:70px}
 .kv span{color:var(--muted)}
 .statuspill{display:inline-flex;align-items:center;border-radius:20px;padding:3px 8px;font-size:12px;font-weight:800;background:#e6f0e8;color:#315d43}
 .statuspill.wait{background:#fff4dd;color:#7a5a12}
+.statuspill.pro{background:#15392a;color:#fff}
+.statuspill.warn{background:#fff4dd;color:#7a5a12}
+.billingoffers{display:flex;flex-wrap:wrap;gap:8px;margin:8px 0 4px}
+.offerbtn{flex-direction:column;align-items:flex-start;gap:2px;min-width:190px;padding:10px 14px;text-align:left}
+.offerbtn .offerprice{font-size:12px;font-weight:650}
+.notice.ok{background:#e6f0e8;border-color:#c5d9cb;color:#234832}
 .accountactions{display:flex;flex-wrap:wrap;gap:8px;margin-top:14px}
 .notice{background:#fff4dd;border:1px solid #ead7a4;color:#604816;border-radius:10px;padding:12px 14px;font-size:13px;line-height:1.45}
 .authpage{min-height:100vh;display:flex;flex-direction:column}
@@ -372,10 +378,12 @@ code, .mono{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:.9
 .sitefoot,.deletedbar{display:none!important}
 }
 
-/* Auth next to brand + Pro kommer snart (no checkout) */
+/* Auth next to brand. The pill links to /konto; checkout only exists when Stripe is configured. */
 .top{height:auto;min-height:64px;flex-wrap:wrap;row-gap:8px;padding-top:10px;padding-bottom:10px}
 .brandcluster{display:flex;align-items:center;gap:12px;min-width:0;flex-wrap:wrap}
-.planpill{display:inline-flex;align-items:center;border:1px solid #ffffff36;background:#ffffff12;color:#fff;border-radius:20px;padding:6px 10px;font-size:11px;font-weight:750;white-space:nowrap;cursor:default}
+.planpill{display:inline-flex;align-items:center;border:1px solid #ffffff36;background:#ffffff12;color:#fff;border-radius:20px;padding:6px 10px;font-size:11px;font-weight:750;white-space:nowrap;cursor:pointer;text-decoration:none}
+a.planpill:hover{background:#ffffff20}
+.planpill.pro{background:var(--yellow);color:var(--g);border-color:transparent}
 .authslot{min-height:32px}
 .authslot a.authlink,.authslot a.authaccount,.authslot a.authsignup{display:inline-flex;align-items:center;min-height:32px;border-radius:20px;padding:6px 12px;font-size:13px;font-weight:800;line-height:1;white-space:nowrap}
 .authslot a.authlink,.authslot a.authaccount{border:1px solid #ffffff73;background:#ffffff18;color:#fff}

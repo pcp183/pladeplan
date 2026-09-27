@@ -5,10 +5,10 @@
 The app is now a Next.js App Router project (see `README.md`). The planner UI and `pack` / `packOnce` behaviour are preserved in `public/planner.js` and `styles/planner.css`. Anonymous use still works.
 
 - Clerk: sign-up, sign-in, `UserButton`, Danish localization where Clerk provides it.
-- `/konto`: profile, sign-out, plan **Gratis**, Pro **Kommer snart**. No Stripe checkout and no claim that payment works.
+- `/konto`: profile, sign-out, plan status. Stripe Checkout and the billing portal run only when Stripe keys and at least one recurring price are set. Otherwise the page still says **Pro kommer snart** and shows no price.
 - Signed-in skæresedler: `PUT/GET /api/projects`, keyed by Clerk `userId`, stored in Neon (`DATABASE_URL` or `POSTGRES_URL`). Guest `localStorage` remains the fallback. On login, local sheets can be moved to the account. The user-facing name is **Skæreseddel** (plural **Skæresedler**). Route paths, table names and storage keys stay as they are.
 - If Clerk or the database is missing, `npm run build` still succeeds. The planner stays usable; account storage explains the missing setup.
-- Real Stripe subscription checkout, webhooks, and server-enforced Pro access are future work. Do not take payment until those exist.
+- Stripe: hosted Checkout (`/api/billing/checkout`), billing portal (`/api/billing/portal`), and signed webhooks (`/api/stripe/webhook`) sync status onto the Clerk user and `pladeplan_billing` when `DATABASE_URL` is set. Current planner features, including saved skæresedler, stay on the free plan. `hasProAccess` is the server check for any later Pro-only feature. Do not show a price that did not come from Stripe.
 - GDPR: `/privatliv` describes the processing. `/konto` can export JSON and delete the account. Delete removes every `pladeplan_projects` row for that Clerk user id, checks none remain, then calls `users.deleteUser`. There is no archive, soft-delete, or silent retention. The browser that confirms deletion also clears local `pladeplan` and `pladeplan-projects`. Optional contact address: `PLADEPLAN_CONTACT_EMAIL`.
 
 ## Earlier static snapshot
@@ -30,8 +30,8 @@ This package previously contained the complete static source for the Pladeplan D
 
 - The current price table is a manually maintained snapshot, not a live supplier feed. Check each retailer's linked product page and update the price/stock/date before representing prices as current.
 - AI import can call `/api/ai-import` if that endpoint exists; otherwise it uses its built-in local text parser. Do not describe the local parser as a production AI model.
-- The subscription dialog is an honest "coming soon" preview: all current features are free, Pro is labelled "Kommer snart", and no trial or payment is promised.
-- The subscription dialog is a UI preview only. Login and account-saved skæresedler exist. There is still no real Stripe checkout, subscription record, webhook, billing portal, or server-side Pro access enforcement. Do not claim a trial or payment is active. Complete those parts before accepting money.
+- Without Stripe env vars, Pro stays «Kommer snart»: no price and no checkout. With Stripe configured, Checkout and the billing portal are real. Do not invent a price in the UI, and do not promise a trial unless the Stripe price itself has one.
+- Current planner features stay free. Pro status is stored on the Clerk user and in `pladeplan_billing`. Gate any new Pro-only behaviour with `hasProAccess`.
 - MobilePay is not suitable for recurring Stripe subscriptions; use a recurring-capable payment method for subscriptions and offer MobilePay only for an appropriate one-time purchase if configured.
 
 ## Handoff goal

@@ -6,7 +6,7 @@
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
-    "test": "node scripts/test-pack.mjs && node --experimental-strip-types scripts/test-projects.mts"
+    "test": "node scripts/test-pack.mjs && node --experimental-strip-types scripts/test-projects.mts && node --experimental-strip-types scripts/test-billing.mts"
   },
   "dependencies": {
     "@clerk/localizations": "^4.20.0",
@@ -14,7 +14,8 @@
     "@neondatabase/serverless": "^1.0.2",
     "next": "^15.5.4",
     "react": "^19.1.1",
-    "react-dom": "^19.1.1"
+    "react-dom": "^19.1.1",
+    "stripe": "^22.6.2"
   },
   "devDependencies": {
     "@types/node": "^22.18.6",

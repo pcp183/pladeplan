@@ -1,5 +1,6 @@
 import type { Metadata } from 'next';
 import { SiteHeader } from '@/components/SiteHeader';
+import { billingConfigured } from '@/lib/billing';
 
 export const dynamic = 'force-dynamic';
 
@@ -16,6 +17,7 @@ function contactEmail(): string | null {
 
 export default function PrivacyPage() {
   const email = contactEmail();
+  const billing = billingConfigured();
 
   return (
     <div className="authpage">
@@ -24,7 +26,10 @@ export default function PrivacyPage() {
         <h1>Privatliv</h1>
         <p className="lead">
           Denne side fortæller, hvilke oplysninger Pladeplan behandler, hvorfor, og hvordan du kan få dem udleveret
-          eller slettet. Pro kommer snart og kan ikke købes. Der behandles ingen betalingsoplysninger.
+          eller slettet.{' '}
+          {billing
+            ? 'Betaling for Pro sker hos Stripe. Pladeplan gemmer ikke kortnummeret.'
+            : 'Pro kommer snart og kan ikke købes. Der behandles ingen betalingsoplysninger.'}
         </p>
 
         <section className="card pad">
@@ -67,8 +72,19 @@ export default function PrivacyPage() {
               <strong>Drift:</strong> Clerk og værten (Vercel) kan kortvarigt logge tekniske oplysninger som tidspunkt
               og IP-adresse for at drive login og hosting. Pladeplan bruger det ikke til reklame.
             </li>
+            {billing ? (
+              <li>
+                <strong>Abonnement:</strong> hvis du tegner Pro, gemmer Pladeplan Stripe-kunde-id, abonnementsstatus,
+                pris-id og periodens udløb sammen med dit bruger-id. Kortnummer, udløbsdato og kvitteringer ligger hos
+                Stripe.
+              </li>
+            ) : null}
           </ul>
-          <p>Der er ingen betalingsdata, ingen nyhedsbrevsliste og ingen salg af oplysninger.</p>
+          <p>
+            {billing
+              ? 'Der er ingen nyhedsbrevsliste og intet salg af oplysninger. Kortoplysninger behandles af Stripe.'
+              : 'Der er ingen betalingsdata, ingen nyhedsbrevsliste og ingen salg af oplysninger.'}
+          </p>
         </section>
 
         <section className="card pad">
@@ -77,6 +93,7 @@ export default function PrivacyPage() {
             <li>At vise og beregne skæreplanen.</li>
             <li>At lade dig gemme skæresedler på kontoen og åbne dem igen.</li>
             <li>At holde styr på login, så kun du kan se og slette dine gemte skæresedler.</li>
+            {billing ? <li>At holde styr på et Pro-abonnement, hvis du selv tegner det.</li> : null}
           </ul>
         </section>
 
@@ -90,6 +107,9 @@ export default function PrivacyPage() {
             Kortvarige tekniske logs hos login- og hosting-leverandøren bruges til at holde tjenesten sikker og kørende
             (artikel 6, stk. 1, litra f).
           </p>
+          {billing ? (
+            <p>Et Pro-abonnement leveres, fordi du har bedt om det (artikel 6, stk. 1, litra b).</p>
+          ) : null}
         </section>
 
         <section className="card pad">
@@ -98,6 +118,7 @@ export default function PrivacyPage() {
             <li>Clerk — login og konto.</li>
             <li>Neon Postgres via Vercel — gemte skæresedler, når databasen er sat op.</li>
             <li>Vercel — hosting af appen.</li>
+            {billing ? <li>Stripe — betaling, kvitteringer og kundeportal, når Pro er tegnet.</li> : null}
           </ul>
           <p>
             Leverandørerne kan behandle data uden for EU. De beskriver selv overførselsgrundlaget i deres
@@ -121,6 +142,12 @@ export default function PrivacyPage() {
             enhed kan stadig have en lokal kladde, indtil den ryddes der. Uden database har serveren ingen skæresedler
             at gemme.
           </p>
+          {billing ? (
+            <p>
+              Abonnementsstatusen slettes sammen med kontoen, og kunden slettes hos Stripe. Stripe kan være forpligtet
+              til at opbevare bogføringsbilag i den periode, bogføringsloven kræver.
+            </p>
+          ) : null}
         </section>
 
         <section className="card pad">
@@ -136,6 +163,12 @@ export default function PrivacyPage() {
             <li>
               <strong>Sletning:</strong> «Slet konto» på kontosiden. Du skal skrive din e-mail for at bekræfte.
             </li>
+            {billing ? (
+              <li>
+                <strong>Abonnement:</strong> opsigelse, kortskift og kvitteringer sker via «Administrer abonnement» på{' '}
+                <a href="/konto">kontoen</a>, som åbner Stripes kundeportal.
+              </li>
+            ) : null}
             <li>
               <strong>Klage:</strong> du kan klage til Datatilsynet,{' '}
               <a href="https://www.datatilsynet.dk">datatilsynet.dk</a>.
