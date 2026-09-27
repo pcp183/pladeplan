@@ -302,7 +302,7 @@ export function planPill(input: { billingReady: boolean; pro: boolean }): { text
   if (input.pro) {
     return {
       text: 'Pro',
-      title: 'Du har Pladeplan Pro. Administrer abonnementet under Konto.',
+      title: 'Du har Skæreseddel Pro. Administrer abonnementet under Konto.',
       pro: true,
     };
   }

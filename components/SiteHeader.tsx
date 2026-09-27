@@ -7,8 +7,8 @@ export function SiteHeader({ trailing }: { trailing?: ReactNode }) {
     <header className="top">
       <div className="brandcluster">
         <a className="brandlink" href="/">
-          <span className="logo">P</span>
-          Pladeplan
+          <span className="logo">S</span>
+          Skæreseddel
         </a>
         {clerkConfigured() ? <AuthLinks /> : null}
       </div>

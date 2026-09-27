@@ -59,12 +59,12 @@ export async function GET() {
     note:
       storage === 'not_configured'
         ? 'Databasen er ikke konfigureret, så der ligger ingen skæresedler på serveren.'
-        : 'Dette er alle skæresedler, Pladeplan har gemt for kontoen. Der findes ingen separat arkivkopi.',
+        : 'Dette er alle skæresedler, Skæreseddel har gemt for kontoen. Der findes ingen separat arkivkopi.',
   };
   return new Response(JSON.stringify(body, null, 2), {
     headers: {
       'content-type': 'application/json; charset=utf-8',
-      'content-disposition': 'attachment; filename="pladeplan-data.json"',
+      'content-disposition': 'attachment; filename="skaereseddel-data.json"',
       'cache-control': 'no-store',
     },
   });

@@ -155,7 +155,7 @@ export async function startCheckout(input: {
     },
     custom_text: {
       submit: {
-        message: 'Abonnementet fortsætter, indtil du opsiger det. Kortoplysninger gemmes hos Stripe, ikke i Pladeplan.',
+        message: 'Abonnementet fortsætter, indtil du opsiger det. Kortoplysninger gemmes hos Stripe, ikke i Skæreseddel.',
       },
     },
   });

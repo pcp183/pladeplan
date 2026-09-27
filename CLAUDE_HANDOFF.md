@@ -1,19 +1,19 @@
-# Pladeplan — Claude handoff
+# Skæreseddel — Claude handoff
 
 ## Accounts — 26 September 2026
 
-The app is now a Next.js App Router project (see `README.md`). The planner UI and `pack` / `packOnce` behaviour are preserved in `public/planner.js` and `styles/planner.css`. Anonymous use still works.
+The app is now a Next.js App Router project (see `README.md`). The public brand is **Skæreseddel**. The planner UI and `pack` / `packOnce` behaviour are preserved in `public/planner.js` and `styles/planner.css`. Anonymous use still works.
 
 - Clerk: sign-up, sign-in, `UserButton`, Danish localization where Clerk provides it.
 - `/konto`: profile, sign-out, plan status. Stripe Checkout and the billing portal run only when Stripe keys and at least one recurring price are set. Otherwise the page still says **Pro kommer snart** and shows no price.
-- Signed-in skæresedler: `PUT/GET /api/projects`, keyed by Clerk `userId`, stored in Neon (`DATABASE_URL` or `POSTGRES_URL`). Guest `localStorage` remains the fallback. On login, local sheets can be moved to the account. The user-facing name is **Skæreseddel** (plural **Skæresedler**). Route paths, table names and storage keys stay as they are.
+- Signed-in skæresedler: `PUT/GET /api/projects`, keyed by Clerk `userId`, stored in Neon (`DATABASE_URL` or `POSTGRES_URL`). Guest `localStorage` remains the fallback. On login, local sheets can be moved to the account. A saved plan is a **skæreseddel** (plural **skæresedler**). Route paths, table names and storage keys stay as they are. Hosting may still say pladeplan (`pladeplan.vercel.app`, GitHub `pcp183/pladeplan`, Vercel project `pladeplan`) until a custom domain.
 - If Clerk or the database is missing, `npm run build` still succeeds. The planner stays usable; account storage explains the missing setup.
 - Stripe: hosted Checkout (`/api/billing/checkout`), billing portal (`/api/billing/portal`), and signed webhooks (`/api/stripe/webhook`) sync status onto the Clerk user and `pladeplan_billing` when `DATABASE_URL` is set. Current planner features, including saved skæresedler, stay on the free plan. `hasProAccess` is the server check for any later Pro-only feature. Do not show a price that did not come from Stripe.
 - GDPR: `/privatliv` describes the processing. `/konto` can export JSON and delete the account. Delete removes every `pladeplan_projects` row for that Clerk user id, checks none remain, then calls `users.deleteUser`. There is no archive, soft-delete, or silent retention. The browser that confirms deletion also clears local `pladeplan` and `pladeplan-projects`. Optional contact address: `PLADEPLAN_CONTACT_EMAIL`.
 
 ## Earlier static snapshot
 
-This package previously contained the complete static source for the Pladeplan Danish sheet-cutting planner, as published on 26 September 2026. That single-page HTML app is now the planner inside the Next.js app. `index.html` and `dist/` are no longer the deployment.
+This package previously contained the complete static source for this Danish sheet-cutting planner, as published on 26 September 2026. The public brand is now Skæreseddel. That single-page HTML app is now the planner inside the Next.js app. `index.html` and `dist/` are no longer the deployment.
 
 ## Files
 
@@ -36,7 +36,7 @@ This package previously contained the complete static source for the Pladeplan D
 
 ## Handoff goal
 
-Continue from these files and preserve the existing Pladeplan product and Danish language. Before implementing production billing, add authenticated server-side checkout, verified Stripe webhooks, durable customer/subscription storage, customer self-service cancellation/payment updates, and server-enforced access checks. Configure secrets only through the hosting provider's secure environment-variable settings, never in browser code or committed files.
+Continue from these files and preserve the Skæreseddel product and Danish language. Before implementing production billing, add authenticated server-side checkout, verified Stripe webhooks, durable customer/subscription storage, customer self-service cancellation/payment updates, and server-enforced access checks. Configure secrets only through the hosting provider's secure environment-variable settings, never in browser code or committed files.
 
 ## Changelog — 26 September 2026 (simplification pass)
 

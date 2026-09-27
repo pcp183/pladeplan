@@ -27,7 +27,7 @@ export function AccountData({ email }: { email: string | null }) {
       const url = URL.createObjectURL(blob);
       const link = document.createElement('a');
       link.href = url;
-      link.download = 'pladeplan-data.json';
+      link.download = 'skaereseddel-data.json';
       document.body.append(link);
       link.click();
       link.remove();

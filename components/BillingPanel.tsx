@@ -150,7 +150,7 @@ export function BillingPanel({
           </button>
         </div>
       ) : null}
-      {configured ? <p>Kortoplysninger behandles af Stripe. Pladeplan gemmer ikke kortnummeret.</p> : null}
+      {configured ? <p>Kortoplysninger behandles af Stripe. Skæreseddel gemmer ikke kortnummeret.</p> : null}
       {error ? (
         <p className="formerror" role="alert">
           {error}

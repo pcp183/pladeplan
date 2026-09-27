@@ -568,12 +568,12 @@ async function nativeSharePlan(){
   if(!url)return toast('Intet link at dele.');
   let name=$('#projectName').value.trim()||'Skæreseddel';
   if(!navigator.share)return copyShareLink();
-  try{await navigator.share({title:name+' — Pladeplan',text:'Skæreseddel fra Pladeplan',url});toast('Delt.')}catch(e){if(e&&e.name==='AbortError')return;copyShareLink()}
+  try{await navigator.share({title:name+' — Skæreseddel',text:'Skæreplan fra Skæreseddel',url});toast('Delt.')}catch(e){if(e&&e.name==='AbortError')return;copyShareLink()}
 }
 function exportShareJson(){
   let data=sharePayload(),name=($('#projectName').value.trim()||'skaereseddel').replace(/[^\wæøåÆØÅ\- ]+/gi,'').trim().replace(/\s+/g,'-')||'skaereseddel';
-  let blob=new Blob([JSON.stringify({v:1,app:'pladeplan',...data},null,2)],{type:'application/json'});
-  let a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download=name+'.pladeplan.json';a.click();URL.revokeObjectURL(a.href);
+  let blob=new Blob([JSON.stringify({v:1,app:'skaereseddel',...data},null,2)],{type:'application/json'});
+  let a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download=name+'.skaereseddel.json';a.click();URL.revokeObjectURL(a.href);
   toast('JSON-fil hentet.');
 }
 async function tryLoadShared(){

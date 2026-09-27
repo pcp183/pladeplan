@@ -1,4 +1,5 @@
 import { auth, currentUser } from '@clerk/nextjs/server';
+import type { Metadata } from 'next';
 import { redirect } from 'next/navigation';
 import { AccountData } from '@/components/AccountData';
 import { BillingPanel } from '@/components/BillingPanel';
@@ -23,6 +24,10 @@ import { clerkConfigured } from '@/lib/env';
 import { listProjects } from '@/lib/projects';
 
 export const dynamic = 'force-dynamic';
+
+export const metadata: Metadata = {
+  title: 'Konto',
+};
 
 type Flash = 'cancelled' | 'pending' | 'synced' | 'unknown' | null;
 
@@ -54,7 +59,7 @@ export default async function AccountPage({
   if (!userId) redirect('/sign-in');
   const user = await currentUser();
   const query = await searchParams;
-  const name = [user?.firstName, user?.lastName].filter(Boolean).join(' ') || 'Pladeplan-bruger';
+  const name = [user?.firstName, user?.lastName].filter(Boolean).join(' ') || 'Skæreseddel-bruger';
   const email = user?.primaryEmailAddress?.emailAddress || user?.emailAddresses[0]?.emailAddress || '—';
 
   if (isCheckoutSessionId(query.session_id)) {

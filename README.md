@@ -1,6 +1,8 @@
-# Pladeplan
+# Skæreseddel
 
-Dansk skæreplanlægger. Next.js-app med den eksisterende planlægger, Clerk-login og skæresedler gemt på kontoen.
+Dansk skæreplanlægger. Det offentlige produktnavn er **Skæreseddel**. Next.js-app med den eksisterende planlægger, Clerk-login og skæresedler gemt på kontoen.
+
+Værtsnavne kan stadig sige pladeplan, indtil der kommer et eget domæne: Vercel-projektet `pladeplan`, `https://pladeplan.vercel.app` og GitHub-repoet [`pcp183/pladeplan`](https://github.com/pcp183/pladeplan). De navne er hosting, ikke brand.
 
 Planlæggeren kan bruges uden login. Gemte skæresedler på serveren og kontosiden kræver login. Pro kan tegnes med Stripe Checkout, når nøglerne og mindst én pris er sat. Uden den opsætning står der **Pro kommer snart**, og der vises ingen pris og intet køb.
 
@@ -109,7 +111,7 @@ Clerk kan stadig være `pk_test_` i produktion. Stripe-nøglerne følger deres e
 
 ### Opret produktet
 
-1. I [Stripe Dashboard](https://dashboard.stripe.com/test/products) (brug testtilstand først): opret produktet **Pladeplan Pro**.
+1. I [Stripe Dashboard](https://dashboard.stripe.com/test/products) (brug testtilstand først): opret produktet **Skæreseddel Pro**. Navnet sættes i Dashboard, ikke i koden.
 2. Tilføj en tilbagevendende pris, månedlig og/eller årlig, i den valuta du vil tage betaling i (typisk DKK). Kopiér `price_…`.
 3. Under **Indstillinger → Fakturering → Kundeportal**: slå portalen til. Tillad opsigelse og skift af betalingskort. Vil du lade kunden skifte mellem måned og år, så tilføj begge priser under abonnementsopdatering.
 4. MobilePay egner sig ikke til et tilbagevendende abonnement. Lad Checkout bruge de kort, Stripe har slået til for abonnementer. Slå ikke en engangsmetode til som den eneste metode.
