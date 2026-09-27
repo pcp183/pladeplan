@@ -3,6 +3,7 @@
 import { useAuth } from '@clerk/nextjs';
 import { useEffect } from 'react';
 import { AuthSlot } from '@/components/AuthSlot';
+import { applyPlanPill } from '@/lib/plan-pill';
 import { PLANNER_MARKUP } from '@/lib/planner-markup';
 
 function ensureCloud() {
@@ -63,10 +64,17 @@ function ClerkBridge() {
   return <AuthSlot />;
 }
 
-export function PlannerApp({ clerkEnabled }: { clerkEnabled: boolean }) {
+export function PlannerApp({
+  clerkEnabled,
+  planPill,
+}: {
+  clerkEnabled: boolean;
+  planPill: { text: string; title: string; pro: boolean };
+}) {
+  const markup = applyPlanPill(PLANNER_MARKUP, planPill);
   return (
     <>
-      <div dangerouslySetInnerHTML={{ __html: PLANNER_MARKUP }} />
+      <div dangerouslySetInnerHTML={{ __html: markup }} />
       {clerkEnabled ? <ClerkBridge /> : <GuestBridge />}
     </>
   );

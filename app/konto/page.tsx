@@ -1,16 +1,44 @@
 import { auth, currentUser } from '@clerk/nextjs/server';
 import { redirect } from 'next/navigation';
 import { AccountData } from '@/components/AccountData';
+import { BillingPanel } from '@/components/BillingPanel';
 import { SignOutControl } from '@/components/SignOutControl';
 import { SiteHeader } from '@/components/SiteHeader';
 import { SetupNotice } from '@/components/SetupNotice';
+import {
+  billingConfigured,
+  blocksNewCheckout,
+  hasProAccess,
+  isCheckoutSessionId,
+  offerTitle,
+  periodSentence,
+  proBadge,
+  stripeKeyMode,
+  type PlanSnapshot,
+} from '@/lib/billing';
+import { loadPlan } from '@/lib/billing-store';
+import { loadOffers, syncCheckoutSession } from '@/lib/billing-server';
 import { DatabaseNotConfiguredError } from '@/lib/db';
 import { clerkConfigured } from '@/lib/env';
 import { listProjects } from '@/lib/projects';
 
 export const dynamic = 'force-dynamic';
 
-export default async function AccountPage() {
+type Flash = 'cancelled' | 'pending' | 'synced' | 'unknown' | null;
+
+function badgeTone(snapshot: PlanSnapshot, configured: boolean): 'wait' | 'pro' | 'warn' | '' {
+  if (!configured && snapshot.status === 'none') return 'wait';
+  if (snapshot.status === 'past_due' || (hasProAccess(snapshot) && snapshot.cancelAtPeriodEnd)) return 'warn';
+  if (hasProAccess(snapshot)) return 'pro';
+  if (snapshot.status === 'none') return '';
+  return 'wait';
+}
+
+export default async function AccountPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ betaling?: string; session_id?: string }>;
+}) {
   if (!clerkConfigured()) {
     return (
       <div className="authpage">
@@ -25,8 +53,22 @@ export default async function AccountPage() {
   const { userId } = await auth();
   if (!userId) redirect('/sign-in');
   const user = await currentUser();
+  const query = await searchParams;
   const name = [user?.firstName, user?.lastName].filter(Boolean).join(' ') || 'Pladeplan-bruger';
   const email = user?.primaryEmailAddress?.emailAddress || user?.emailAddresses[0]?.emailAddress || '—';
+
+  if (isCheckoutSessionId(query.session_id)) {
+    let destination = '/konto?betaling=ukendt';
+    try {
+      const synced = await syncCheckoutSession(userId, query.session_id, user?.publicMetadata);
+      if (synced && hasProAccess(synced)) destination = '/konto?betaling=aktiv';
+      else if (synced) destination = '/konto?betaling=afventer';
+    } catch (error) {
+      console.error('checkout sync failed', error instanceof Error ? error.name : 'unknown');
+      destination = '/konto?betaling=afventer';
+    }
+    redirect(destination);
+  }
 
   let projectCount: number | null = null;
   let databaseReady = true;
@@ -36,6 +78,20 @@ export default async function AccountPage() {
     if (error instanceof DatabaseNotConfiguredError) databaseReady = false;
     else throw error;
   }
+
+  const configured = billingConfigured();
+  const plan = await loadPlan(userId, user?.publicMetadata);
+  const offers = configured && !blocksNewCheckout(plan.status) ? await loadOffers() : [];
+  const flash: Flash =
+    query.betaling === 'annulleret'
+      ? 'cancelled'
+      : query.betaling === 'aktiv'
+        ? 'synced'
+        : query.betaling === 'afventer'
+          ? 'pending'
+          : query.betaling === 'ukendt'
+            ? 'unknown'
+            : null;
 
   return (
     <div className="authpage">
@@ -59,25 +115,24 @@ export default async function AccountPage() {
               </a>
             </div>
           </section>
-          <section className="card pad">
+          <section className="card pad" id="abonnement">
             <h2>Abonnement</h2>
-            <p>
-              Nuværende plan: <span className="statuspill">Gratis</span>
-            </p>
-            <p>
-              Pro: <span className="statuspill wait">Kommer snart</span>
-            </p>
-            <p>
-              {`Alle nuværende funktioner er gratis, også gemte skæresedler på kontoen${
-                projectCount !== null
-                  ? ` (${projectCount} ${projectCount === 1 ? 'skæreseddel' : 'skæresedler'})`
-                  : ''
-              }. Pro kommer snart og kan ikke købes.`}
-            </p>
-            <div className="notice">
-              <strong>Pro kommer snart.</strong> Der er intet kasseforløb, intet abonnement og ingen betaling knyttet
-              til kontoen.
-            </div>
+            <BillingPanel
+              configured={configured}
+              testMode={stripeKeyMode() === 'test'}
+              planName={hasProAccess(plan) ? 'Pro' : 'Gratis'}
+              badge={proBadge(plan, configured)}
+              badgeTone={badgeTone(plan, configured)}
+              periodText={periodSentence(plan)}
+              projectCount={projectCount}
+              offers={offers.map((offer) => ({
+                slot: offer.slot,
+                title: offerTitle(offer.interval, offer.slot),
+                amountLabel: offer.amountLabel,
+              }))}
+              canManage={Boolean(plan.stripeSubscriptionId)}
+              flash={flash}
+            />
           </section>
           <section className="card pad">
             <h2>Skæresedler</h2>

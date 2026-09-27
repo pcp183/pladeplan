@@ -1,4 +1,7 @@
 import { auth, clerkClient, currentUser } from '@clerk/nextjs/server';
+import { subscriptionExport } from '@/lib/billing';
+import { loadPlan } from '@/lib/billing-store';
+import { purgeBilling } from '@/lib/billing-server';
 import { DatabaseNotConfiguredError } from '@/lib/db';
 import { confirmationMatches } from '@/lib/confirm';
 import { clerkConfigured } from '@/lib/env';
@@ -46,10 +49,12 @@ export async function GET() {
       return problem('Kunne ikke hente dine data.', 'server', 500);
     }
   }
+  const subscription = subscriptionExport(await loadPlan(gate.userId, user?.publicMetadata));
   const body = {
     exportedAt: new Date().toISOString(),
     storage,
     account: { id: gate.userId, name, email },
+    subscription,
     projects,
     note:
       storage === 'not_configured'
@@ -98,6 +103,17 @@ export async function DELETE(request: Request) {
       console.error('account project delete failed', error instanceof Error ? error.name : 'unknown');
       return problem('Skæresedlerne kunne ikke slettes. Kontoen er ikke slettet.', 'projects', 500);
     }
+  }
+
+  try {
+    await purgeBilling(gate.userId, user?.publicMetadata);
+  } catch (error) {
+    console.error('billing purge failed', error instanceof Error ? error.name : 'unknown');
+    return problem(
+      'Abonnementet kunne ikke afsluttes hos betalingsudbyderen. Kontoen er ikke slettet. Prøv igen.',
+      'billing',
+      500,
+    );
   }
 
   try {

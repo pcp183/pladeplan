@@ -38,6 +38,23 @@ export async function ensureSchema(): Promise<void> {
         PRIMARY KEY (user_id, id)
       )
     `
+      .then(() => sql`
+        CREATE TABLE IF NOT EXISTS pladeplan_billing (
+          user_id TEXT PRIMARY KEY,
+          stripe_customer_id TEXT,
+          stripe_subscription_id TEXT,
+          status TEXT NOT NULL DEFAULT 'none',
+          price_id TEXT,
+          current_period_end TIMESTAMPTZ,
+          cancel_at_period_end BOOLEAN NOT NULL DEFAULT FALSE,
+          last_event_created BIGINT NOT NULL DEFAULT 0,
+          updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+        )
+      `)
+      .then(() => sql`
+        CREATE INDEX IF NOT EXISTS pladeplan_billing_customer_idx
+        ON pladeplan_billing (stripe_customer_id)
+      `)
       .then(() => undefined)
       .catch((error: unknown) => {
         schemaReady = null;
