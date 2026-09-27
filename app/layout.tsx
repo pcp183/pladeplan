@@ -14,10 +14,23 @@ const inter = Inter({
   display: 'swap',
 });
 
+const description =
+  'Gratis dansk skæreplanlægger til plader: beregn skæreplan, udnyttelse og pladeforbrug, og sammenlign MDF-priser hos danske forhandlere.';
+
 export const metadata: Metadata = {
-  title: 'Pladeplan — dansk skæreplanlægger',
-  description:
-    'Gratis dansk skæreplanlægger til plader: beregn skæreplan, udnyttelse og pladeforbrug, og sammenlign MDF-priser hos danske forhandlere.',
+  title: {
+    default: 'Skæreseddel — dansk skæreplanlægger',
+    template: '%s — Skæreseddel',
+  },
+  description,
+  applicationName: 'Skæreseddel',
+  openGraph: {
+    title: 'Skæreseddel — dansk skæreplanlægger',
+    description,
+    siteName: 'Skæreseddel',
+    locale: 'da_DK',
+    type: 'website',
+  },
 };
 
 export const dynamic = 'force-dynamic';

@@ -5,8 +5,12 @@ import { billingConfigured } from '@/lib/billing';
 export const dynamic = 'force-dynamic';
 
 export const metadata: Metadata = {
-  title: 'Privatliv — Pladeplan',
-  description: 'Sådan behandler Pladeplan kontooplysninger og gemte skæresedler.',
+  title: 'Privatliv',
+  description: 'Sådan behandler Skæreseddel kontooplysninger og gemte skæresedler.',
+  openGraph: {
+    title: 'Privatliv — Skæreseddel',
+    description: 'Sådan behandler Skæreseddel kontooplysninger og gemte skæresedler.',
+  },
 };
 
 function contactEmail(): string | null {
@@ -25,17 +29,17 @@ export default function PrivacyPage() {
       <main className="account prose">
         <h1>Privatliv</h1>
         <p className="lead">
-          Denne side fortæller, hvilke oplysninger Pladeplan behandler, hvorfor, og hvordan du kan få dem udleveret
+          Denne side fortæller, hvilke oplysninger Skæreseddel behandler, hvorfor, og hvordan du kan få dem udleveret
           eller slettet.{' '}
           {billing
-            ? 'Betaling for Pro sker hos Stripe. Pladeplan gemmer ikke kortnummeret.'
+            ? 'Betaling for Pro sker hos Stripe. Skæreseddel gemmer ikke kortnummeret.'
             : 'Pro kommer snart og kan ikke købes. Der behandles ingen betalingsoplysninger.'}
         </p>
 
         <section className="card pad">
           <h2>Dataansvarlig</h2>
           <p>
-            Pladeplan drives af Peter Price. Tjenesten er skæreplanlæggeren på dette website.
+            Skæreseddel drives af Peter Price. Tjenesten er skæreplanlæggeren på dette website.
           </p>
           <p>
             Kontakt:{' '}
@@ -58,7 +62,7 @@ export default function PrivacyPage() {
           <h2>Hvilke oplysninger</h2>
           <ul>
             <li>
-              <strong>Konto:</strong> e-mail, navn og login håndteres af Clerk. Pladeplan gemmer ikke din adgangskode.
+              <strong>Konto:</strong> e-mail, navn og login håndteres af Clerk. Skæreseddel gemmer ikke din adgangskode.
             </li>
             <li>
               <strong>Skæresedler:</strong> når du er logget ind og trykker Gem, gemmes navnet på skæresedlen, plademål, emner,
@@ -70,11 +74,11 @@ export default function PrivacyPage() {
             </li>
             <li>
               <strong>Drift:</strong> Clerk og værten (Vercel) kan kortvarigt logge tekniske oplysninger som tidspunkt
-              og IP-adresse for at drive login og hosting. Pladeplan bruger det ikke til reklame.
+              og IP-adresse for at drive login og hosting. Skæreseddel bruger det ikke til reklame.
             </li>
             {billing ? (
               <li>
-                <strong>Abonnement:</strong> hvis du tegner Pro, gemmer Pladeplan Stripe-kunde-id, abonnementsstatus,
+                <strong>Abonnement:</strong> hvis du tegner Pro, gemmer Skæreseddel Stripe-kunde-id, abonnementsstatus,
                 pris-id og periodens udløb sammen med dit bruger-id. Kortnummer, udløbsdato og kvitteringer ligger hos
                 Stripe.
               </li>
@@ -122,7 +126,7 @@ export default function PrivacyPage() {
           </ul>
           <p>
             Leverandørerne kan behandle data uden for EU. De beskriver selv overførselsgrundlaget i deres
-            databehandleraftaler. Pladeplan sælger ikke oplysningerne og deler dem ikke med annoncører.
+            databehandleraftaler. Skæreseddel sælger ikke oplysningerne og deler dem ikke med annoncører.
           </p>
         </section>
 
@@ -131,10 +135,10 @@ export default function PrivacyPage() {
           <p>
             Gemte skæresedler bliver liggende, indtil du sletter den enkelte skæreseddel eller sletter kontoen. Ved
             «Slet konto» slettes alle rækker for dit bruger-id med det samme. Der skrives ingen arkivkopi, papirkurv
-            eller sikkerhedskopi i Pladeplan.
+            eller sikkerhedskopi i Skæreseddel.
           </p>
           <p>
-            Derefter slettes selve brugeren hos Clerk, inklusive sessioner. Pladeplan beholder ikke e-mail eller profil
+            Derefter slettes selve brugeren hos Clerk, inklusive sessioner. Skæreseddel beholder ikke e-mail eller profil
             bagefter.
           </p>
           <p>
