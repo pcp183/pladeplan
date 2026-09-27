@@ -1,6 +1,6 @@
 'use strict';
 const DEFAULT_PARTS=[['Side',580,720,2],['Bund',564,580,1],['Hylde',564,560,3]];
-const MAX_PIECES=2000,DEFAULT_NAME='Nyt skæreprojekt';
+const MAX_PIECES=2000,DEFAULT_NAME='Ny skæreseddel';
 /* Indeks fra gemte skæresedler før pladetyperne blev udvidet. */
 const LEGACY_MATERIAL=['mdf-19-1220x2440','span-16-1220x2440','birk-19-1250x2500','mdf-12-1220x2440','custom'];
 const $=s=>document.querySelector(s),P=$('#parts'),EMPTY_BOARDS=$('#boards').innerHTML;
@@ -154,7 +154,7 @@ function syncBoardJump(){
 }
 function copyCutlist(){
   if(!result||$('.result').classList.contains('stale'))return toast('Beregn planen først.');
-  let name=$('#projectName').value.trim()||'Skæreplan';
+  let name=$('#projectName').value.trim()||'Skæreseddel';
   let mat=materialLabel();
   let lines=[name,`${mat?mat+' · ':''}${dim(result.W)} × ${dim(result.H)} mm · savspor ${dim(+$('#kerf').value)} mm · kantfraskær ${dim(+$('#trim').value)} mm`,`${result.s.length} ${result.s.length===1?'plade':'plader'} · ${result.ps.length} emner · brugt ${(result.ps.reduce((n,a)=>n+a.w*a.h,0)/1e6).toFixed(2).replace('.',',')} m² · udnyttelse ${fmt(result.y)}% · spild ${fmt(100-result.y)}%`,''];
   result.s.forEach((s,i)=>{
@@ -169,7 +169,7 @@ function copyCutlist(){
 }
 function copyText(text,done){if(navigator.clipboard&&navigator.clipboard.writeText){navigator.clipboard.writeText(text).then(done).catch(()=>fallbackCopy(text,done))}else fallbackCopy(text,done)}
 function fallbackCopy(text,done){let ta=document.createElement('textarea');ta.value=text;ta.setAttribute('readonly','');ta.style.position='fixed';ta.style.left='-9999px';document.body.append(ta);ta.select();try{document.execCommand('copy');done()}catch{toast('Kunne ikke kopiere — brug CSV i stedet')}ta.remove()}
-function updatePrintHeader(){let t=$('#printTitle'),m=$('#printMeta'),d=$('#printDate');if(!t)return;t.textContent=$('#projectName').value.trim()||'Skæreplan';if(d)d.textContent='Udskrevet '+new Date().toLocaleString('da-DK',{dateStyle:'medium',timeStyle:'short'});if(!result){m.textContent='';return}let mat=materialLabel(),unit=manualSheetPrice(),price=unit?` · pris ${kr(unit*result.s.length)}`:'';m.textContent=`${mat?mat+' · ':''}${result.s.length} ${result.s.length===1?'plade':'plader'} · ${result.ps.length} emner · ${dim(result.W)} × ${dim(result.H)} mm · savspor ${dim(+$('#kerf').value)} mm · kantfraskær ${dim(+$('#trim').value)} mm · udnyttelse ${fmt(result.y)}% · spild ${fmt(100-result.y)}%${price}`}
+function updatePrintHeader(){let t=$('#printTitle'),m=$('#printMeta'),d=$('#printDate');if(!t)return;t.textContent=$('#projectName').value.trim()||'Skæreseddel';if(d)d.textContent='Udskrevet '+new Date().toLocaleString('da-DK',{dateStyle:'medium',timeStyle:'short'});if(!result){m.textContent='';return}let mat=materialLabel(),unit=manualSheetPrice(),price=unit?` · pris ${kr(unit*result.s.length)}`:'';m.textContent=`${mat?mat+' · ':''}${result.s.length} ${result.s.length===1?'plade':'plader'} · ${result.ps.length} emner · ${dim(result.W)} × ${dim(result.H)} mm · savspor ${dim(+$('#kerf').value)} mm · kantfraskær ${dim(+$('#trim').value)} mm · udnyttelse ${fmt(result.y)}% · spild ${fmt(100-result.y)}%${price}`}
 function state(){let o=materialOption();return{id:activeProjectId,n:$('#projectName').value,m:$('#material').selectedIndex,mid:o?o.value:'',w:$('#sheetW').value,h:$('#sheetH').value,k:$('#kerf').value,t:$('#trim').value,r:$('#rotate').checked,pr:$('#sheetPrice')?$('#sheetPrice').value:'',p:rows()}}
 function store(){try{localStorage.setItem('pladeplan',JSON.stringify(state()))}catch{}}
 function markStale(){if(result){$('#resultSubtitle').textContent='Ændret – tryk “Opdater skæreplan” for at opdatere';$('.result').classList.add('stale');syncStaleBar();syncCalcLabel();setExportEnabled(false);syncPriceStat()}}
@@ -359,7 +359,7 @@ function render(){
     $('#statWaste').textContent=fmt(waste/area*100)+'%';
     let wa=$('#statWasteArea');if(wa)wa.textContent=(waste/1e6).toFixed(2).replace('.',',')+' m²';
     let mat=materialLabel();
-    $('#resultSubtitle').textContent=[($('#projectName').value.trim()||'Skæreplan'),mat,`${dim(W)} × ${dim(H)} mm`,`savspor ${dim(k)} mm`].filter(Boolean).join(' · ');
+    $('#resultSubtitle').textContent=[($('#projectName').value.trim()||'Skæreseddel'),mat,`${dim(W)} × ${dim(H)} mm`,`savspor ${dim(k)} mm`].filter(Boolean).join(' · ');
     $('#boardCount').textContent=`${s.length} ${s.length===1?'plade':'plader'} · ${ps.length} ${ps.length===1?'emne':'emner'}`;
     $('#boards').innerHTML=s.map((x,i)=>draw(x,i,W,H)).join('');
     bindBoardUI($('#boards'));setExportEnabled(true);syncCalcLabel();renderPrices();store();$('#saveState').textContent='Plan beregnet · kladde gemt';updatePrintHeader();
@@ -376,11 +376,11 @@ function render(){
 function csvCell(v){v=String(v);return /[;"\n]/.test(v)?'"'+v.replace(/"/g,'""')+'"':v}
 function exportCSV(){
   if(!result)return toast('Beregn planen først.');
-  let name=$('#projectName').value.trim()||'Skæreplan';
+  let name=$('#projectName').value.trim()||'Skæreseddel';
   let when=new Date().toLocaleString('da-DK',{dateStyle:'medium',timeStyle:'short'});
   let l=[
     ['Felt','Værdi'].map(csvCell).join(';'),
-    ['Projekt',name].map(csvCell).join(';'),
+    ['Skæreseddel',name].map(csvCell).join(';'),
     ['Dato',when].map(csvCell).join(';'),
     ['Pladetype',materialLabel()||'Tilpasset mål'].map(csvCell).join(';'),
     ['Plademål',`${dim(result.W)} × ${dim(result.H)} mm`].map(csvCell).join(';'),
@@ -396,12 +396,12 @@ function exportCSV(){
     ['Plade','Emne','Bredde (mm)','Længde (mm)','X (mm)','Y (mm)','Roteret'].map(csvCell).join(';')
   ];
   result.s.forEach((s,i)=>s.pieces.forEach(p=>l.push([i+1,p.name,p.w,p.h,p.x,p.y,p.turn?'Ja':'Nej'].map(v=>csvCell(typeof v==='number'?String(v).replace('.',','):v)).join(';'))));
-  let url=URL.createObjectURL(new Blob(['﻿'+l.join('\r\n')],{type:'text/csv;charset=utf-8'})),a=document.createElement('a'),n=(name).replace(/[^\wæøåÆØÅ -]+/g,'').trim()||'skaereplan';
+  let url=URL.createObjectURL(new Blob(['﻿'+l.join('\r\n')],{type:'text/csv;charset=utf-8'})),a=document.createElement('a'),n=(name).replace(/[^\wæøåÆØÅ -]+/g,'').trim()||'skaereseddel';
   a.href=url;a.download=n+'.csv';document.body.append(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),1000);
   toast('CSV hentet · '+result.ps.length+' emner');
 }
 
-/* ---------- Projekter / skæreseddel ---------- */
+/* ---------- Skæresedler ---------- */
 function cloudBridge(){return window.__pladeplanCloud||null}
 function cloudOn(){let b=cloudBridge();return !!(b&&b.signedIn&&b.ready&&!b.degraded)}
 function library(){
@@ -410,7 +410,7 @@ function library(){
 }
 function saveLibrary(){
   let name=$('#projectName').value.trim();
-  if(!name||name===DEFAULT_NAME){name='Skæreseddel '+new Date().toLocaleDateString('da-DK');$('#projectName').value=name}
+  if(!name||name===DEFAULT_NAME||name==='Nyt skæreprojekt'||name==='Nyt projekt'){name='Skæreseddel '+new Date().toLocaleDateString('da-DK');$('#projectName').value=name}
   let id=activeProjectId||('p-'+Date.now()),item={...state(),id,n:name,updatedAt:new Date().toISOString()},all=library().filter(x=>x.id!==id);all.unshift(item);
   if(!persistLibrary(all))return;
   activeProjectId=id;store();
@@ -478,8 +478,8 @@ function renderLibrary(){
   let all=library(),el=$('#projectList');
   syncLibraryChrome();
   if(!all.length){el.innerHTML=cloudOn()
-    ?'<div class="projectempty"><div class="emptyicon">▣</div><strong>Ingen gemte skæresedler endnu</strong>Tryk «Gem» for at gemme den aktuelle plan på din konto.</div>'
-    :'<div class="projectempty"><div class="emptyicon">▣</div><strong>Ingen gemte skæresedler endnu</strong>'+(storageDegraded()?'Tryk «Gem» for at gemme den aktuelle plan på denne enhed. Konto-lagring er ikke sat op endnu.':authAvailable()?'Tryk «Gem» for at gemme den aktuelle plan på denne enhed. Log ind for at gemme den på din konto. Brug «Del» for at sende et link til andre.':'Tryk «Gem» for at gemme den aktuelle plan på denne enhed. Brug «Del» for at sende et link til andre.')+'</div>';return}
+    ?'<div class="projectempty"><div class="emptyicon">▣</div><strong>Ingen gemte skæresedler endnu</strong>Tryk «Gem» for at gemme den aktuelle skæreseddel på din konto.</div>'
+    :'<div class="projectempty"><div class="emptyicon">▣</div><strong>Ingen gemte skæresedler endnu</strong>'+(storageDegraded()?'Tryk «Gem» for at gemme den aktuelle skæreseddel på denne enhed. Konto-lagring er ikke sat op endnu.':authAvailable()?'Tryk «Gem» for at gemme den aktuelle skæreseddel på denne enhed. Log ind for at gemme den på din konto. Brug «Del» for at sende et link til andre.':'Tryk «Gem» for at gemme den aktuelle skæreseddel på denne enhed. Brug «Del» for at sende et link til andre.')+'</div>';return}
   el.innerHTML=all.map(x=>{let qty=(x.p||[]).reduce((n,r)=>n+(+r[3]||0),0),dt=new Date(x.updatedAt),d=isNaN(dt)?'':' · gemt '+dt.toLocaleString('da-DK',{dateStyle:'medium',timeStyle:'short'});
     let opt=x.mid?[...$('#material').options].find(o=>o.value===x.mid):null,mat=opt?materialLabel(opt):'';
     return `<div class="projectitem" data-id="${esc(x.id)}"><div><h3 title="Dobbeltklik for at omdøbe">${esc(x.n||'Skæreseddel')}</h3><p>${qty} emner${mat?` · ${esc(mat)}`:''} · ${esc(x.w)} × ${esc(x.h)} mm${d}</p></div><div class="actions"><button class="btn small openproject" type="button" data-id="${esc(x.id)}">Åbn</button><button class="btn small dupproject" type="button" data-id="${esc(x.id)}" aria-label="Duplikér ${esc(x.n||'skæreseddel')}">Duplikér</button><button class="btn small renproject" type="button" data-id="${esc(x.id)}" aria-label="Omdøb ${esc(x.n||'skæreseddel')}">Omdøb</button><button class="btn small delproject" type="button" data-id="${esc(x.id)}" aria-label="Slet ${esc(x.n||'skæreseddel')}">Slet</button></div></div>`}).join('');
