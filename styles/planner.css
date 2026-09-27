@@ -372,6 +372,30 @@ code, .mono{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:.9
 .sitefoot,.deletedbar{display:none!important}
 }
 
+/* Auth next to brand + Pro kommer snart (no checkout) */
+.top{height:auto;min-height:64px;flex-wrap:wrap;row-gap:8px;padding-top:10px;padding-bottom:10px}
+.brandcluster{display:flex;align-items:center;gap:12px;min-width:0;flex-wrap:wrap}
+.planpill{display:inline-flex;align-items:center;border:1px solid #ffffff36;background:#ffffff12;color:#fff;border-radius:20px;padding:6px 10px;font-size:11px;font-weight:750;white-space:nowrap;cursor:default}
+.authslot{min-height:32px}
+.authslot a.authlink,.authslot a.authaccount,.authslot a.authsignup{display:inline-flex;align-items:center;min-height:32px;border-radius:20px;padding:6px 12px;font-size:13px;font-weight:800;line-height:1;white-space:nowrap}
+.authslot a.authlink,.authslot a.authaccount{border:1px solid #ffffff73;background:#ffffff18;color:#fff}
+.authslot a.authlink:hover,.authslot a.authaccount:hover{background:#ffffff2e}
+.flowbar .flowstep{border:0;background:transparent;font:inherit;color:#78847d;padding:4px 8px;border-radius:20px;cursor:pointer}
+.flowbar .flowstep.on{background:#e7f0ea;color:var(--g)}
+.flowbar .flowstep.done{color:#3d7451}
+.flowbar .flowstep:hover{background:#eef4f0}
+.flowbar .flowstep:focus-visible{outline:3px solid #9fc2ad;outline-offset:2px}
+.card.stepfocus{box-shadow:0 0 0 2px #b7d0c2,var(--shadow)}
+.calcwrap.ready .calcsub{color:var(--g);font-weight:750}
+@media(max-width:780px){
+.brandcluster{gap:8px}
+.authslot a.authsignup{padding:6px 10px}
+.planpill{font-size:10px;padding:5px 8px}
+}
+@media print{
+.planpill,.brandcluster .authslot{display:none!important}
+}
+
 /* Lagerplade → emner → resultat */
 .matnote{font-size:11px;color:#66746c;line-height:1.45;margin:-2px 0 12px}
 .sawblock{border-top:1px solid #edf0ed;margin-top:4px;padding-top:12px}
