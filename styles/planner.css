@@ -420,3 +420,71 @@ select.select{text-overflow:ellipsis}
 .stats,.stats.has-price{grid-template-columns:1fr 1fr}
 .sheetprice{max-width:none}
 }
+
+/* Calmer layout, cost first. Prices are the user's own figures. */
+.card{box-shadow:0 1px 2px #163a2b0d}
+.priceblock{margin:2px 0 2px;padding:10px 12px;background:#f3f6f4;border-radius:10px}
+.priceblock .sheetprice{max-width:280px;margin:0}
+.priceblock .field{margin-bottom:4px}
+.priceblock .label{color:#24352c}
+.pricenote{margin:0;font-size:11px;line-height:1.4;color:#6d7b73}
+.sawdetails{margin-top:8px;border-top:1px solid #edf0ed}
+.sawdetails>summary{cursor:pointer;list-style:none;padding:10px 0 2px;font-size:12px;font-weight:700;color:#5c6b63}
+.sawdetails>summary::-webkit-details-marker{display:none}
+.sawdetails>summary:after{content:" ⌄";font-weight:500;color:#9aa59d}
+.sawdetails[open]>summary:after{content:" ⌃"}
+.sawdetails .sawbody{padding-top:8px}
+.outcome{padding:16px 18px 12px;border-bottom:1px solid #e7ece8;background:#fbfcfb}
+.outcome[hidden],.compare[hidden]{display:none}
+.outcome-grid{display:grid;grid-template-columns:minmax(0,1.5fr) auto;gap:10px 18px;align-items:end}
+.outcome-kicker{display:block;font-size:11px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:#5e7368}
+.outcome-total{display:block;margin-top:2px;font-size:34px;line-height:1.05;letter-spacing:-.045em;font-weight:800;color:#15392a;font-variant-numeric:tabular-nums}
+.outcome-total.unset{font-size:22px;font-weight:750;letter-spacing:-.03em;color:#3d5246}
+.outcome-sub{margin:6px 0 0;font-size:12px;color:#5c6b63;line-height:1.45}
+.outcome-metrics{display:flex;gap:8px;margin:0}
+.outcome-metrics div{min-width:112px;background:#fff;border:1px solid #e4ebe6;border-radius:8px;padding:8px 10px}
+.outcome-metrics dt{font-size:10px;color:#6d7b73;font-weight:650}
+.outcome-metrics dd{margin:2px 0 0;font-size:15px;font-weight:800;letter-spacing:-.03em;font-variant-numeric:tabular-nums}
+.outcome-note{grid-column:1/-1;margin:2px 0 0;font-size:13px;line-height:1.45;color:#1e4a32;font-weight:650}
+.outcome-note.quiet{color:#5c6b63;font-weight:500}
+.outcome-note .textbtn{border:0;background:transparent;color:#15392a;font-weight:800;text-decoration:underline;padding:0;cursor:pointer;font-size:13px}
+.outcome-note .textbtn:hover{color:#23503d}
+.compare{padding:2px 18px 14px}
+.comparehead{display:flex;justify-content:space-between;gap:12px;align-items:baseline;margin:10px 0 4px}
+.comparehead strong{font-size:13px;font-weight:750}
+.comparehead span{font-size:11px;color:#7a8780;text-align:right}
+.cmpgroup{margin:10px 0 0;font-size:10px;font-weight:750;letter-spacing:.04em;text-transform:uppercase;color:#8a968f}
+.cmprow{display:grid;grid-template-columns:minmax(0,1.4fr) 118px minmax(96px,.8fr) auto;gap:8px;align-items:center;padding:8px 2px;border-top:1px solid #eef2ef}
+.cmpname{font-size:13px;font-weight:750}
+.cmpmeta{display:block;margin-top:2px;font-size:11px;font-weight:500;color:#6d7b73}
+.cmprow.best .cmpname{color:#15392a}
+.cmprow.best .cmpname:after{content:"Billigst";margin-left:6px;font-size:10px;font-weight:800;letter-spacing:0;text-transform:none;color:#1e4a32;background:#e5f2ea;border-radius:99px;padding:2px 6px;vertical-align:1px}
+.cmpprice{position:relative;margin:0}
+.cmpprice input{height:34px;padding-right:32px;font-size:13px}
+.cmpprice span{position:absolute;right:8px;top:9px;font-size:11px;color:#829087;pointer-events:none}
+.cmptotal{font-size:14px;font-weight:800;text-align:right;font-variant-numeric:tabular-nums}
+.cmpwaste{display:block;font-size:10px;font-weight:500;color:#6d7b73;text-align:right}
+.cmpuse{min-height:32px}
+.cmpvalgt{font-size:11px;font-weight:750;color:#5e7368;text-align:right}
+.cmprow.impossible{opacity:.55}
+.cmpfoot{margin:8px 0 0;font-size:11px;color:#8a968f;line-height:1.4}
+.result.stale .outcome,.result.stale .compare{opacity:.55}
+@media(max-width:780px){
+.priceblock .sheetprice{max-width:none}
+.outcome{padding:14px 12px 10px}
+.outcome-grid{grid-template-columns:1fr}
+.outcome-total{font-size:30px}
+.outcome-metrics{display:grid;grid-template-columns:1fr 1fr}
+.outcome-metrics div{min-width:0}
+.compare{padding:2px 12px 12px}
+.comparehead{flex-direction:column;align-items:flex-start;gap:2px}
+.comparehead span{text-align:left}
+.cmprow{grid-template-columns:minmax(0,1fr) 108px}
+.cmprow .cmptotal{grid-column:1}
+.cmpuse,.cmpvalgt{grid-column:2;justify-self:end}
+}
+@media print{
+.outcome:not([hidden]),.compare:not([hidden]){display:block!important;opacity:1!important}
+.cmpuse,.textbtn{display:none!important}
+.outcome:not([hidden]){border:1px solid #dfe6e0;margin-bottom:10px}
+}

@@ -4,7 +4,7 @@ import { useClerk } from '@clerk/nextjs';
 import { useState } from 'react';
 import { confirmationHint, confirmationMatches } from '@/lib/confirm';
 
-const LOCAL_KEYS = ['pladeplan-projects', 'pladeplan'];
+const LOCAL_KEYS = ['pladeplan-projects', 'pladeplan', 'pladeplan-sheet-prices'];
 
 export function AccountData({ email }: { email: string | null }) {
   const { signOut } = useClerk();
