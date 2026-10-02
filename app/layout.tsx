@@ -15,7 +15,7 @@ const inter = Inter({
 });
 
 const description =
-  'Gratis dansk skæreplanlægger til plader: beregn skæreplan, udnyttelse og pladeforbrug, og sammenlign MDF-priser hos danske forhandlere.';
+  'Gratis dansk skæreplanlægger til plader: beregn skæreplan, udnyttelse og hvad pladerne koster ud fra de priser, du selv skriver.';
 
 export const metadata: Metadata = {
   title: {

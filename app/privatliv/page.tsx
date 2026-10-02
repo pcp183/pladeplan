@@ -66,11 +66,11 @@ export default function PrivacyPage() {
             </li>
             <li>
               <strong>Skæresedler:</strong> når du er logget ind og trykker Gem, gemmes navnet på skæresedlen, plademål, emner,
-              savindstillinger og tidspunkt sammen med dit Clerk-bruger-id. Det sker kun, hvis databasen er sat op.
+              savindstillinger, de pladepriser du selv har skrevet, og tidspunkt sammen med dit Clerk-bruger-id. Det sker kun, hvis databasen er sat op.
             </li>
             <li>
-              <strong>Kladde på enheden:</strong> browseren kan gemme kladden og lokale skæresedler i
-              localStorage. De sendes ikke til serveren, før du gemmer dem på kontoen.
+              <strong>Kladde på enheden:</strong> browseren kan gemme kladden, lokale skæresedler og de pladepriser, du selv
+              skriver, i localStorage. De sendes ikke til serveren, før du gemmer en skæreseddel på kontoen.
             </li>
             <li>
               <strong>Drift:</strong> Clerk og værten (Vercel) kan kortvarigt logge tekniske oplysninger som tidspunkt

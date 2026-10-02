@@ -14,9 +14,24 @@ export type StoredProject = {
   r: boolean;
   /** Valgfri pris pr. plade, som brugeren selv har skrevet. */
   pr?: string;
+  /** Priser pr. pladetype, som brugeren selv har skrevet. Nøglen er pladetype-id. */
+  px?: Record<string, string>;
   p: string[][];
   updatedAt: string;
 };
+
+function parsePriceMap(input: unknown): Record<string, string> | undefined {
+  if (!input || typeof input !== 'object' || Array.isArray(input)) return undefined;
+  const out: Record<string, string> = {};
+  for (const [key, value] of Object.entries(input as Record<string, unknown>)) {
+    if (Object.keys(out).length >= 40) break;
+    if (!/^[\w.-]{1,80}$/.test(key)) continue;
+    const raw = clip(value, 24).trim();
+    if (!/^[\d\s.,]{1,24}$/.test(raw)) continue;
+    out[key] = raw;
+  }
+  return Object.keys(out).length ? out : undefined;
+}
 
 function clip(value: unknown, max: number): string {
   if (typeof value === 'number' && Number.isFinite(value)) return String(value).slice(0, max);
@@ -63,6 +78,8 @@ export function parseProject(input: unknown): StoredProject | null {
   };
   if (mid) project.mid = mid;
   if (pr) project.pr = pr;
+  const px = parsePriceMap(source.px);
+  if (px) project.px = px;
   return project;
 }
 

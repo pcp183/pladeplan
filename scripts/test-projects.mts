@@ -40,6 +40,30 @@ assert.ok(withPlate);
 assert.equal(withPlate.m, 25);
 assert.equal(withPlate.mid, 'melamin-18-2070x2800');
 assert.equal(withPlate.pr, '275,50');
+assert.equal(withPlate.px, undefined);
+
+const withPrices = parseProject({
+  id: 'p-priser',
+  n: 'Priser',
+  m: 4,
+  mid: 'mdf-19-1220x2440',
+  pr: '320',
+  px: {
+    'mdf-19-1220x2440': '320',
+    'mdf-19-2070x2800': '610,50',
+    '<bad>': '100',
+    custom: 'ikke',
+    'birk-18-1220x2440': '400',
+  },
+  p: [],
+  updatedAt: '2026-10-02T12:00:00.000Z',
+});
+assert.ok(withPrices);
+assert.deepEqual(withPrices.px, {
+  'mdf-19-1220x2440': '320',
+  'mdf-19-2070x2800': '610,50',
+  'birk-18-1220x2440': '400',
+});
 
 const rejectedPlate = parseProject({
   id: 'p-bad-plate',
