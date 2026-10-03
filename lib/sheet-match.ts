@@ -84,6 +84,31 @@ export function sheetDims(text: string | null | undefined): SheetSize | null {
   return { thick: Math.round(thick * 10) / 10, w, h };
 }
 
+/** Tykkelse skrevet for sig, plus bredde × længde. 122x244 cm bliver 1220×2440 mm. */
+export function readSheetSize(text: string | null | undefined): SheetSize | null {
+  const direct = sheetDims(text);
+  if (direct) return direct;
+  if (!text) return null;
+  const pair = text.match(/(\d+(?:[.,]\d+)?)\s*[x×]\s*(\d+(?:[.,]\d+)?)(?:\s*(mm|cm))?/i);
+  if (!pair) return null;
+  let width = Number(pair[1].replace(',', '.'));
+  let height = Number(pair[2].replace(',', '.'));
+  const unit = (pair[3] || '').toLowerCase();
+  if (!Number.isFinite(width) || !Number.isFinite(height)) return null;
+  if (unit === 'cm' || (!unit && width <= 400 && height <= 400)) {
+    width *= 10;
+    height *= 10;
+  }
+  const w = Math.round(width);
+  const h = Math.round(height);
+  const thicknesses = [
+    ...text.matchAll(/(\d+(?:[.,]\d+)?)\s*mm/gi),
+  ].map((hit) => Math.round(Number(hit[1].replace(',', '.')) * 10) / 10);
+  const unique = [...new Set(thicknesses.filter((value) => value > 0 && value <= 80))];
+  if (unique.length !== 1 || w < 100 || h < 100 || w > 6000 || h > 6000) return null;
+  return { thick: unique[0], w, h };
+}
+
 export function sameDims(a: SheetSize, b: SheetSize): boolean {
   return Math.abs(a.thick - b.thick) < 0.2 && a.w === b.w && a.h === b.h;
 }

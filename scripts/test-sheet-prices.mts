@@ -10,10 +10,19 @@ import {
   offersFromProducts,
   FOG_LIST_URLS,
   STARK_CATEGORY_PATHS,
+  offersFromBauhausHtml,
+  offersFromBygmaHtml,
+  offersFromDavidsenHtml,
   offersFromFogHtml,
+  offersFromJemHtml,
   offersFromSilvanHtml,
   offersFromStarkPayload,
   offersFromXlHtml,
+  BAUHAUS_CATEGORY_URLS,
+  DAVIDSEN_CATEGORY_URLS,
+  JEM_CATEGORY_URLS,
+  BYGMA_SEARCH_URLS,
+  BYGMA_TERMS_URL,
   type SheetOffer,
 } from '../lib/sheet-prices.ts';
 
@@ -507,6 +516,161 @@ assert.equal(
   0,
 );
 
+const bauhausVat = '"display_cart_subtotal_incl_tax":1,"display_cart_subtotal_excl_tax":0';
+function bauhausCard(name: string, price: string, url: string, sku: string, extras = '') {
+  return `<div class="card__name">${name}</div>${extras}<span class="price-container amount-default price-indexed_price tax weee"><span data-price-amount="${price}" data-price-type="finalPrice"></span></span><script>productUrl: '${url}'</script>,"sku":"${sku}"`;
+}
+const bauhausOffers = offersFromBauhausHtml(
+  `<html><script>${bauhausVat}</script>${bauhausCard(
+    'Keflico OSB-3 konstruktionsplade retkantet 11x2440x1220 mm',
+    '199.95',
+    'https://www.bauhaus.dk/keflico-osb-3-konstruktionsplade-retkantet-11x2440x1220-mm',
+    '1001',
+  )}${bauhausCard(
+    'Keflico OSB-3 konstruktionsplade retkantet 15x2440x1220 mm',
+    '80.00',
+    'https://www.bauhaus.dk/keflico-osb-15',
+    '1005',
+  )}${bauhausCard(
+    'Keflico OSB-3 konstruktionsplade fer &amp; not 15x2440x1220 mm',
+    '50.00',
+    'https://www.bauhaus.dk/keflico-osb-fer',
+    '1002',
+  )}${bauhausCard(
+    'DLH MDF-plade 19 mm savværk pris pr. m²',
+    '259.95',
+    'https://www.bauhaus.dk/dlh-mdf-plade-19-mm-savvaerk-pris-pr-m',
+    '1003',
+  )}${bauhausCard(
+    'MDF-plade 2440x1220 mm - flere tykkelser',
+    '164.95',
+    'https://www.bauhaus.dk/mdf-flere',
+    '1004',
+    '<span class="price-label">Fra</span>',
+  )}</html>`,
+);
+assert.equal(findSheetOffer(bauhausOffers, 'osb', 11, 1220, 2440)?.price, 199.95);
+assert.equal(findSheetOffer(bauhausOffers, 'osb', 11, 1220, 2440)?.shop, 'Bauhaus');
+assert.equal(findSheetOffer(bauhausOffers, 'osb', 15, 1220, 2440)?.price, 80);
+assert.equal(bauhausOffers.some((offer) => offer.sku === '1003' || offer.sku === '1004'), false);
+assert.equal(offersFromBauhausHtml(bauhausCard('Keflico OSB-3 retkantet 11x2440x1220 mm', '199.95', 'https://www.bauhaus.dk/osb', '1')).length, 0);
+
+const davidsenVat = 'Priserne er afhentningspriser, inkl. moms.';
+function davidsenPage(variants: { name: string; price: string; unit: string; url: string; sku: string }[]) {
+  const products = [
+    {
+      variants: variants.map((variant) => ({
+        name: variant.name,
+        url: variant.url,
+        productVariantId: variant.sku,
+        priceInformation: {
+          showPrice: true,
+          priceUnitSingular: variant.unit,
+          priceDescription: variant.unit === 'plade' ? 'kr./plade' : 'kr./stk.',
+          price: { value: variant.price },
+        },
+      })),
+    },
+  ];
+  return `<html>${davidsenVat}<script>"products":${JSON.stringify(products)}</script></html>`;
+}
+const davidsenOffers = offersFromDavidsenHtml(
+  davidsenPage([
+    {
+      name: 'Keflico MDF E1 standard 19 mm 122x244 cm',
+      price: '431,64',
+      unit: 'plade',
+      url: '/keflico-mdf-e1-standard-19-mm-122x244-cm-c-id525412-p-38101961125',
+      sku: '38101961125',
+    },
+    {
+      name: 'NPI OSB-3 Kronospan 11x1220x2440 mm',
+      price: '95,00',
+      unit: 'm²',
+      url: '/osb-m2',
+      sku: 'm2',
+    },
+  ]),
+);
+assert.equal(findSheetOffer(davidsenOffers, 'mdf', 19, 1220, 2440)?.price, 431.64);
+assert.equal(findSheetOffer(davidsenOffers, 'mdf', 19, 1220, 2440)?.shop, 'Davidsen');
+assert.equal(davidsenOffers.some((offer) => offer.kind === 'osb'), false);
+assert.equal(
+  offersFromDavidsenHtml(
+    davidsenPage([
+      {
+        name: 'Keflico MDF E1 standard 19 mm 122x244 cm',
+        price: '431,64',
+        unit: 'plade',
+        url: '/mdf',
+        sku: '1',
+      },
+    ]).replace(davidsenVat, 'uden moms'),
+  ).length,
+  0,
+);
+
+function jemProduct(name: string, price: string, amount: number, url: string, sku: string) {
+  return {
+    title: name,
+    url,
+    erpItemNo: sku,
+    price: {
+      priceUnitText: 'stk.',
+      priceInclVatFormatted: price,
+      unitPriceInclVat: amount,
+      handlingPriceInclVat: amount,
+      multiPricesShow: false,
+    },
+  };
+}
+const jemOffers = offersFromJemHtml(
+  `<html>"searchResultsSSR":${JSON.stringify([
+    jemProduct('MDF plade 19 mm - 80 x 120 cm', '279,00', 279, '/mdf-plade-19-mm-80-x-120-cm/4138/9018806/', '9018806'),
+    jemProduct('Krydsfiner nåletræ 12 mm - 122 x 244 cm', '289,00', 289, '/krydsfiner-naaletrae/4131/9054770/', '9054770'),
+    jemProduct('OSB-3 plade SE 10 mm - 1197 x 2390 mm', '199,00', 180, '/osb/1/', '1'),
+  ])}</html>`,
+);
+assert.equal(findSheetOffer(jemOffers, 'mdf', 19, 800, 1200)?.price, 279);
+assert.equal(findSheetOffer(jemOffers, 'mdf', 19, 800, 1200)?.shop, 'Jem & Fix');
+assert.equal(findSheetOffer(jemOffers, 'fyr', 12, 1220, 2440), null);
+assert.equal(jemOffers.some((offer) => offer.sku === '1'), false);
+
+function bygmaPage(prices: unknown[], name: string) {
+  const data = JSON.stringify({ Prices: prices }).replace(/"/g, '&quot;');
+  return `<html><div data-is-bygmaster="false" data-unit-of-measure-over-unit-price="False" data-product-code="100p102414" data-m3-data="${data}"><h1>${name}</h1></div><link rel="canonical" href="https://www.bygma.dk/byggematerialer/byggeplader/mdf-plader/mdf-19/"></html>`;
+}
+const bygmaPrice = {
+  Factor: 2.9768,
+  Pristype: 0,
+  NetPrice: 162.95,
+  LowestQuantityLimitBasicUm: 1,
+  SalesPriceUnitOfMeasure: 'PL',
+};
+const bygmaOffers = offersFromBygmaHtml(
+  bygmaPage(
+    [
+      bygmaPrice,
+      { ...bygmaPrice, Pristype: 2, NetPrice: 100 },
+    ],
+    'MDF plader 19mm - 122x244cm - Klasse E1',
+  ),
+  true,
+);
+assert.equal(findSheetOffer(bygmaOffers, 'mdf', 19, 1220, 2440)?.price, 485.07);
+assert.equal(findSheetOffer(bygmaOffers, 'mdf', 19, 1220, 2440)?.shop, 'Bygma');
+assert.equal(
+  offersFromBygmaHtml(bygmaPage([bygmaPrice], 'MDF plader 19mm - 122x244cm - Klasse E1'), false).length,
+  0,
+);
+assert.equal(
+  offersFromBygmaHtml(
+    bygmaPage([{ ...bygmaPrice, SalesPriceUnitOfMeasure: 'M2', Factor: 1 }], 'MDF plader 19mm - 122x244cm'),
+    true,
+  ).length,
+  0,
+);
+
 const compared = findSheetOffer(
   [
     ...(findSheetOffer(offers, 'mdf', 19, 1220, 2440) ? [findSheetOffer(offers, 'mdf', 19, 1220, 2440)!] : []),
@@ -549,7 +713,18 @@ assert.equal(first.stale, false);
 assert.equal(first.offers.length, 1);
 assert.equal(first.offers[0]?.price, 306);
 assert.equal(first.shops.map((shop) => shop.name).sort().join(','), '10-4.dk,Silvan,XL-BYG');
-const shopFetches = TENFOUR_CATEGORY_IDS.length + 1 + XL_CATEGORY_URLS.length + STARK_CATEGORY_PATHS.length + FOG_LIST_URLS.length;
+const shopFetches =
+  TENFOUR_CATEGORY_IDS.length +
+  1 +
+  XL_CATEGORY_URLS.length +
+  STARK_CATEGORY_PATHS.length +
+  FOG_LIST_URLS.length +
+  BAUHAUS_CATEGORY_URLS.length +
+  DAVIDSEN_CATEGORY_URLS.length +
+  JEM_CATEGORY_URLS.length +
+  BYGMA_SEARCH_URLS.length +
+  1;
+assert.equal(BYGMA_TERMS_URL.startsWith('https://www.bygma.dk/'), true);
 assert.equal(calls, shopFetches);
 const second = await loadSheetPrices(mockFetch, 2_000);
 assert.equal(calls, shopFetches);
@@ -598,6 +773,10 @@ assert.equal(PLANNER_MARKUP.includes('Silvan'), true);
 assert.equal(PLANNER_MARKUP.includes('XL-BYG'), true);
 assert.equal(PLANNER_MARKUP.includes('STARK'), true);
 assert.equal(PLANNER_MARKUP.includes('Johannes Fog'), true);
+assert.equal(PLANNER_MARKUP.includes('Bauhaus'), true);
+assert.equal(PLANNER_MARKUP.includes('Davidsen'), true);
+assert.equal(PLANNER_MARKUP.includes('Jem &amp; Fix'), true);
+assert.equal(PLANNER_MARKUP.includes('Bygma'), true);
 assert.equal(PLANNER_MARKUP.includes('Din pris'), false);
 assert.equal(PLANNER_MARKUP.includes('du skriver selv'), false);
 assert.equal(PLANNER_MARKUP.includes('dine priser'), false);

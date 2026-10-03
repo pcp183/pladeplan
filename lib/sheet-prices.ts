@@ -9,10 +9,39 @@ import { offersFromSilvanHtml, SILVAN_LIST_URL, SILVAN_SHOP, silvanParsed } from
 import { offersFromXlHtml, XL_CATEGORY_URLS, XL_SHOP, xlParsed, xlProductUrl, xlSheetSlugs } from './xlbyg-prices.ts';
 import { FOG_LIST_URLS, FOG_SHOP, fogParsed, offersFromFogHtml } from './fog-prices.ts';
 import { offersFromStarkPayload, STARK_CATEGORY_PATHS, STARK_SHOP, starkCategoryUrl, starkParsed } from './stark-prices.ts';
+import { BAUHAUS_CATEGORY_URLS, BAUHAUS_SHOP, bauhausParsed, offersFromBauhausHtml } from './bauhaus-prices.ts';
+import { DAVIDSEN_CATEGORY_URLS, DAVIDSEN_SHOP, davidsenParsed, offersFromDavidsenHtml } from './davidsen-prices.ts';
+import { JEM_CATEGORY_URLS, JEM_SHOP, jemParsed, offersFromJemHtml } from './jemfix-prices.ts';
+import {
+  BYGMA_SEARCH_URLS,
+  BYGMA_SHOP,
+  BYGMA_TERMS_URL,
+  bygmaParsed,
+  bygmaSheetUrls,
+  bygmaTermsIncludeVat,
+  offersFromBygmaHtml,
+} from './bygma-prices.ts';
 
 export { findSheetOffer, kindFromName, SHEET_KINDS };
 export type { SheetKind, SheetOffer };
-export { offersFromSilvanHtml, offersFromXlHtml, offersFromFogHtml, offersFromStarkPayload, XL_CATEGORY_URLS, FOG_LIST_URLS, STARK_CATEGORY_PATHS };
+export {
+  offersFromSilvanHtml,
+  offersFromXlHtml,
+  offersFromFogHtml,
+  offersFromStarkPayload,
+  offersFromBauhausHtml,
+  offersFromDavidsenHtml,
+  offersFromJemHtml,
+  offersFromBygmaHtml,
+  XL_CATEGORY_URLS,
+  FOG_LIST_URLS,
+  STARK_CATEGORY_PATHS,
+  BAUHAUS_CATEGORY_URLS,
+  DAVIDSEN_CATEGORY_URLS,
+  JEM_CATEGORY_URLS,
+  BYGMA_SEARCH_URLS,
+  BYGMA_TERMS_URL,
+};
 
 export const TENFOUR_CATEGORY_IDS = [63, 62, 64, 66, 58, 59, 61] as const;
 
@@ -22,6 +51,10 @@ export const SHEET_SHOPS = [
   { name: XL_SHOP, url: 'https://www.xl-byg.dk' },
   { name: STARK_SHOP, url: 'https://www.stark.dk' },
   { name: FOG_SHOP, url: 'https://www.johannesfog.dk' },
+  { name: BAUHAUS_SHOP, url: 'https://www.bauhaus.dk' },
+  { name: DAVIDSEN_SHOP, url: 'https://www.davidsen.dk' },
+  { name: JEM_SHOP, url: 'https://www.jemogfix.dk' },
+  { name: BYGMA_SHOP, url: 'https://www.bygma.dk' },
 ] as const;
 
 export const SHEET_PRICE_NOTE =
@@ -92,6 +125,10 @@ export async function loadSheetPrices(
     loadXl(fetchImpl),
     loadStark(fetchImpl),
     loadFog(fetchImpl),
+    loadBauhaus(fetchImpl),
+    loadDavidsen(fetchImpl),
+    loadJem(fetchImpl),
+    loadBygma(fetchImpl),
   ]);
   const ready = loads.filter((load) => load.ok);
   if (!ready.length) {
@@ -173,6 +210,83 @@ async function loadFog(fetchImpl: FetchLike): Promise<ShopLoad> {
   }
 }
 
+async function loadBauhaus(fetchImpl: FetchLike): Promise<ShopLoad> {
+  const shop = { name: BAUHAUS_SHOP, url: 'https://www.bauhaus.dk' };
+  try {
+    const pages: string[] = [];
+    await mapPool([...BAUHAUS_CATEGORY_URLS], 4, async (url) => {
+      const html = await fetchText(url, fetchImpl);
+      if (html != null) pages.push(html);
+    });
+    if (!pages.length) return { ok: false, shop, offers: [] };
+    return { ok: true, shop, offers: dedupeOffers(pages.flatMap((html) => bauhausParsed(html))) };
+  } catch {
+    return { ok: false, shop, offers: [] };
+  }
+}
+
+async function loadDavidsen(fetchImpl: FetchLike): Promise<ShopLoad> {
+  const shop = { name: DAVIDSEN_SHOP, url: 'https://www.davidsen.dk' };
+  try {
+    const pages: string[] = [];
+    await mapPool([...DAVIDSEN_CATEGORY_URLS], 4, async (url) => {
+      const html = await fetchText(url, fetchImpl);
+      if (html != null) pages.push(html);
+    });
+    if (!pages.length) return { ok: false, shop, offers: [] };
+    return { ok: true, shop, offers: dedupeOffers(pages.flatMap((html) => davidsenParsed(html))) };
+  } catch {
+    return { ok: false, shop, offers: [] };
+  }
+}
+
+async function loadJem(fetchImpl: FetchLike): Promise<ShopLoad> {
+  const shop = { name: JEM_SHOP, url: 'https://www.jemogfix.dk' };
+  try {
+    const pages: string[] = [];
+    await mapPool([...JEM_CATEGORY_URLS], 4, async (url) => {
+      const html = await fetchText(url, fetchImpl);
+      if (html != null) pages.push(html);
+    });
+    if (!pages.length) return { ok: false, shop, offers: [] };
+    return { ok: true, shop, offers: dedupeOffers(pages.flatMap((html) => jemParsed(html))) };
+  } catch {
+    return { ok: false, shop, offers: [] };
+  }
+}
+
+async function loadBygma(fetchImpl: FetchLike): Promise<ShopLoad> {
+  const shop = { name: BYGMA_SHOP, url: 'https://www.bygma.dk' };
+  try {
+    const termsPromise = fetchText(BYGMA_TERMS_URL, fetchImpl);
+    const searches: unknown[] = [];
+    await Promise.all([
+      termsPromise,
+      mapPool([...BYGMA_SEARCH_URLS], 4, async (url) => {
+        const payload = await fetchJson(
+          url,
+          fetchImpl,
+          JSON.stringify({ query: '', filters: [], pageSize: 80, pageNumber: 1, sortOrder: 1, includeContent: false }),
+        );
+        if (payload != null) searches.push(payload);
+      }),
+    ]);
+    const terms = await termsPromise;
+    const vat = terms != null && bygmaTermsIncludeVat(terms);
+    if (!vat || !searches.length) return { ok: false, shop, offers: [] };
+    const urls = [...new Set(searches.flatMap((payload) => bygmaSheetUrls(payload)))].slice(0, 48);
+    const pages: string[] = [];
+    await mapPool(urls, 6, async (url) => {
+      const html = await fetchText(url, fetchImpl);
+      if (html != null) pages.push(html);
+    });
+    if (urls.length && !pages.length) return { ok: false, shop, offers: [] };
+    return { ok: true, shop, offers: dedupeOffers(pages.flatMap((html) => bygmaParsed(html, true))) };
+  } catch {
+    return { ok: false, shop, offers: [] };
+  }
+}
+
 async function loadXl(fetchImpl: FetchLike): Promise<ShopLoad> {
   const shop = { name: XL_SHOP, url: 'https://www.xl-byg.dk' };
   try {
@@ -211,12 +325,15 @@ async function loadXl(fetchImpl: FetchLike): Promise<ShopLoad> {
   }
 }
 
-async function fetchJson(url: string, fetchImpl: FetchLike): Promise<unknown | null> {
+async function fetchJson(url: string, fetchImpl: FetchLike, body?: string): Promise<unknown | null> {
   const response = await fetchImpl(url, {
+    method: body == null ? 'GET' : 'POST',
     headers: {
       Accept: 'application/json',
       'User-Agent': USER_AGENT,
+      ...(body == null ? {} : { 'Content-Type': 'application/json' }),
     },
+    body,
     cache: 'no-store',
     signal: AbortSignal.timeout(12000),
   });

@@ -291,7 +291,7 @@ function bindBoardUI(root){
 
 /* ---------- Pladepris fra butikker ---------- */
 const RETAIL_CACHE_KEY='skaereseddel-retail-prices';
-const SHOP_HOSTS={'10-4.dk':'https://www.10-4.dk/','Silvan':'https://www.silvan.dk/','XL-BYG':'https://www.xl-byg.dk/','STARK':'https://www.stark.dk/','Johannes Fog':'https://www.johannesfog.dk/'};
+const SHOP_HOSTS={'10-4.dk':'https://www.10-4.dk/','Silvan':'https://www.silvan.dk/','XL-BYG':'https://www.xl-byg.dk/','STARK':'https://www.stark.dk/','Johannes Fog':'https://www.johannesfog.dk/','Bauhaus':'https://www.bauhaus.dk/','Davidsen':'https://www.davidsen.dk/','Jem & Fix':'https://www.jemogfix.dk/','Bygma':'https://www.bygma.dk/'};
 let sheetPriceBook=null;
 let sheetPriceLoad=null;
 function kr(n){return n.toLocaleString('da-DK',{minimumFractionDigits:Math.round(n*100)%100?2:0,maximumFractionDigits:2})+' kr.'}
