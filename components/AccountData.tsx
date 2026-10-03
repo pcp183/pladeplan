@@ -64,6 +64,7 @@ export function AccountData({ email }: { email: string | null }) {
       }
       try {
         sessionStorage.removeItem('pladeplan-migrate-asked');
+        sessionStorage.removeItem('skaereseddel-retail-prices');
         sessionStorage.setItem('pladeplan-account-deleted', '1');
       } catch {
         /* ignore */

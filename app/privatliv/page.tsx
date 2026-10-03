@@ -66,11 +66,16 @@ export default function PrivacyPage() {
             </li>
             <li>
               <strong>Skæresedler:</strong> når du er logget ind og trykker Gem, gemmes navnet på skæresedlen, plademål, emner,
-              savindstillinger, de pladepriser du selv har skrevet, og tidspunkt sammen med dit Clerk-bruger-id. Det sker kun, hvis databasen er sat op.
+              savindstillinger og tidspunkt sammen med dit Clerk-bruger-id. Det sker kun, hvis databasen er sat op. Ældre
+              skæresedler kan stadig indeholde en pris, du selv har skrevet, indtil de gemmes igen.
             </li>
             <li>
-              <strong>Kladde på enheden:</strong> browseren kan gemme kladden, lokale skæresedler og de pladepriser, du selv
-              skriver, i localStorage. De sendes ikke til serveren, før du gemmer en skæreseddel på kontoen.
+              <strong>Pladepris:</strong> efter beregning henter serveren offentlige varepriser fra 10-4.dk, Silvan, XL-BYG, STARK, Johannes Fog, Bauhaus, Davidsen, Jem & Fix og Bygma.
+              Emnelisten sendes ikke til butikkerne. Prisen kan være forældet, og der vises ingen pris, hvis varen ikke findes.
+            </li>
+            <li>
+              <strong>Kladde på enheden:</strong> browseren kan gemme kladden og lokale skæresedler i localStorage. De sendes
+              ikke til serveren, før du gemmer en skæreseddel på kontoen.
             </li>
             <li>
               <strong>Drift:</strong> Clerk og værten (Vercel) kan kortvarigt logge tekniske oplysninger som tidspunkt
