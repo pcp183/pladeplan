@@ -158,7 +158,7 @@ function copyCutlist(){
   let mat=materialLabel();
   let lines=[name,`${mat?mat+' · ':''}${dim(result.W)} × ${dim(result.H)} mm · savspor ${dim(+$('#kerf').value)} mm · kantfraskær ${dim(+$('#trim').value)} mm`,`${result.s.length} ${result.s.length===1?'plade':'plader'} · ${result.ps.length} emner · brugt ${(result.ps.reduce((n,a)=>n+a.w*a.h,0)/1e6).toFixed(2).replace('.',',')} m² · udnyttelse ${fmt(result.y)}% · spild ${fmt(100-result.y)}%`];
   let unit=activeUnitPrice();
-  if(unit){let total=unit*result.s.length,used=result.ps.reduce((n,a)=>n+a.w*a.h,0),area=result.W*result.H*result.s.length;lines.push(`Pris ${kr(total)} · ${used>0?kr(total/(used/1e6))+' pr. nyttig m² · ':''}${area>0?kr(total*((area-used)/area))+' heraf spild':''} · 10-4.dk, kan være forældet`)}
+  if(unit){let total=unit*result.s.length,used=result.ps.reduce((n,a)=>n+a.w*a.h,0),area=result.W*result.H*result.s.length,q=currentQuote();lines.push(`Pris ${kr(total)} · ${used>0?kr(total/(used/1e6))+' pr. nyttig m² · ':''}${area>0?kr(total*((area-used)/area))+' heraf spild':''} · ${q.offer?q.offer.shop:'butik'}, kan være forældet`)}
   lines.push('');
   result.s.forEach((s,i)=>{
     lines.push(`Plade ${i+1} (${s.pieces.length} stk.)`);
@@ -172,7 +172,7 @@ function copyCutlist(){
 }
 function copyText(text,done){if(navigator.clipboard&&navigator.clipboard.writeText){navigator.clipboard.writeText(text).then(done).catch(()=>fallbackCopy(text,done))}else fallbackCopy(text,done)}
 function fallbackCopy(text,done){let ta=document.createElement('textarea');ta.value=text;ta.setAttribute('readonly','');ta.style.position='fixed';ta.style.left='-9999px';document.body.append(ta);ta.select();try{document.execCommand('copy');done()}catch{toast('Kunne ikke kopiere — brug CSV i stedet')}ta.remove()}
-function updatePrintHeader(){let t=$('#printTitle'),m=$('#printMeta'),d=$('#printDate');if(!t)return;t.textContent=$('#projectName').value.trim()||'Skæreseddel';if(d)d.textContent='Udskrevet '+new Date().toLocaleString('da-DK',{dateStyle:'medium',timeStyle:'short'});if(!result){m.textContent='';return}let mat=materialLabel(),unit=activeUnitPrice(),price='';if(unit){let total=unit*result.s.length,used=result.ps.reduce((n,a)=>n+a.w*a.h,0);price=` · pris ${kr(total)} (10-4.dk)`;if(used>0)price+=` · ${kr(total/(used/1e6))} pr. nyttig m²`}m.textContent=`${mat?mat+' · ':''}${result.s.length} ${result.s.length===1?'plade':'plader'} · ${result.ps.length} emner · ${dim(result.W)} × ${dim(result.H)} mm · savspor ${dim(+$('#kerf').value)} mm · kantfraskær ${dim(+$('#trim').value)} mm · udnyttelse ${fmt(result.y)}% · spild ${fmt(100-result.y)}%${price}`}
+function updatePrintHeader(){let t=$('#printTitle'),m=$('#printMeta'),d=$('#printDate');if(!t)return;t.textContent=$('#projectName').value.trim()||'Skæreseddel';if(d)d.textContent='Udskrevet '+new Date().toLocaleString('da-DK',{dateStyle:'medium',timeStyle:'short'});if(!result){m.textContent='';return}let mat=materialLabel(),unit=activeUnitPrice(),price='';if(unit){let total=unit*result.s.length,used=result.ps.reduce((n,a)=>n+a.w*a.h,0),q=currentQuote();price=` · pris ${kr(total)} (${q.offer?q.offer.shop:'butik'})`;if(used>0)price+=` · ${kr(total/(used/1e6))} pr. nyttig m²`}m.textContent=`${mat?mat+' · ':''}${result.s.length} ${result.s.length===1?'plade':'plader'} · ${result.ps.length} emner · ${dim(result.W)} × ${dim(result.H)} mm · savspor ${dim(+$('#kerf').value)} mm · kantfraskær ${dim(+$('#trim').value)} mm · udnyttelse ${fmt(result.y)}% · spild ${fmt(100-result.y)}%${price}`}
 function state(){let o=materialOption();return{id:activeProjectId,n:$('#projectName').value,m:$('#material').selectedIndex,mid:o?o.value:'',w:$('#sheetW').value,h:$('#sheetH').value,k:$('#kerf').value,t:$('#trim').value,r:$('#rotate').checked,p:rows()}}
 function store(){try{localStorage.setItem('pladeplan',JSON.stringify(state()))}catch{}}
 function markStale(){if(result){$('#resultSubtitle').textContent='Ændret – tryk “Opdater skæreplan” for at opdatere';$('.result').classList.add('stale');syncStaleBar();syncCalcLabel();setExportEnabled(false);syncPriceStat()}}
@@ -289,8 +289,9 @@ function bindBoardUI(root){
   });
 }
 
-/* ---------- Pladepris fra 10-4.dk ---------- */
+/* ---------- Pladepris fra butikker ---------- */
 const RETAIL_CACHE_KEY='skaereseddel-retail-prices';
+const SHOP_HOSTS={'10-4.dk':'https://www.10-4.dk/','Silvan':'https://www.silvan.dk/','XL-BYG':'https://www.xl-byg.dk/'};
 let sheetPriceBook=null;
 let sheetPriceLoad=null;
 function kr(n){return n.toLocaleString('da-DK',{minimumFractionDigits:Math.round(n*100)%100?2:0,maximumFractionDigits:2})+' kr.'}
@@ -307,7 +308,18 @@ function kindFromOption(opt){
   return '';
 }
 function offerOk(o){
-  return !!(o&&typeof o.kind==='string'&&typeof o.price==='number'&&o.price>0&&o.price<100000&&typeof o.url==='string'&&o.url.startsWith('https://www.10-4.dk/')&&typeof o.productName==='string');
+  let host=o&&SHOP_HOSTS[o.shop];
+  return !!(host&&typeof o.kind==='string'&&typeof o.price==='number'&&o.price>0&&o.price<100000&&typeof o.url==='string'&&o.url.startsWith(host)&&typeof o.productName==='string'&&o.productName.length<160);
+}
+function joinDa(names){
+  let list=names.filter(Boolean);
+  if(!list.length)return 'butikkerne';
+  if(list.length===1)return list[0];
+  return list.slice(0,-1).join(', ')+' og '+list[list.length-1];
+}
+function shopNames(){
+  let names=Array.isArray(sheetPriceBook?.shops)?sheetPriceBook.shops.map(s=>s&&SHOP_HOSTS[s.name]?s.name:'').filter(Boolean):[];
+  return names.length?names:Object.keys(SHOP_HOSTS);
 }
 function readRetailCache(){
   try{
@@ -335,25 +347,24 @@ function loadSheetPrices(force){
     })
     .catch(()=>{
       if(sheetPriceBook&&sheetPriceBook.ok){sheetPriceBook={...sheetPriceBook,stale:true};if(result)renderPrices();return}
-      sheetPriceBook={ok:false,stale:false,offers:[],note:'Pladeprisen kunne ikke hentes fra 10-4.dk.',sourceName:'10-4.dk',fetchedAt:null};
+      sheetPriceBook={ok:false,stale:false,offers:[],shops:[],note:'Pladeprisen kunne ikke hentes hos butikkerne.',sourceName:'butikkerne',fetchedAt:null};
       if(result)renderPrices();
     });
   return sheetPriceLoad;
 }
 function retrySheetPrices(){sheetPriceLoad=null;sheetPriceBook=null;try{sessionStorage.removeItem(RETAIL_CACHE_KEY)}catch{}if(result)renderPrices();loadSheetPrices(true)}
-function sheetOfferFor(kind,thick,w,h){
-  if(!sheetPriceBook||sheetPriceBook.ok!==true||!kind)return null;
+function sheetOffersFor(kind,thick,w,h){
+  if(!sheetPriceBook||sheetPriceBook.ok!==true||!kind)return [];
   thick=+thick;w=Math.round(+w);h=Math.round(+h);
-  if(!(thick>0)||!(w>0)||!(h>0))return null;
-  let hit=null;
-  for(let o of sheetPriceBook.offers){
-    if(!offerOk(o)||o.kind!==kind||Math.abs(+o.thick-thick)>0.05)continue;
+  if(!(thick>0)||!(w>0)||!(h>0))return [];
+  return sheetPriceBook.offers.filter(o=>{
+    if(!offerOk(o)||o.kind!==kind||Math.abs(+o.thick-thick)>0.05)return false;
     let ow=Math.round(+o.w),oh=Math.round(+o.h);
-    if(!((ow===w&&oh===h)||(ow===h&&oh===w)))continue;
-    if(hit)return null;
-    hit=o;
-  }
-  return hit;
+    return (ow===w&&oh===h)||(ow===h&&oh===w);
+  }).sort((a,b)=>a.price-b.price||String(a.shop).localeCompare(String(b.shop),'da'));
+}
+function sheetOfferFor(kind,thick,w,h){
+  return sheetOffersFor(kind,thick,w,h)[0]||null;
 }
 function currentQuote(){
   if(!result)return {status:'idle'};
@@ -408,10 +419,11 @@ function priceLabel(offer){
 }
 function compareRowHtml(r){
   let m=r.m;
-  let meta=m.ok?`${m.sheets} ${m.sheets===1?'plade':'plader'} · spild ${m.area?fmt(m.waste/m.area*100):'0'}%`:'Passer ikke på pladen';
+  let shop=r.offer&&r.offer.shop?r.offer.shop:'';
+  let meta=m.ok?`${m.sheets} ${m.sheets===1?'plade':'plader'} · spild ${m.area?fmt(m.waste/m.area*100):'0'}%${shop?' · '+shop:''}`:'Passer ikke på pladen';
   let use=r.current?'<span class="cmpvalgt">Valgt</span>':`<button type="button" class="btn small cmpuse" data-useformat="${esc(r.id)}" ${m.ok?'':'disabled'}>Brug</button>`;
   let priced=!!(r.offer&&m.ok);
-  return `<div class="cmprow${r.current?' is-current':''}${m.ok?'':' impossible'}" data-mid="${esc(r.id)}" data-group="${r.group}" data-current="${r.current?'1':'0'}" data-ok="${m.ok?'1':'0'}" data-sheets="${m.sheets||0}" data-area="${m.area||0}" data-waste="${m.waste||0}"${priced?` data-price="${r.offer.price}"`:''}><div><div class="cmpname">${esc(r.name)}</div><div class="cmpmeta">${esc(meta)}</div></div><div class="cmpprice${priced?'':' missing'}">${esc(priceLabel(r.offer))}</div><div><div class="cmptotal">—</div><div class="cmpwaste"></div></div>${use}</div>`;
+  return `<div class="cmprow${r.current?' is-current':''}${m.ok?'':' impossible'}" data-mid="${esc(r.id)}" data-group="${r.group}" data-current="${r.current?'1':'0'}" data-ok="${m.ok?'1':'0'}" data-sheets="${m.sheets||0}" data-area="${m.area||0}" data-waste="${m.waste||0}"${shop?` data-shop="${esc(shop)}"`:''}${priced?` data-price="${r.offer.price}"`:''}><div><div class="cmpname">${esc(r.name)}</div><div class="cmpmeta">${esc(meta)}</div></div><div class="cmpprice${priced?'':' missing'}">${esc(priceLabel(r.offer))}</div><div><div class="cmptotal">—</div><div class="cmpwaste"></div></div>${use}</div>`;
 }
 function renderPrices(){
   let panel=$('#costPanel'),block=$('#compareBlock'),list=$('#priceList');
@@ -422,7 +434,7 @@ function renderPrices(){
   if($('.result').classList.contains('stale')){paintCosts();return}
   let plan=comparePlan();
   let hint=$('#compareHint');
-  if(hint)hint.textContent=plan.rows.filter(r=>r.group==='primary').length>1?'Samme tykkelse · 10-4.dk':'Ét standardmål · 10-4.dk';
+  if(hint)hint.textContent=plan.rows.filter(r=>r.group==='primary').length>1?'Samme tykkelse · billigste butik':'Ét standardmål';
   let primary=plan.rows.filter(r=>r.group==='primary').sort((a,b)=>Number(b.current)-Number(a.current));
   if(list)list.innerHTML=primary.length?`<div class="cmpgroup">${esc(materialLabel()||'Valgt plade')}</div>`+primary.map(compareRowHtml).join(''):'';
   document.querySelectorAll('#priceList [data-useformat]').forEach(btn=>{btn.onclick=()=>useFormat(btn.dataset.useformat)});
@@ -457,17 +469,17 @@ function paintCosts(){
   let unit=quote.status==='ok'?quote.offer.price:null;
   if(!unit){
     totalEl.classList.add('unset');
-    if(quote.status==='loading'){totalEl.textContent='Henter pris…';if(sub)sub.textContent='Slår pladeprisen op hos 10-4.dk.'}
-    else if(quote.status==='error'){totalEl.textContent='Ikke hentet';if(sub)sub.textContent='Pladeprisen kunne ikke hentes fra 10-4.dk. Der vises ingen pris.'}
+    if(quote.status==='loading'){totalEl.textContent='Henter pris…';if(sub)sub.textContent=`Slår pladeprisen op hos ${joinDa(shopNames())}.`}
+    else if(quote.status==='error'){totalEl.textContent='Ikke hentet';if(sub)sub.textContent='Pladeprisen kunne ikke hentes. Der vises ingen pris.'}
     else if(quote.status==='custom'){totalEl.textContent='Ikke fundet';if(sub)sub.textContent='Vælg en pladetype med tykkelse. Tilpasset mål alene kan ikke slås op.'}
-    else{totalEl.textContent='Ikke fundet';if(sub)sub.textContent=`Vi fandt ikke en pris på ${mat||'denne plade'} i ${dim(result.W)} × ${dim(result.H)} mm hos 10-4.dk.`}
+    else{totalEl.textContent='Ikke fundet';if(sub)sub.textContent=`Vi fandt ikke en pris på ${mat||'denne plade'} i ${dim(result.W)} × ${dim(result.H)} mm. Butikker uden match vises ikke.`}
     if(per)per.textContent='—';
     if(wasteEl)wasteEl.textContent='—';
   }else{
     let total=unit*sheets;
     totalEl.textContent=kr(total);
     totalEl.classList.remove('unset');
-    if(sub)sub.textContent=`${sheets} ${sheets===1?'plade':'plader'} à ${kr(unit)} · ${quote.offer.productName}${mat?' · '+mat:''} · ${dim(result.W)} × ${dim(result.H)} mm`;
+    if(sub)sub.textContent=`${sheets} ${sheets===1?'plade':'plader'} à ${kr(unit)} · ${quote.offer.productName} · hos ${quote.offer.shop}${mat?' · '+mat:''} · ${dim(result.W)} × ${dim(result.H)} mm`;
     if(per)per.textContent=used>0?kr(total/(used/1e6)):'—';
     if(wasteEl)wasteEl.textContent=area>0?kr(total*(waste/area)):'—';
   }
@@ -490,7 +502,7 @@ function paintCosts(){
     let wasteCost=rowArea>0?total*(rowWaste/rowArea):0;
     if(totalNode)totalNode.textContent=kr(total);
     if(wasteNode)wasteNode.textContent='heraf '+kr(wasteCost)+' spild';
-    priced.push({row,total,sheets:nSheets,id:row.dataset.mid,current:row.dataset.current==='1',name:row.querySelector('.cmpname')?.textContent||'Format',wasteCost});
+    priced.push({row,total,sheets:nSheets,id:row.dataset.mid,current:row.dataset.current==='1',name:row.querySelector('.cmpname')?.textContent||'Format',shop:row.dataset.shop||'',wasteCost});
   });
   let best=null;
   if(priced.length>1){
@@ -502,16 +514,17 @@ function paintCosts(){
   if(source){
     if(quote.status==='ok'){
       let when=fetchedLabel(sheetPriceBook?.fetchedAt);
-      let stale=sheetPriceBook?.stale?' Et nyt opslag lykkedes ikke, så tallet kan være forældet.':' Prisen kan være forældet.';
-      let link=quote.offer.url.startsWith('https://www.10-4.dk/')?` <a href="${esc(quote.offer.url)}" target="_blank" rel="noopener noreferrer">Se varen hos 10-4.dk</a>`:'';
-      source.innerHTML=`Kilde: 10-4.dk${when?' · hentet '+esc(when):''}.${esc(stale)}${link}`;
+      let stale=sheetPriceBook?.stale?' Et nyt opslag lykkedes ikke, så tallene kan være forældede.':' Prisen kan være forældet.';
+      let offers=sheetOffersFor(quote.offer.kind,quote.offer.thick,quote.offer.w,quote.offer.h);
+      let bits=offers.map(o=>`<a href="${esc(o.url)}" target="_blank" rel="noopener noreferrer">${esc(o.shop)}</a> ${esc(kr(o.price))}`);
+      source.innerHTML=`Priser: ${joinHtml(bits)}.${when?' Hentet '+esc(when)+'.':''}${esc(stale)}`;
     }else if(quote.status==='error'){
-      source.innerHTML='Kilden er 10-4.dk. <button type="button" class="textbtn" id="retryPrices">Prøv igen</button>';
+      source.innerHTML='Opslaget fejlede. <button type="button" class="textbtn" id="retryPrices">Prøv igen</button>';
       let b=$('#retryPrices');if(b)b.onclick=()=>retrySheetPrices();
     }else if(quote.status==='loading'){
-      source.textContent='Prisen hentes fra 10-4.dk og vises først, når opslaget er færdigt.';
+      source.textContent=`Prisen hentes hos ${joinDa(shopNames())} og vises først, når opslaget er færdigt.`;
     }else{
-      source.textContent='Kilde: 10-4.dk. Der gættes ikke en pris, når varen ikke findes.';
+      source.textContent='Der gættes ikke en pris, når varen ikke findes.';
     }
   }
   if(!note)return;
@@ -529,15 +542,20 @@ function paintCosts(){
   if(!openSiblings.length){note.textContent='De andre mål i denne tykkelse kan ikke rumme emnerne.';return}
   let more=unpriced.length?` Pris mangler på ${unpriced.length===1?'ét andet mål':unpriced.length+' andre mål'}.`:'';
   if(!others.length){note.textContent='Vi fandt ikke priser på de andre mål, så de kan ikke sammenlignes.'+more;return}
-  if(best&&best.current){note.textContent='Dette format er billigst hos 10-4.dk.'+more;return}
+  if(best&&best.current){note.textContent=`Dette format hos ${best.shop||'butikken'} er billigst.`+more;return}
   if(best&&current){
     let diff=current.total-best.total;
     note.className='outcome-note';
-    note.innerHTML=`${esc(best.name)} er billigst: ${esc(kr(best.total))} for ${best.sheets} ${best.sheets===1?'plade':'plader'} — ${esc(kr(diff))} mindre end det valgte. <button type="button" class="textbtn" id="useBest" data-useformat="${esc(best.id)}">Brug dette format</button>${esc(more)}`;
+    note.innerHTML=`${esc(best.name)} hos ${esc(best.shop||'butikken')} er billigst: ${esc(kr(best.total))} for ${best.sheets} ${best.sheets===1?'plade':'plader'} — ${esc(kr(diff))} mindre end det valgte. <button type="button" class="textbtn" id="useBest" data-useformat="${esc(best.id)}">Brug dette format</button>${esc(more)}`;
     let b=$('#useBest');if(b)b.onclick=()=>useFormat(best.id);
     return;
   }
-  note.textContent='Sammenligningen bruger de priser, 10-4.dk viser.';
+  note.textContent='Sammenligningen bruger den billigste pris, butikkerne viser for hvert format.';
+}
+function joinHtml(bits){
+  if(bits.length<=1)return bits[0]||'';
+  if(bits.length===2)return bits[0]+' og '+bits[1];
+  return bits.slice(0,-1).join(', ')+' og '+bits[bits.length-1];
 }
 
 /* ---------- Beregning ---------- */
@@ -599,7 +617,8 @@ function exportCSV(){
       ['Pris i alt',kr(total)].map(csvCell).join(';'),
       ['Pris pr. nyttig m²',used>0?kr(total/(used/1e6)):''].map(csvCell).join(';'),
       ['Heraf spild',area>0?kr(total*((area-used)/area)):''].map(csvCell).join(';'),
-      ['Priskilde','10-4.dk'].map(csvCell).join(';'),
+      ['Priskilde',q.offer?q.offer.shop:''].map(csvCell).join(';'),
+      ['Prislink',q.offer?q.offer.url:''].map(csvCell).join(';'),
       ['Prisvare',q.offer?q.offer.productName:''].map(csvCell).join(';'),
       ['Prisnote','Kan være forældet'].map(csvCell).join(';')
     ]})():[]),

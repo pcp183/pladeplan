@@ -83,7 +83,7 @@ GitHub Pages kan ikke køre Clerk eller API-ruterne. Den tidligere statiske `ind
 
 ## Adfærd
 
-- **Pladepris:** efter beregning slår Skæreseddel prisen op hos [10-4.dk](https://www.10-4.dk) for de pladetyper og mål, butikken faktisk fører. Opslaget caches i op til 6 timer. Siden viser kilden, hvornår prisen er hentet, og at den kan være forældet. Findes varen ikke, eller kan opslaget ikke gennemføres, vises ingen pris. Der er ikke et felt, hvor brugeren selv skriver prisen.
+- **Pladepris:** efter beregning slår Skæreseddel prisen op hos [10-4.dk](https://www.10-4.dk), [Silvan](https://www.silvan.dk) og [XL-BYG](https://www.xl-byg.dk) for de pladetyper og mål, butikkerne faktisk fører. Den billigste butik og det billigste format vises. En butik uden match udelades. Opslaget caches i op til 6 timer. Siden viser butik, varelink, hvornår prisen er hentet, og at den kan være forældet. Findes varen ikke, eller kan opslaget ikke gennemføres, vises ingen pris. Der er ikke et felt, hvor brugeren selv skriver prisen.
 - **Uden login:** beregn, del via link, CSV, udskrift og lokale skæresedler som før.
 - **Med login:** «Gem», omdøb, duplikér og slet skriver til kontoen. En kladde, der ikke er gemt, bliver i browseren.
 - **Første login:** hvis enheden har lokale skæresedler, kan de flyttes til kontoen.

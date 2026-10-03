@@ -1,37 +1,37 @@
 /**
- * Pladepriser fra 10-4.dk's offentlige produkt-API.
+ * Pladepriser fra offentlige danske butikssider.
  * Her ligger ingen priser. Beløb kommer kun fra svaret, og kun når
- * mål, enhed og moms kan læses entydigt.
+ * vare, mål, enhed og moms kan læses entydigt.
  */
 
-export const SHEET_KINDS = ['mdf', 'span', 'melamin', 'birk', 'fyr', 'osb', 'hdf', 'lim'] as const;
-export type SheetKind = (typeof SHEET_KINDS)[number];
+import { dedupeOffers, findSheetOffer, kindFromName, SHEET_KINDS, type ParsedSheet, type SheetKind, type SheetOffer } from './sheet-match.ts';
+import { offersFromSilvanHtml, SILVAN_LIST_URL, SILVAN_SHOP, silvanParsed } from './silvan-prices.ts';
+import { offersFromXlHtml, XL_CATEGORY_URLS, XL_SHOP, xlParsed, xlProductUrl, xlSheetSlugs } from './xlbyg-prices.ts';
+
+export { findSheetOffer, kindFromName, SHEET_KINDS };
+export type { SheetKind, SheetOffer };
+export { offersFromSilvanHtml, offersFromXlHtml, XL_CATEGORY_URLS };
 
 export const TENFOUR_CATEGORY_IDS = [63, 62, 64, 66, 58, 59, 61] as const;
 
-export const SHEET_PRICE_SOURCE = {
-  name: '10-4.dk',
-  url: 'https://www.10-4.dk',
-} as const;
+export const SHEET_SHOPS = [
+  { name: '10-4.dk', url: 'https://www.10-4.dk' },
+  { name: SILVAN_SHOP, url: 'https://www.silvan.dk' },
+  { name: XL_SHOP, url: 'https://www.xl-byg.dk' },
+] as const;
 
 export const SHEET_PRICE_NOTE =
-  'Prisen er hentet fra 10-4.dk og kan være forældet. Kontrollér varen, før du køber.';
+  'Priserne er hentet hos butikkerne og kan være forældede. Kontrollér varen, før du køber.';
 
-const SOURCE_ORIGIN = 'https://www.10-4.dk';
+const TENFOUR_ORIGIN = 'https://www.10-4.dk';
 const PRODUCTS_URL = 'https://d1fn9evouep5ml.cloudfront.net/backend/api/shop/products';
+const USER_AGENT = 'Skaereseddel/1.0 (sheet price lookup; +https://github.com/pcp183/pladeplan)';
 const TTL_MS = 6 * 60 * 60 * 1000;
 const FAIL_TTL_MS = 45 * 1000;
+const XL_FAMILY_PAGES = 10;
+const XL_VARIANT_PAGES = 14;
 
-export type SheetOffer = {
-  kind: SheetKind;
-  thick: number;
-  w: number;
-  h: number;
-  price: number;
-  productName: string;
-  sku: string;
-  url: string;
-};
+export type SheetShop = { name: string; url: string };
 
 export type SheetPriceResponse = {
   ok: boolean;
@@ -39,13 +39,13 @@ export type SheetPriceResponse = {
   fetchedAt: string | null;
   sourceName: string;
   sourceUrl: string;
+  shops: SheetShop[];
   note: string;
   offers: SheetOffer[];
 };
 
 type FetchLike = (input: string, init?: RequestInit) => Promise<Response>;
-
-type ParsedSheet = SheetOffer & { penalty: number };
+type ShopLoad = { ok: boolean; shop: SheetShop; offers: SheetOffer[] };
 
 const cache: { expires: number; book: SheetPriceResponse } = { expires: 0, book: emptyBook() };
 
@@ -54,9 +54,10 @@ function emptyBook(): SheetPriceResponse {
     ok: false,
     stale: false,
     fetchedAt: null,
-    sourceName: SHEET_PRICE_SOURCE.name,
-    sourceUrl: SHEET_PRICE_SOURCE.url,
-    note: 'Pladeprisen kunne ikke hentes fra 10-4.dk.',
+    sourceName: joinNames(SHEET_SHOPS.map((shop) => shop.name)),
+    sourceUrl: SHEET_SHOPS[0].url,
+    shops: [],
+    note: 'Pladeprisen kunne ikke hentes hos butikkerne.',
     offers: [],
   };
 }
@@ -69,41 +70,10 @@ export function clearSheetPriceCache(): void {
 export function offersFromProducts(products: unknown[]): SheetOffer[] {
   const parsed: ParsedSheet[] = [];
   for (const product of products) {
-    const sheet = parseProduct(product);
+    const sheet = parseTenfour(product);
     if (sheet) parsed.push(sheet);
   }
-  const best = new Map<string, ParsedSheet>();
-  for (const sheet of parsed) {
-    const key = slotKey(sheet);
-    const current = best.get(key);
-    if (!current || sheet.penalty < current.penalty || (sheet.penalty === current.penalty && sheet.price < current.price)) {
-      best.set(key, sheet);
-    }
-  }
-  return [...best.values()]
-    .map(({ penalty: _penalty, ...offer }) => offer)
-    .sort((a, b) => a.kind.localeCompare(b.kind) || a.thick - b.thick || a.w - b.w || a.h - b.h);
-}
-
-export function findSheetOffer(
-  offers: readonly SheetOffer[],
-  kind: string,
-  thick: number,
-  w: number,
-  h: number,
-): SheetOffer | null {
-  if (!SHEET_KINDS.includes(kind as SheetKind)) return null;
-  if (!Number.isFinite(thick) || !Number.isFinite(w) || !Number.isFinite(h)) return null;
-  const width = Math.round(w);
-  const height = Math.round(h);
-  if (!(thick > 0) || !(width > 0) || !(height > 0)) return null;
-  const hits = offers.filter(
-    (offer) =>
-      offer.kind === kind &&
-      Math.abs(offer.thick - thick) < 0.05 &&
-      ((offer.w === width && offer.h === height) || (offer.w === height && offer.h === width)),
-  );
-  return hits.length === 1 ? hits[0] : null;
+  return dedupeOffers(parsed);
 }
 
 export async function loadSheetPrices(
@@ -112,21 +82,13 @@ export async function loadSheetPrices(
 ): Promise<SheetPriceResponse> {
   if (cache.expires > now) return cache.book;
   const previous = cache.book.ok ? cache.book : null;
-  try {
-    const lists = await Promise.all(TENFOUR_CATEGORY_IDS.map((id) => fetchCategory(id, fetchImpl)));
-    const book: SheetPriceResponse = {
-      ok: true,
-      stale: false,
-      fetchedAt: new Date(now).toISOString(),
-      sourceName: SHEET_PRICE_SOURCE.name,
-      sourceUrl: SHEET_PRICE_SOURCE.url,
-      note: SHEET_PRICE_NOTE,
-      offers: offersFromProducts(lists.flat()),
-    };
-    cache.expires = now + TTL_MS;
-    cache.book = book;
-    return book;
-  } catch {
+  const loads = await Promise.all([
+    loadTenfour(fetchImpl),
+    loadSilvan(fetchImpl),
+    loadXl(fetchImpl),
+  ]);
+  const ready = loads.filter((load) => load.ok);
+  if (!ready.length) {
     if (previous) {
       const stale = { ...previous, stale: true };
       cache.book = stale;
@@ -138,6 +100,92 @@ export async function loadSheetPrices(
     cache.expires = now + FAIL_TTL_MS;
     return failed;
   }
+  const shops = ready.map((load) => load.shop);
+  const book: SheetPriceResponse = {
+    ok: true,
+    stale: false,
+    fetchedAt: new Date(now).toISOString(),
+    sourceName: joinNames(shops.map((shop) => shop.name)),
+    sourceUrl: shops[0]?.url ?? SHEET_SHOPS[0].url,
+    shops,
+    note: SHEET_PRICE_NOTE,
+    offers: dedupeOffers(ready.flatMap((load) => load.offers.map((offer) => ({ ...offer, penalty: 0 })))),
+  };
+  cache.expires = now + TTL_MS;
+  cache.book = book;
+  return book;
+}
+
+async function loadTenfour(fetchImpl: FetchLike): Promise<ShopLoad> {
+  const shop = { name: '10-4.dk', url: 'https://www.10-4.dk' };
+  try {
+    const lists = await Promise.all(TENFOUR_CATEGORY_IDS.map((id) => fetchCategory(id, fetchImpl)));
+    return { ok: true, shop, offers: offersFromProducts(lists.flat()) };
+  } catch {
+    return { ok: false, shop, offers: [] };
+  }
+}
+
+async function loadSilvan(fetchImpl: FetchLike): Promise<ShopLoad> {
+  const shop = { name: SILVAN_SHOP, url: 'https://www.silvan.dk' };
+  try {
+    const html = await fetchText(SILVAN_LIST_URL, fetchImpl);
+    if (html == null) return { ok: false, shop, offers: [] };
+    return { ok: true, shop, offers: dedupeOffers(silvanParsed(html)) };
+  } catch {
+    return { ok: false, shop, offers: [] };
+  }
+}
+
+async function loadXl(fetchImpl: FetchLike): Promise<ShopLoad> {
+  const shop = { name: XL_SHOP, url: 'https://www.xl-byg.dk' };
+  try {
+    const pages: string[] = [];
+    await mapPool([...XL_CATEGORY_URLS], 4, async (url) => {
+      const html = await fetchText(url, fetchImpl);
+      if (html != null) pages.push(html);
+    });
+    if (!pages.length) return { ok: false, shop, offers: [] };
+    const seen = new Set<string>();
+    const first = xlSheetSlugs(pages.join('\n')).filter((slug) => !seen.has(slug));
+    first.forEach((slug) => seen.add(slug));
+    const family: string[] = [];
+    await mapPool(first.slice(0, XL_FAMILY_PAGES), 4, async (slug) => {
+      const url = xlProductUrl(slug);
+      if (!url) return;
+      const html = await fetchText(url, fetchImpl);
+      if (html != null) family.push(html);
+    });
+    const variants = xlSheetSlugs(family.join('\n')).filter((slug) => !seen.has(slug));
+    variants.forEach((slug) => seen.add(slug));
+    const extra: string[] = [];
+    await mapPool(variants.slice(0, XL_VARIANT_PAGES), 4, async (slug) => {
+      const url = xlProductUrl(slug);
+      if (!url) return;
+      const html = await fetchText(url, fetchImpl);
+      if (html != null) extra.push(html);
+    });
+    return {
+      ok: true,
+      shop,
+      offers: dedupeOffers([...pages, ...family, ...extra].flatMap((html) => xlParsed(html))),
+    };
+  } catch {
+    return { ok: false, shop, offers: [] };
+  }
+}
+
+async function fetchText(url: string, fetchImpl: FetchLike): Promise<string | null> {
+  const response = await fetchImpl(url, {
+    headers: {
+      Accept: 'text/html,application/xhtml+xml',
+      'User-Agent': USER_AGENT,
+    },
+    cache: 'no-store',
+    signal: AbortSignal.timeout(12000),
+  });
+  if (!response.ok) return null;
+  return response.text();
 }
 
 async function fetchCategory(id: number, fetchImpl: FetchLike): Promise<unknown[]> {
@@ -148,7 +196,7 @@ async function fetchCategory(id: number, fetchImpl: FetchLike): Promise<unknown[
     const response = await fetchImpl(url, {
       headers: {
         Accept: 'application/json',
-        'User-Agent': 'Skaereseddel/1.0 (sheet price lookup; +https://github.com/pcp183/pladeplan)',
+        'User-Agent': USER_AGENT,
       },
       cache: 'no-store',
       signal: AbortSignal.timeout(12000),
@@ -164,14 +212,27 @@ async function fetchCategory(id: number, fetchImpl: FetchLike): Promise<unknown[
   return all;
 }
 
-function parseProduct(product: unknown): ParsedSheet | null {
+async function mapPool<T>(items: readonly T[], limit: number, fn: (item: T) => Promise<void>): Promise<void> {
+  if (!items.length) return;
+  let index = 0;
+  const workers = Array.from({ length: Math.min(limit, items.length) }, async () => {
+    while (index < items.length) {
+      const current = items[index];
+      index += 1;
+      await fn(current);
+    }
+  });
+  await Promise.all(workers);
+}
+
+function parseTenfour(product: unknown): ParsedSheet | null {
   if (!product || typeof product !== 'object') return null;
   const record = product as Record<string, unknown>;
   if (typeof record.name !== 'string') return null;
   const productName = record.name.replace(/\s+/g, ' ').trim();
   if (!productName || productName.length > 120) return null;
   const kind = kindFromName(productName);
-  if (!kind || rejected(kind, productName)) return null;
+  if (!kind || rejectedTenfour(kind, productName)) return null;
   const price = publicGross(record.prices);
   if (price == null) return null;
   const unit = customField(record.custom_fields, 'salgsenhed');
@@ -179,11 +240,12 @@ function parseProduct(product: unknown): ParsedSheet | null {
   const sku = (customField(record.custom_fields, 'varenummer') ?? '').trim();
   if (!/^[A-Za-z0-9-]{3,40}$/.test(sku)) return null;
   const path = routePath(record.static_routes);
-  const url = path ? productUrl(path) : null;
+  const url = path ? tenfourUrl(path) : null;
   if (!url) return null;
   const dims = dimensions(record.variants, customField(record.custom_fields, 'varetekst2'));
   if (!dims) return null;
   return {
+    shop: '10-4.dk',
     kind,
     thick: dims.thick,
     w: dims.w,
@@ -196,20 +258,7 @@ function parseProduct(product: unknown): ParsedSheet | null {
   };
 }
 
-export function kindFromName(name: string): SheetKind | null {
-  const text = name.toLowerCase();
-  if (text.includes('melamin')) return 'melamin';
-  if (text.includes('masonit') || text.includes('hdf')) return 'hdf';
-  if (/\bosb\b/.test(text)) return 'osb';
-  if (text.includes('mdf')) return 'mdf';
-  if (text.includes('krydsfiner') && text.includes('birk')) return 'birk';
-  if (text.includes('krydsfiner') && /(fyr|pine|radiata)/.test(text) && !text.includes('gran')) return 'fyr';
-  if ((text.includes('limtræ') || text.includes('limtrae')) && text.includes('plade')) return 'lim';
-  if (text.includes('spånplade') || text.includes('spaanplade')) return 'span';
-  return null;
-}
-
-function rejected(kind: SheetKind, name: string): boolean {
+function rejectedTenfour(kind: SheetKind, name: string): boolean {
   const text = name.toLowerCase();
   if (kind === 'mdf' && /sort|grundmalet|finér|finer|vandfast/.test(text)) return true;
   if (kind === 'span' && /melamin|gulv|thermo|vådrum|vaadrum|fer/.test(text)) return true;
@@ -273,9 +322,9 @@ function routePath(routes: unknown): string | null {
   return null;
 }
 
-function productUrl(path: string): string | null {
+function tenfourUrl(path: string): string | null {
   if (!/^\/[a-z0-9/-]+$/i.test(path) || path.includes('//')) return null;
-  return `${SOURCE_ORIGIN}/varer${path}`;
+  return `${TENFOUR_ORIGIN}/varer${path}`;
 }
 
 function dimensions(
@@ -342,8 +391,8 @@ function textDims(value: string | null): { thick: number; w: number; h: number }
   return { thick, w, h };
 }
 
-function slotKey(sheet: ParsedSheet): string {
-  const a = Math.min(sheet.w, sheet.h);
-  const b = Math.max(sheet.w, sheet.h);
-  return `${sheet.kind}|${Math.round(sheet.thick * 10)}|${a}|${b}`;
+function joinNames(names: string[]): string {
+  if (names.length === 0) return 'butikkerne';
+  if (names.length === 1) return names[0];
+  return `${names.slice(0, -1).join(', ')} og ${names[names.length - 1]}`;
 }

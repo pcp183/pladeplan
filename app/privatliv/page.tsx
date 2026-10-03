@@ -70,8 +70,8 @@ export default function PrivacyPage() {
               skæresedler kan stadig indeholde en pris, du selv har skrevet, indtil de gemmes igen.
             </li>
             <li>
-              <strong>Pladepris:</strong> efter beregning henter serveren offentlige varepriser fra 10-4.dk. Emnelisten sendes
-              ikke til butikken. Prisen kan være forældet, og der vises ingen pris, hvis varen ikke findes.
+              <strong>Pladepris:</strong> efter beregning henter serveren offentlige varepriser fra 10-4.dk, Silvan og XL-BYG.
+              Emnelisten sendes ikke til butikkerne. Prisen kan være forældet, og der vises ingen pris, hvis varen ikke findes.
             </li>
             <li>
               <strong>Kladde på enheden:</strong> browseren kan gemme kladden og lokale skæresedler i localStorage. De sendes

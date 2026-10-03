@@ -1,6 +1,7 @@
 import { loadSheetPrices } from '@/lib/sheet-prices';
 
 export const runtime = 'nodejs';
+export const maxDuration = 60;
 
 export async function GET() {
   const book = await loadSheetPrices();
