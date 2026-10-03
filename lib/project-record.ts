@@ -12,9 +12,9 @@ export type StoredProject = {
   k: string;
   t: string;
   r: boolean;
-  /** Valgfri pris pr. plade, som brugeren selv har skrevet. */
+  /** Ældre felt: pris brugeren selv skrev. Nye skæresedler udelader det. */
   pr?: string;
-  /** Priser pr. pladetype, som brugeren selv har skrevet. Nøglen er pladetype-id. */
+  /** Ældre felt: priser pr. pladetype, som brugeren selv skrev. */
   px?: Record<string, string>;
   p: string[][];
   updatedAt: string;

@@ -6,7 +6,7 @@
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
-    "test": "node scripts/test-pack.mjs && node --experimental-strip-types scripts/test-projects.mts && node --experimental-strip-types scripts/test-billing.mts"
+    "test": "node scripts/test-pack.mjs && node --experimental-strip-types scripts/test-projects.mts && node --experimental-strip-types scripts/test-billing.mts && node --experimental-strip-types scripts/test-sheet-prices.mts"
   },
   "dependencies": {
     "@clerk/localizations": "^4.20.0",
