@@ -7,10 +7,12 @@
 import { dedupeOffers, findSheetOffer, kindFromName, SHEET_KINDS, type ParsedSheet, type SheetKind, type SheetOffer } from './sheet-match.ts';
 import { offersFromSilvanHtml, SILVAN_LIST_URL, SILVAN_SHOP, silvanParsed } from './silvan-prices.ts';
 import { offersFromXlHtml, XL_CATEGORY_URLS, XL_SHOP, xlParsed, xlProductUrl, xlSheetSlugs } from './xlbyg-prices.ts';
+import { FOG_LIST_URLS, FOG_SHOP, fogParsed, offersFromFogHtml } from './fog-prices.ts';
+import { offersFromStarkPayload, STARK_CATEGORY_PATHS, STARK_SHOP, starkCategoryUrl, starkParsed } from './stark-prices.ts';
 
 export { findSheetOffer, kindFromName, SHEET_KINDS };
 export type { SheetKind, SheetOffer };
-export { offersFromSilvanHtml, offersFromXlHtml, XL_CATEGORY_URLS };
+export { offersFromSilvanHtml, offersFromXlHtml, offersFromFogHtml, offersFromStarkPayload, XL_CATEGORY_URLS, FOG_LIST_URLS, STARK_CATEGORY_PATHS };
 
 export const TENFOUR_CATEGORY_IDS = [63, 62, 64, 66, 58, 59, 61] as const;
 
@@ -18,6 +20,8 @@ export const SHEET_SHOPS = [
   { name: '10-4.dk', url: 'https://www.10-4.dk' },
   { name: SILVAN_SHOP, url: 'https://www.silvan.dk' },
   { name: XL_SHOP, url: 'https://www.xl-byg.dk' },
+  { name: STARK_SHOP, url: 'https://www.stark.dk' },
+  { name: FOG_SHOP, url: 'https://www.johannesfog.dk' },
 ] as const;
 
 export const SHEET_PRICE_NOTE =
@@ -86,6 +90,8 @@ export async function loadSheetPrices(
     loadTenfour(fetchImpl),
     loadSilvan(fetchImpl),
     loadXl(fetchImpl),
+    loadStark(fetchImpl),
+    loadFog(fetchImpl),
   ]);
   const ready = loads.filter((load) => load.ok);
   if (!ready.length) {
@@ -137,6 +143,36 @@ async function loadSilvan(fetchImpl: FetchLike): Promise<ShopLoad> {
   }
 }
 
+async function loadStark(fetchImpl: FetchLike): Promise<ShopLoad> {
+  const shop = { name: STARK_SHOP, url: 'https://www.stark.dk' };
+  try {
+    const payloads: unknown[] = [];
+    await mapPool([...STARK_CATEGORY_PATHS], 4, async (path) => {
+      const payload = await fetchJson(starkCategoryUrl(path), fetchImpl);
+      if (payload != null) payloads.push(payload);
+    });
+    if (!payloads.length) return { ok: false, shop, offers: [] };
+    return { ok: true, shop, offers: dedupeOffers(payloads.flatMap((payload) => starkParsed(payload))) };
+  } catch {
+    return { ok: false, shop, offers: [] };
+  }
+}
+
+async function loadFog(fetchImpl: FetchLike): Promise<ShopLoad> {
+  const shop = { name: FOG_SHOP, url: 'https://www.johannesfog.dk' };
+  try {
+    const pages: string[] = [];
+    await mapPool([...FOG_LIST_URLS], 4, async (url) => {
+      const html = await fetchText(url, fetchImpl);
+      if (html != null) pages.push(html);
+    });
+    if (!pages.length) return { ok: false, shop, offers: [] };
+    return { ok: true, shop, offers: dedupeOffers(pages.flatMap((html) => fogParsed(html))) };
+  } catch {
+    return { ok: false, shop, offers: [] };
+  }
+}
+
 async function loadXl(fetchImpl: FetchLike): Promise<ShopLoad> {
   const shop = { name: XL_SHOP, url: 'https://www.xl-byg.dk' };
   try {
@@ -173,6 +209,19 @@ async function loadXl(fetchImpl: FetchLike): Promise<ShopLoad> {
   } catch {
     return { ok: false, shop, offers: [] };
   }
+}
+
+async function fetchJson(url: string, fetchImpl: FetchLike): Promise<unknown | null> {
+  const response = await fetchImpl(url, {
+    headers: {
+      Accept: 'application/json',
+      'User-Agent': USER_AGENT,
+    },
+    cache: 'no-store',
+    signal: AbortSignal.timeout(12000),
+  });
+  if (!response.ok) return null;
+  return response.json();
 }
 
 async function fetchText(url: string, fetchImpl: FetchLike): Promise<string | null> {

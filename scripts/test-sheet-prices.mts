@@ -8,7 +8,11 @@ import {
   kindFromName,
   loadSheetPrices,
   offersFromProducts,
+  FOG_LIST_URLS,
+  STARK_CATEGORY_PATHS,
+  offersFromFogHtml,
   offersFromSilvanHtml,
+  offersFromStarkPayload,
   offersFromXlHtml,
   type SheetOffer,
 } from '../lib/sheet-prices.ts';
@@ -297,6 +301,212 @@ assert.equal(
   0,
 );
 
+function starkVariant(overrides: Record<string, unknown> = {}) {
+  return {
+    DisplayName: '9583465 - 19 mm x 1220 mm x 2440 mm',
+    ProductName: 'RAW Standard MDF Plade',
+    Unit: 'PL',
+    SalesUnit: 'M2, m²',
+    StandardPriceExVat: '45009',
+    StandardPriceInVat: '56261',
+    CampaignType: 4,
+    CampaignPriceExVat: 40508,
+    CampaignPriceInVat: 50635,
+    ProductUrl: '/raw-standard-mdf-plade-19-mm-1220-mm-2440-mm?id=4220-9583465',
+    Sku: '4220#9583465',
+    ...overrides,
+  };
+}
+const starkOffers = offersFromStarkPayload({
+  Products: [
+    {
+      Variants: [
+        starkVariant(),
+        starkVariant({
+          DisplayName: '9648332 - 15 mm x 1220 mm x 2440 mm',
+          ProductName: 'RAW OSB3 Gulv/Tag TG2',
+          StandardPriceExVat: '40484',
+          StandardPriceInVat: '50605',
+          ProductUrl: '/raw-osb3-gulv-tag-tg2-15?id=4220-9646009',
+          Sku: '4220#9646009',
+        }),
+        starkVariant({
+          DisplayName: '9648332 - 15 mm x 1220 mm x 2440 mm',
+          ProductName: 'RAW OSB3 SQ Plade',
+          StandardPriceExVat: '42390',
+          StandardPriceInVat: '52988',
+          ProductUrl: '/raw-osb3-sq-plade-15?id=4220-9648332',
+          Sku: '4220#9648332',
+        }),
+        starkVariant({
+          DisplayName: '9757300 - 18 mm x 1250 mm x 2500 mm',
+          ProductName: 'Film/Film WBP Birkekrydsfiner',
+          StandardPriceExVat: '156000',
+          StandardPriceInVat: '195000',
+          ProductUrl: '/film-birk?id=4220-9757300',
+          Sku: '4220#9757300',
+        }),
+        starkVariant({
+          DisplayName: '9526569 - 12 mm x 1220 mm x 2440 mm',
+          ProductName: 'RAW Sporplade Radiata Pine Krydsfiner',
+          Type: 'Profileret krydsfinér',
+          StandardPriceExVat: '50487',
+          StandardPriceInVat: '63109',
+          ProductUrl: '/raw-sporplade?id=4220-9526569',
+          Sku: '4220#9526569',
+        }),
+      ],
+    },
+  ],
+});
+assert.equal(findSheetOffer(starkOffers, 'mdf', 19, 1220, 2440)?.price, 562.61);
+assert.equal(findSheetOffer(starkOffers, 'mdf', 19, 1220, 2440)?.shop, 'STARK');
+assert.equal(findSheetOffer(starkOffers, 'mdf', 19, 1220, 2440)?.url, 'https://www.stark.dk/raw-standard-mdf-plade-19-mm-1220-mm-2440-mm?id=4220-9583465');
+assert.equal(findSheetOffer(starkOffers, 'osb', 15, 1220, 2440)?.sku, '4220-9648332');
+assert.equal(findSheetOffer(starkOffers, 'osb', 15, 1220, 2440)?.price, 529.88);
+assert.equal(starkOffers.some((offer) => offer.productName.includes('Film')), false);
+assert.equal(starkOffers.some((offer) => offer.productName.includes('Sporplade')), false);
+assert.equal(offersFromStarkPayload({ Products: [{ Variants: [starkVariant({ Unit: 'M2' })] }] }).length, 0);
+assert.equal(
+  offersFromStarkPayload({
+    Products: [{ Variants: [starkVariant({ StandardPriceInVat: '10000', StandardPriceExVat: '45009' })] }],
+  }).length,
+  0,
+);
+assert.equal(
+  offersFromStarkPayload({
+    Products: [
+      {
+        Variants: [
+          starkVariant({
+            CampaignType: 5,
+            CampaignPriceExVat: 40000,
+            CampaignPriceInVat: 50000,
+            StandardPriceExVat: '45009',
+            StandardPriceInVat: '56261',
+          }),
+        ],
+      },
+    ],
+  })[0]?.price,
+  500,
+);
+
+function fogPage(items: Record<string, unknown>[], tax = true) {
+  const data = {
+    props: {
+      pageProps: {
+        dehydratedState: {
+          queries: [
+            { queryKey: ['frame', 'da-dk', '/'], state: { data: { market: { pricesIncludeTax: tax } } } },
+            { queryKey: ['filterEntities', {}], state: { data: { results: { items } } } },
+          ],
+        },
+      },
+    },
+  };
+  return `<html><script id="__NEXT_DATA__" type="application/json">${JSON.stringify(data)}</script></html>`;
+}
+function fogItem(fields: Record<string, string | number | null>) {
+  return {
+    id: fields.SKU ?? '1',
+    attributes: Object.entries(fields).map(([name, value]) => ({ name, values: value == null ? [] : [value] })),
+  };
+}
+const fogOffers = offersFromFogHtml(
+  fogPage([
+    fogItem({
+      ItemName: '12MM MDF E1 INDVENDIG',
+      ItemName2: '1220X2440MM',
+      SalesUnit: 'plade',
+      PriceInclVat: 413.775,
+      PriceExclVat: 331.02,
+      ItemUrl: '/byggematerialer/byggeplader/traeplader/mdf/12mm-mdf',
+      SKU: '2631001',
+    }),
+    fogItem({
+      ItemName: 'OSB3 SE BYGGEPLADE 11MM',
+      ItemName2: '2440X1220MM',
+      SalesUnit: 'plade',
+      PriceInclVat: 198.9875,
+      PriceExclVat: 159.19,
+      ItemUrl: '/byggematerialer/byggeplader/traeplader/spaanplader/osb3-se-11mm',
+      SKU: '2442684',
+    }),
+    fogItem({
+      ItemName: 'OSB 3 TAG/GULV TG2 11MM',
+      ItemName2: '1220X2440MM',
+      SalesUnit: 'plade',
+      PriceInclVat: 150,
+      PriceExclVat: 120,
+      ItemUrl: '/byggematerialer/byggeplader/traeplader/tag-og-gulvplader/osb-tg2-11',
+      SKU: '2442690',
+    }),
+    fogItem({
+      ItemName: 'TRÆFIBER HÅRD 3X1220X2440MM',
+      ItemName2: '',
+      SalesUnit: 'plade',
+      PriceInclVat: 163.575,
+      PriceExclVat: 130.86,
+      ItemUrl: '/byggematerialer/byggeplader/traeplader/traefiberplader/traefiber-hard-3',
+      SKU: '1695001',
+    }),
+    fogItem({
+      ItemName: 'TRÆFIBER HÅRD OLIEHÆRDET 3MM',
+      ItemName2: '1220X2440MM',
+      SalesUnit: 'plade',
+      PriceInclVat: 100,
+      PriceExclVat: 80,
+      ItemUrl: '/byggematerialer/byggeplader/traeplader/traefiberplader/olie',
+      SKU: '1695002',
+    }),
+    fogItem({
+      ItemName: 'NPI MDF E-1 16MM',
+      ItemName2: '800X1200MM',
+      SalesUnit: 'plade',
+      PriceInclVat: 199,
+      PriceExclVat: 159.2,
+      ItemUrl: '/byggematerialer/byggeplader/traeplader/mdf/npi-mdf-16',
+      SKU: '1958471',
+      ItemThicknessMm: 16,
+    }),
+    fogItem({
+      ItemName: 'SPÅNPLADE LD 19MM',
+      ItemName2: '2500X1220MM',
+      SalesUnit: 'm²',
+      PriceInclVat: 545.95,
+      PriceExclVat: 436.76,
+      ItemUrl: '/byggematerialer/byggeplader/traeplader/spaanplader/span-19',
+      SKU: '1845581',
+    }),
+  ]),
+);
+assert.equal(findSheetOffer(fogOffers, 'mdf', 12, 1220, 2440)?.shop, 'Johannes Fog');
+assert.equal(findSheetOffer(fogOffers, 'mdf', 12, 1220, 2440)?.price, 413.78);
+assert.equal(findSheetOffer(fogOffers, 'osb', 11, 2440, 1220)?.price, 198.99);
+assert.equal(findSheetOffer(fogOffers, 'osb', 11, 1220, 2440)?.sku, '2442684');
+assert.equal(findSheetOffer(fogOffers, 'hdf', 3, 1220, 2440)?.price, 163.58);
+assert.equal(fogOffers.some((offer) => offer.productName.includes('OLIE')), false);
+assert.equal(findSheetOffer(fogOffers, 'mdf', 16, 800, 1200)?.price, 199);
+assert.equal(fogOffers.some((offer) => offer.kind === 'span'), false);
+assert.equal(offersFromFogHtml(fogPage([fogItem({ ItemName: '12MM MDF E1 INDVENDIG', ItemName2: '1220X2440MM', SalesUnit: 'plade', PriceInclVat: 413.775, PriceExclVat: 331.02, ItemUrl: '/mdf', SKU: '2631001' })], false)).length, 0);
+assert.equal(
+  offersFromFogHtml(
+    fogPage([
+      fogItem({
+        ItemName: '12MM MDF E1 INDVENDIG',
+        ItemName2: '1220X2440MM',
+        SalesUnit: 'plade',
+        PriceInclVat: 100,
+        PriceExclVat: 331.02,
+        ItemUrl: '/mdf',
+        SKU: '2631001',
+      }),
+    ]),
+  ).length,
+  0,
+);
+
 const compared = findSheetOffer(
   [
     ...(findSheetOffer(offers, 'mdf', 19, 1220, 2440) ? [findSheetOffer(offers, 'mdf', 19, 1220, 2440)!] : []),
@@ -339,9 +549,10 @@ assert.equal(first.stale, false);
 assert.equal(first.offers.length, 1);
 assert.equal(first.offers[0]?.price, 306);
 assert.equal(first.shops.map((shop) => shop.name).sort().join(','), '10-4.dk,Silvan,XL-BYG');
-assert.equal(calls, TENFOUR_CATEGORY_IDS.length + 1 + XL_CATEGORY_URLS.length);
+const shopFetches = TENFOUR_CATEGORY_IDS.length + 1 + XL_CATEGORY_URLS.length + STARK_CATEGORY_PATHS.length + FOG_LIST_URLS.length;
+assert.equal(calls, shopFetches);
 const second = await loadSheetPrices(mockFetch, 2_000);
-assert.equal(calls, TENFOUR_CATEGORY_IDS.length + 1 + XL_CATEGORY_URLS.length);
+assert.equal(calls, shopFetches);
 assert.equal(second.fetchedAt, first.fetchedAt);
 
 clearSheetPriceCache();
@@ -385,6 +596,8 @@ assert.ok(partialCalls > 0);
 assert.equal(PLANNER_MARKUP.includes('id="sheetPrice"'), false);
 assert.equal(PLANNER_MARKUP.includes('Silvan'), true);
 assert.equal(PLANNER_MARKUP.includes('XL-BYG'), true);
+assert.equal(PLANNER_MARKUP.includes('STARK'), true);
+assert.equal(PLANNER_MARKUP.includes('Johannes Fog'), true);
 assert.equal(PLANNER_MARKUP.includes('Din pris'), false);
 assert.equal(PLANNER_MARKUP.includes('du skriver selv'), false);
 assert.equal(PLANNER_MARKUP.includes('dine priser'), false);

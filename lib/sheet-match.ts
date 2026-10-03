@@ -36,7 +36,7 @@ export function kindFromName(name: string): SheetKind | null {
   const text = foldDanish(name);
   if (text.includes('melamin')) return 'melamin';
   if (text.includes('masonit') || text.includes('hdf') || (text.includes('haard') && text.includes('traefiber'))) return 'hdf';
-  if (/\bosb\b/.test(text)) return 'osb';
+  if (/\bosb\d?\b/.test(text)) return 'osb';
   if (text.includes('mdf')) return 'mdf';
   if (text.includes('krydsfiner') && text.includes('birk')) return 'birk';
   if (text.includes('krydsfiner') && /(fyr|pine|radiata)/.test(text) && !text.includes('gran')) return 'fyr';
@@ -53,25 +53,28 @@ export function classifySheet(name: string): { kind: SheetKind; penalty: number 
 
 function rejected(kind: SheetKind, name: string): boolean {
   const text = foldDanish(name);
-  if (/tagkrydsfiner|filmbelagt|profileret|trailer|stoeb|akustik|facade/.test(text)) return true;
+  if (/tagkrydsfiner|filmbelagt|\bfilm\b|profileret|sporplade|trailer|stoeb|akustik|facade/.test(text)) return true;
   if (kind === 'mdf' && /sort|grundmalet|finer|vandfast/.test(text)) return true;
   if (kind === 'span' && /melamin|gulv|thermo|vaadrum|fer/.test(text)) return true;
   if (kind === 'melamin' && !text.includes('hvid')) return true;
   if (kind === 'lim' && text.includes('bjaelke')) return true;
   if (kind === 'fyr' && text.includes('gran')) return true;
   if (kind === 'birk' && text.includes('gran')) return true;
+  if (kind === 'hdf' && /oliehaerdet|hvidmalet|\bhvid\b|\bmalet\b/.test(text)) return true;
   return false;
 }
 
 function penaltyFor(kind: SheetKind, name: string): number {
   const text = foldDanish(name);
-  if (kind === 'osb' && /tg2|tg4|gulv|fer/.test(text)) return 5;
+  if ((kind === 'osb' || kind === 'fyr' || kind === 'birk') && /tg2|tg4|gulv|\btag\b|fer/.test(text)) return 5;
   return 0;
 }
 
 export function sheetDims(text: string | null | undefined): SheetSize | null {
   if (!text) return null;
-  const match = text.match(/(\d+(?:[.,]\d+)?)\s*[x×]\s*(\d+(?:[.,]\d+)?)\s*[x×]\s*(\d+(?:[.,]\d+)?)/i);
+  const match = text.match(
+    /(\d+(?:[.,]\d+)?)\s*(?:mm)?\s*[x×]\s*(\d+(?:[.,]\d+)?)\s*(?:mm)?\s*[x×]\s*(\d+(?:[.,]\d+)?)/i,
+  );
   if (!match) return null;
   const thick = Number(match[1].replace(',', '.'));
   const w = Math.round(Number(match[2].replace(',', '.')));
