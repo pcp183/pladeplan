@@ -499,7 +499,7 @@ select.select{text-overflow:ellipsis}
 .calcstep{display:flex;align-items:center;gap:8px;margin:0 0 8px;font-size:15px;font-weight:800;color:var(--ink)}
 .calcwrap.ready .calculate{box-shadow:0 0 0 3px #d5e7da,0 6px 18px #163a2b22}
 .owntools{margin:-4px 0 12px}
-.owntools[hidden],#deleteOwnSheet[hidden],#ownSheetGroup[hidden]{display:none!important}
+.owntools[hidden],#deleteOwnSheet[hidden]{display:none!important}
 .owntools .textbtn{border:0;background:transparent;color:#15392a;font-weight:750;font-size:13px;text-decoration:underline;padding:0;cursor:pointer}
 #ownSheetDialog{width:min(460px,calc(100vw - 28px))}
 .ownform{display:grid;gap:12px}

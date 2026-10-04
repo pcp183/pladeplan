@@ -941,8 +941,8 @@ function renderOwnOptions(){
   let group=$('#ownSheetGroup');if(!group)return;
   let selected=$('#material').value;
   let list=loadOwnSheets();
-  group.hidden=!list.length;
-  group.innerHTML=list.map(s=>`<option value="${esc(s.id)}" data-own="1" data-w="${s.w}" data-h="${s.h}" data-thick="${s.thick}" data-mat="${esc(s.name)}" data-price="${s.price}">${esc(ownOptionLabel(s))}</option>`).join('');
+  group.hidden=false;
+  group.innerHTML=list.map(s=>`<option value="${esc(s.id)}" data-own="1" data-w="${s.w}" data-h="${s.h}" data-thick="${s.thick}" data-mat="${esc(s.name)}" data-price="${s.price}">${esc(ownOptionLabel(s))}</option>`).join('')+`<option value="${ADD_OWN}">＋ Tilføj egen plade…</option>`;
   if(selected&&selected!==ADD_OWN)selectMaterialById(selected);
   syncOwnTools();
 }
