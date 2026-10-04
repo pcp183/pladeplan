@@ -489,3 +489,88 @@ select.select{text-overflow:ellipsis}
 .cmpuse,.textbtn{display:none!important}
 .outcome:not([hidden]){border:1px solid #dfe6e0;margin-bottom:10px}
 }
+
+/* Calmer scan: cheapest shop first, the rest tucked away. */
+.btn.ai{background:#fff;color:#3d5246;border-color:#d5ded7}
+.btn.ai:hover{background:#eef4f0;border-color:#aab9af}
+.table th{font-size:12px;text-transform:none;letter-spacing:0;color:#526159;font-weight:750;padding-top:10px;padding-bottom:6px}
+.unithead{font-weight:500;color:#8a968f}
+.table .input{font-size:14px;height:38px}
+.calcstep{display:flex;align-items:center;gap:8px;margin:0 0 8px;font-size:15px;font-weight:800;color:var(--ink)}
+.calcwrap.ready .calculate{box-shadow:0 0 0 3px #d5e7da,0 6px 18px #163a2b22}
+.matnote{font-size:12px;color:#6d7b73}
+.empty strong{font-size:15px}
+.empty span{font-size:13px;max-width:280px;color:#526159}
+.resulthead h2{font-size:16px}
+.resulthead p{font-size:13px}
+.outcome{padding:14px 18px 10px;background:#fff;border-bottom:1px solid #e7ece8}
+.bestprice-kicker{margin-bottom:2px}
+.outcome-kicker{letter-spacing:.08em;color:#2f6a45}
+.bestprice-row{display:flex;align-items:baseline;justify-content:space-between;gap:16px}
+.outcome-total{font-size:44px;line-height:.95;color:#15392a}
+.outcome-total.unset{font-size:28px;font-weight:750;letter-spacing:-.03em;color:#6a5348}
+.bestshop{margin:0;font-size:22px;font-weight:800;letter-spacing:-.03em;line-height:1.1}
+.bestshop a{color:#15392a;text-decoration:none}
+.bestshop a:hover{text-decoration:underline}
+.outcome-sub{margin:8px 0 0;font-size:14px;color:#24352c;line-height:1.4}
+.outcome-source{margin:4px 0 0;font-size:12px;color:#6d7b73}
+.outcome-source:empty,.outcome-note:empty,.pricefacts:empty{display:none}
+.outcome-note{margin:8px 0 0;font-size:13px;color:#6a5348}
+.moreprices{margin-top:8px;border-top:1px solid #eef2ef}
+.moreprices[hidden],.shoplabel[hidden],#stats[hidden],.cmprow[hidden],.compare[hidden]{display:none!important}
+.moreprices>summary{cursor:pointer;list-style:none;padding:10px 0 4px;font-size:13px;font-weight:750;color:#3d5246}
+.moreprices>summary::-webkit-details-marker{display:none}
+.moreprices>summary:before{content:"▸ ";color:#8a968f;font-weight:500}
+.moreprices[open]>summary:before{content:"▾ "}
+.shoplabel{margin:2px 0 0;font-size:11px;font-weight:700;color:#8a968f}
+.shoplist{list-style:none;margin:0;padding:0}
+.shoplist li{display:flex;justify-content:space-between;align-items:baseline;gap:12px;padding:8px 0;border-top:1px solid #eef2ef;font-size:14px}
+.shoplist a{color:#15392a;font-weight:750;text-decoration:none}
+.shoplist a:hover{text-decoration:underline}
+.shoplist b{font-weight:800;font-variant-numeric:tabular-nums;color:#24352c}
+.pricefacts{margin:8px 0 0;font-size:12px;line-height:1.45;color:#5c6b63}
+.shopfoot{margin:8px 0 2px;font-size:11px;line-height:1.4;color:#8a968f}
+.compare{margin:0 18px 4px;padding:10px 12px;background:#f3f7f4;border:1px solid #d7e3da;border-radius:10px}
+.comparehead{margin:0 0 2px}
+.comparehead strong{font-size:13px;color:#1e4a32}
+.comparehead span:empty{display:none}
+.compare .cmprow{display:grid;grid-template-columns:minmax(0,1fr) auto auto;gap:8px 10px;align-items:center;padding:6px 0 0;border:0}
+.compare .cmpname{font-size:14px}
+.compare .cmpmeta{font-size:12px}
+.compare .cmpprice{display:none}
+.compare .cmptotal{grid-column:auto;margin:0;font-size:16px;font-weight:800;text-align:right}
+.compare .cmpuse,.compare .cmpvalgt{grid-column:auto;justify-self:end}
+#stats.stats{display:flex;flex-wrap:wrap;gap:4px 18px;background:transparent;padding:8px 18px 12px;border:0;border-bottom:1px solid #eef2ef}
+#stats .stat{display:flex;align-items:baseline;gap:6px;background:transparent;border:0;padding:0;min-width:0}
+#stats .stat span{margin:0;font-size:12px}
+#stats .stat strong{font-size:15px}
+#stats .stat em{font-size:12px}
+.okbar{border-bottom:1px solid #c9e2d1}
+@media(hover:hover) and (pointer:fine){
+.partacts .move,.partacts .dup{opacity:.35}
+tr:hover .partacts .move,tr:hover .partacts .dup,tr:focus-within .partacts .move,tr:focus-within .partacts .dup{opacity:1}
+}
+@media(max-width:780px){
+.outcome{padding:14px 12px 8px}
+.bestprice-row{flex-direction:column;align-items:flex-start;gap:4px}
+.outcome-total{font-size:36px}
+.outcome-total.unset{font-size:26px}
+.bestshop{font-size:20px}
+.outcome-sub{font-size:14px}
+.compare{margin:0 12px 4px}
+#stats.stats{padding:8px 12px 10px;gap:4px 14px}
+.calcwrap .calcsub{display:block}
+body.plan-fresh .calcwrap .calculate{display:inline-flex}
+body.plan-fresh .stickycalc{display:none}
+body.plan-fresh.has-stickycalc{padding-bottom:0}
+body.plan-fresh .toast{bottom:20px}
+.partacts .move{display:none}
+.table th:last-child,.table td:last-child{width:72px}
+.table .input{font-size:16px}
+}
+@media print{
+.moreprices:not([hidden]){display:block!important}
+.moreprices:not([hidden]) .shoplist,.moreprices:not([hidden]) .pricefacts,.moreprices:not([hidden]) .shopfoot,.moreprices:not([hidden]) .shoplabel:not([hidden]){display:block!important}
+.moreprices summary{display:none!important}
+.compare .cmpuse{display:none!important}
+}
