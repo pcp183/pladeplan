@@ -15,7 +15,7 @@ const inter = Inter({
 });
 
 const description =
-  'Gratis dansk skæreplanlægger til plader: beregn skæreplan, udnyttelse og hvad pladerne koster ud fra de priser, du selv skriver.';
+  'Gratis dansk skæreplanlægger til plader: beregn skæreplan, udnyttelse og hvad pladerne koster ud fra priser slået op hos 10-4.dk, Silvan, XL-BYG, STARK, Johannes Fog, Bauhaus, Davidsen, Jem & Fix og Bygma.';
 
 export const metadata: Metadata = {
   title: {

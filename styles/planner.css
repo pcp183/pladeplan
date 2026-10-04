@@ -421,7 +421,7 @@ select.select{text-overflow:ellipsis}
 .sheetprice{max-width:none}
 }
 
-/* Calmer layout, cost first. Prices are the user's own figures. */
+/* Calmer layout, cost first. Prices come from the retail lookup. */
 .card{box-shadow:0 1px 2px #163a2b0d}
 .priceblock{margin:2px 0 2px;padding:10px 12px;background:#f3f6f4;border-radius:10px}
 .priceblock .sheetprice{max-width:280px;margin:0}
@@ -447,8 +447,10 @@ select.select{text-overflow:ellipsis}
 .outcome-metrics dd{margin:2px 0 0;font-size:15px;font-weight:800;letter-spacing:-.03em;font-variant-numeric:tabular-nums}
 .outcome-note{grid-column:1/-1;margin:2px 0 0;font-size:13px;line-height:1.45;color:#1e4a32;font-weight:650}
 .outcome-note.quiet{color:#5c6b63;font-weight:500}
-.outcome-note .textbtn{border:0;background:transparent;color:#15392a;font-weight:800;text-decoration:underline;padding:0;cursor:pointer;font-size:13px}
-.outcome-note .textbtn:hover{color:#23503d}
+.outcome-note .textbtn,.outcome-source .textbtn{border:0;background:transparent;color:#15392a;font-weight:800;text-decoration:underline;padding:0;cursor:pointer;font-size:13px}
+.outcome-note .textbtn:hover,.outcome-source .textbtn:hover{color:#23503d}
+.outcome-source{margin:4px 0 0;font-size:11px;line-height:1.45;color:#6d7b73}
+.outcome-source a{color:#1e4a32;font-weight:700}
 .compare{padding:2px 18px 14px}
 .comparehead{display:flex;justify-content:space-between;gap:12px;align-items:baseline;margin:10px 0 4px}
 .comparehead strong{font-size:13px;font-weight:750}
@@ -459,9 +461,8 @@ select.select{text-overflow:ellipsis}
 .cmpmeta{display:block;margin-top:2px;font-size:11px;font-weight:500;color:#6d7b73}
 .cmprow.best .cmpname{color:#15392a}
 .cmprow.best .cmpname:after{content:"Billigst";margin-left:6px;font-size:10px;font-weight:800;letter-spacing:0;text-transform:none;color:#1e4a32;background:#e5f2ea;border-radius:99px;padding:2px 6px;vertical-align:1px}
-.cmpprice{position:relative;margin:0}
-.cmpprice input{height:34px;padding-right:32px;font-size:13px}
-.cmpprice span{position:absolute;right:8px;top:9px;font-size:11px;color:#829087;pointer-events:none}
+.cmpprice{margin:0;font-size:13px;font-weight:750;text-align:right;font-variant-numeric:tabular-nums;color:#24352c}
+.cmpprice.missing{font-size:12px;font-weight:650;color:#8a6450}
 .cmptotal{font-size:14px;font-weight:800;text-align:right;font-variant-numeric:tabular-nums}
 .cmpwaste{display:block;font-size:10px;font-weight:500;color:#6d7b73;text-align:right}
 .cmpuse{min-height:32px}
