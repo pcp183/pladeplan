@@ -101,6 +101,27 @@ if ('projects' in list) {
 assert.equal('error' in parseProjectList({ projects: [{ id: 'bad id' }] }), true);
 assert.equal(confirmationMatches('Peter@Example.com', ' peter@example.com '), true);
 assert.equal(confirmationMatches('peter@example.com', 'anden@example.com'), false);
+const withOwn = parseProject({
+  id: 'p-own',
+  n: 'Valnød',
+  m: 40,
+  mid: 'own-valnod',
+  w: '800',
+  h: '2200',
+  os: { id: 'own-valnod', name: 'Valnød', thick: 18, w: 800, h: 2200, price: '640,50' },
+  sheets: [
+    { id: 'own-valnod', name: 'Valnød', thick: 18, w: 800, h: 2200, price: 640.5 },
+    { id: 'shop', name: 'Silvan', thick: 19, w: 1220, h: 2440, price: 10 },
+    { id: 'own-bad', name: '', thick: 18, w: 10, h: 10, price: 10 },
+  ],
+  p: [],
+  updatedAt: '2026-10-04T12:00:00.000Z',
+});
+assert.ok(withOwn);
+assert.equal(withOwn.mid, 'own-valnod');
+assert.deepEqual(withOwn.os, { id: 'own-valnod', name: 'Valnød', thick: 18, w: 800, h: 2200, price: 640.5 });
+assert.deepEqual(withOwn.sheets, [{ id: 'own-valnod', name: 'Valnød', thick: 18, w: 800, h: 2200, price: 640.5 }]);
+
 assert.equal(confirmationMatches(null, 'SLET'), true);
 assert.equal(confirmationMatches(null, 'slet'), false);
 console.log('projects ok');

@@ -498,6 +498,15 @@ select.select{text-overflow:ellipsis}
 .table .input{font-size:14px;height:38px}
 .calcstep{display:flex;align-items:center;gap:8px;margin:0 0 8px;font-size:15px;font-weight:800;color:var(--ink)}
 .calcwrap.ready .calculate{box-shadow:0 0 0 3px #d5e7da,0 6px 18px #163a2b22}
+.owntools{margin:-4px 0 12px}
+.owntools[hidden],#deleteOwnSheet[hidden],#ownSheetGroup[hidden]{display:none!important}
+.owntools .textbtn{border:0;background:transparent;color:#15392a;font-weight:750;font-size:13px;text-decoration:underline;padding:0;cursor:pointer}
+#ownSheetDialog{width:min(460px,calc(100vw - 28px))}
+.ownform{display:grid;gap:12px}
+.ownrow{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}
+.ownhint{margin:0;font-size:12px;line-height:1.45;color:#5c6b63}
+.ownerror{margin:0;font-size:12px;color:#8a3d32}
+.ownerror:empty{display:none}
 .meta .units,.privacy{display:none}
 .matnote:empty,.calcsub:empty,#resultSubtitle:empty,#boardCount:empty{display:none}
 .matnote{font-size:12px;color:#6d7b73}
@@ -563,6 +572,7 @@ tr:hover .partacts .move,tr:hover .partacts .dup,tr:focus-within .partacts .move
 #stats.stats{padding:8px 12px 10px;gap:4px 14px}
 .calcwrap .calcsub{display:block}
 .calcwrap .calcsub:empty{display:none}
+.ownrow{grid-template-columns:1fr}
 body.plan-fresh .calcwrap .calculate{display:inline-flex}
 body.plan-fresh .stickycalc{display:none}
 body.plan-fresh.has-stickycalc{padding-bottom:0}

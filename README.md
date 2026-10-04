@@ -98,7 +98,7 @@ GitHub Pages kan ikke køre Clerk eller API-ruterne. Den tidligere statiske `ind
 1. Sletter alle rækker i `pladeplan_projects` for Clerk-`userId` og tjekker, at ingen række er tilbage.
 2. Sletter derefter Clerk-brugeren med `users.deleteUser`.
 
-Der laves ingen arkivkopi, papirkurv eller soft-delete. Mislykkes sletningen af skæresedlerne, slettes Clerk-brugeren ikke. Uden `DATABASE_URL` ligger der ingen skæresedler på serveren, og kun Clerk-brugeren slettes. Browseren, hvor der trykkes slet, rydder også `localStorage`-nøglerne `pladeplan`, `pladeplan-projects` og `pladeplan-sheet-prices`.
+Der laves ingen arkivkopi, papirkurv eller soft-delete. Mislykkes sletningen af skæresedlerne, slettes Clerk-brugeren ikke. Uden `DATABASE_URL` ligger der ingen skæresedler på serveren, og kun Clerk-brugeren slettes. Browseren, hvor der trykkes slet, rydder også `localStorage`-nøglerne `pladeplan`, `pladeplan-projects`, `pladeplan-sheet-prices` og `pladeplan-own-sheets`.
 
 «Hent mine data (JSON)» er indsigt og udtræk af profil og gemte skæresedler.
 

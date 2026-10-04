@@ -16,9 +16,70 @@ export type StoredProject = {
   pr?: string;
   /** Ældre felt: priser pr. pladetype, som brugeren selv skrev. */
   px?: Record<string, string>;
+  /** Egen plade, som denne skæreseddel bruger. */
+  os?: OwnSheet;
+  /** Egne plader, gemt sammen med skæresedlen, så listen følger kontoen. */
+  sheets?: OwnSheet[];
   p: string[][];
   updatedAt: string;
 };
+
+export type OwnSheet = {
+  id: string;
+  name: string;
+  thick: number;
+  w: number;
+  h: number;
+  price: number;
+};
+
+const MAX_OWN_SHEETS = 40;
+
+function parseDim(value: unknown, min: number, max: number): number | null {
+  const n = typeof value === 'number' ? value : Number(String(value ?? '').trim().replace(',', '.'));
+  if (!Number.isFinite(n) || n < min || n > max) return null;
+  return Math.round(n * 10) / 10;
+}
+
+function parseMoney(value: unknown): number | null {
+  let n: number;
+  if (typeof value === 'number') n = value;
+  else {
+    let s = clip(value, 24).trim().replace(/\s/g, '');
+    if (!s) return null;
+    if (s.includes(',') && s.includes('.')) s = s.replace(/\./g, '').replace(',', '.');
+    else if (s.includes(',')) s = s.replace(',', '.');
+    n = Number(s);
+  }
+  if (!Number.isFinite(n) || n < 0 || n >= 1_000_000) return null;
+  return Math.round(n * 100) / 100;
+}
+
+export function parseOwnSheet(input: unknown): OwnSheet | null {
+  if (!input || typeof input !== 'object' || Array.isArray(input)) return null;
+  const source = input as Record<string, unknown>;
+  const id = clip(source.id, 80).trim();
+  if (!/^own-[\w.-]{1,72}$/.test(id)) return null;
+  const name = clip(source.name, 60).trim();
+  if (!name) return null;
+  const thick = parseDim(source.thick, 0.1, 200);
+  const w = parseDim(source.w, 1, 20000);
+  const h = parseDim(source.h, 1, 20000);
+  const price = parseMoney(source.price);
+  if (thick == null || w == null || h == null || price == null) return null;
+  return { id, name, thick, w, h, price };
+}
+
+function parseOwnSheetList(input: unknown): OwnSheet[] | undefined {
+  if (!Array.isArray(input)) return undefined;
+  const byId = new Map<string, OwnSheet>();
+  for (const item of input) {
+    if (byId.size >= MAX_OWN_SHEETS) break;
+    const sheet = parseOwnSheet(item);
+    if (sheet) byId.set(sheet.id, sheet);
+  }
+  return byId.size ? [...byId.values()] : undefined;
+}
 
 function parsePriceMap(input: unknown): Record<string, string> | undefined {
   if (!input || typeof input !== 'object' || Array.isArray(input)) return undefined;
@@ -80,6 +141,10 @@ export function parseProject(input: unknown): StoredProject | null {
   if (pr) project.pr = pr;
   const px = parsePriceMap(source.px);
   if (px) project.px = px;
+  const os = parseOwnSheet(source.os);
+  if (os) project.os = os;
+  const sheets = parseOwnSheetList(source.sheets);
+  if (sheets) project.sheets = sheets;
   return project;
 }
 
