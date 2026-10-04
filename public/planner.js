@@ -117,7 +117,7 @@ function materialIdFromState(x){
   return loadMaterialPrefId()||'mdf-19-1220x2440';
 }
 function syncCustomHint(){let o=materialOption(),h=$('#customHint');if(h&&o)h.classList.toggle('show',!o.dataset.w);syncSheetNote()}
-function syncSheetNote(){let el=$('#matNote');if(!el)return;let o=materialOption();if(!o||!o.dataset.w){el.textContent='Skriv bredde og længde. Tilpasset mål slås ikke op i butikkerne.';return}let w=+o.dataset.w,h=+o.dataset.h,lo=Math.min(w,h),hi=Math.max(w,h);if((lo===2070&&hi===2800)||(lo===2070&&hi===2620)){el.textContent=`Butikken sælger pladen som ${dim(hi)}×${dim(lo)}. Prisen vises efter beregning.`;return}el.textContent='Prisen vises, når du har beregnet skæreplanen.'}
+function syncSheetNote(){let el=$('#matNote');if(!el)return;let o=materialOption();if(!o||!o.dataset.w){el.textContent='';return}let w=+o.dataset.w,h=+o.dataset.h,lo=Math.min(w,h),hi=Math.max(w,h);if((lo===2070&&hi===2800)||(lo===2070&&hi===2620)){el.textContent=`Butikken sælger pladen som ${dim(hi)} × ${dim(lo)} mm.`;return}el.textContent=''}
 function syncUsable(){let el=$('#usableSize');if(!el)return;let W=+$('#sheetW').value,H=+$('#sheetH').value,t=+$('#trim').value;if(!(W>0&&H>0)||!(t>=0)){el.textContent='—';return}let uw=W-2*t,uh=H-2*t;el.textContent=(uw>0&&uh>0)?(`${dim(uw)} × ${dim(uh)} mm`):'kantfraskær for stort'}
 function loadSawPref(){try{let raw=localStorage.getItem('pladeplan-pref-saw');if(!raw)return null;let o=JSON.parse(raw);if(!o||typeof o!=='object')return null;return o}catch{return null}}
 function saveSawPref(){try{localStorage.setItem('pladeplan-pref-saw',JSON.stringify({k:$('#kerf').value,t:$('#trim').value,r:$('#rotate').checked}))}catch{}}
@@ -139,12 +139,11 @@ function softFitCheck(){
 }
 function syncCalcSub(){
   let sub=$('#calcSub');if(!sub)return;
-  let {bad,area,n}=softFitCheck();
+  let {bad,n}=softFitCheck();
   if($('.result').classList.contains('stale')&&result){sub.textContent='Emner er ændret — opdater planen';return}
-  if(result){sub.textContent='Planen er beregnet. Ret emnerne, hvis du vil lave den om.';return}
   if(bad){sub.textContent=`${bad} ${bad===1?'emne':'emner'} passer ikke på pladen — ret mål eller tillad rotation`;return}
-  if(n>0){let m2=(area/1e6).toFixed(2).replace('.',',');sub.textContent=`Trin 3 · ${n} ${n===1?'emne':'emner'} · ${m2} m² — tryk Beregn`;return}
-  sub.textContent='Trin 2: tilføj emner, og tryk derefter Beregn';
+  if(!n){sub.textContent='Tilføj emner, og tryk derefter Beregn';return}
+  sub.textContent='';
 }
 function syncBoardJump(){
   let el=$('#boardJump');if(!el)return;
@@ -180,7 +179,7 @@ function markStale(){if(result){$('#resultSubtitle').textContent='Ændret – tr
 function change(){count();ensurePartsEmpty();store();$('#saveState').textContent='Kladde gemt lokalt';markStale();syncUsable();syncFlow();syncExampleChip();syncCalcSub();syncBoardJump();hideOkBar();if(result)updatePrintHeader()}
 function resetStats(){['#statSheets','#statUsed','#statWaste'].forEach(id=>{let el=$(id);if(el)el.textContent='—'});let wa=$('#statWasteArea');if(wa)wa.textContent=''}
 function syncStats(){let el=$('#stats');if(el)el.hidden=!result}
-function clearResult(){result=null;resetStats();syncStats();$('#resultSubtitle').textContent='Beregn for at se pris og skæreplan';$('#boardCount').textContent='Ingen plan endnu';$('#boards').innerHTML=EMPTY_BOARDS;$('#error').classList.remove('show');$('.result').classList.remove('stale');syncStaleBar();syncCalcLabel();setExportEnabled(false);renderPrices();updatePrintHeader();hideOkBar();syncFlow();syncExampleChip();syncCalcSub();syncBoardJump()}
+function clearResult(){result=null;resetStats();syncStats();$('#resultSubtitle').textContent='';$('#boardCount').textContent='';$('#boards').innerHTML=EMPTY_BOARDS;$('#error').classList.remove('show');$('.result').classList.remove('stale');syncStaleBar();syncCalcLabel();setExportEnabled(false);renderPrices();updatePrintHeader();hideOkBar();syncFlow();syncExampleChip();syncCalcSub();syncBoardJump()}
 function applyState(x){
   x=x||{};activeProjectId=x.id||null;
   $('#projectName').value=x.n||DEFAULT_NAME;
@@ -461,13 +460,15 @@ function shopLink(offer,arrow){return `<a href="${esc(offer.url)}" target="_blan
 function paintShops(quote,sheets,used,area,waste){
   let box=$('#morePrices'),list=$('#shopList'),summary=$('#morePricesSummary'),facts=$('#priceFacts'),unitLabel=$('#shopUnitLabel');
   if(!box)return;
-  if(quote.status!=='ok'){if(list)list.innerHTML='';if(facts)facts.textContent='';if(unitLabel)unitLabel.hidden=true;if(quote.status==='missing'){if(summary)summary.textContent='Hvor vi ledte';if(box.dataset.mode!=='missing')box.open=false;box.dataset.mode='missing';box.hidden=false}else{box.hidden=true;box.dataset.mode=''}return}
+  if(quote.status!=='ok'){if(list)list.innerHTML='';if(facts)facts.textContent='';if(unitLabel)unitLabel.hidden=true;box.hidden=true;box.dataset.mode='';return}
   let offers=sheetOffersFor(quote.offer.kind,quote.offer.thick,quote.offer.w,quote.offer.h);
   let others=offers.slice(1);
   let total=quote.offer.price*sheets;
   let bits=[quote.offer.productName];
   if(used>0)bits.push(kr(total/(used/1e6))+' pr. nyttig m²');
   if(area>0)bits.push(kr(total*(waste/area))+' af prisen er spild');
+  let when=fetchedLabel(sheetPriceBook?.fetchedAt);
+  if(when)bits.push('Hentet '+when+(sheetPriceBook?.stale?'. Et nyt opslag lykkedes ikke':''));
   if(facts)facts.textContent=bits.filter(Boolean).join(' · ');
   if(list)list.innerHTML=others.map(o=>`<li>${shopLink(o)}<b>${esc(kr(o.price))}</b></li>`).join('');
   if(unitLabel)unitLabel.hidden=!others.length;
@@ -496,7 +497,7 @@ function paintCosts(){
     let total=unit*sheets;
     totalEl.textContent=kr(total);
     totalEl.classList.remove('unset');
-    if(sub)sub.textContent=`${sheets} ${sheets===1?'plade':'plader'} à ${kr(unit)} · ${mat||'Plade'} · ${dim(result.W)} × ${dim(result.H)} mm`;
+    if(sub){let size=`${mat||'Plade'} · ${dim(result.W)} × ${dim(result.H)} mm`;sub.textContent=sheets>1?`${sheets} plader à ${kr(unit)} · ${size}`:size}
   }
   paintShops(quote,sheets,used,area,waste);
   let priced=[];
@@ -534,23 +535,12 @@ function paintCosts(){
   }
   if(kicker&&unit&&showRows.length)kicker.textContent='Valgt plade';
   if(source){
-    if(quote.status==='ok'){
-      let when=fetchedLabel(sheetPriceBook?.fetchedAt);
-      let stale=sheetPriceBook?.stale?' Et nyt opslag lykkedes ikke, så prisen kan være forældet.':' Prisen kan være forældet.';
-      source.textContent=(when?'Hentet '+when+'.':'')+stale;
-    }else if(quote.status==='error'){
+    if(quote.status==='error'){
       source.innerHTML='<button type="button" class="textbtn" id="retryPrices">Prøv igen</button>';
       let b=$('#retryPrices');if(b)b.onclick=()=>retrySheetPrices();
     }else source.textContent='';
   }
-  if(!note)return;
-  note.className='outcome-note quiet';
-  if(quote.status==='loading'||quote.status==='error'||quote.status==='custom'){note.textContent='';return}
-  if(showRows.length){note.textContent='';return}
-  let missing=[...document.querySelectorAll('#priceList .cmprow')].filter(r=>r.dataset.current!=='1'&&r.dataset.ok==='1'&&!rowUnit(r));
-  if(!missing.length){note.textContent='';return}
-  let names=missing.map(r=>r.querySelector('.cmpname')?.textContent||'').filter(Boolean);
-  note.textContent=names.length===1?names[0]+': Ikke fundet.':names.join(' · ')+': Ikke fundet.';
+  if(note){note.className='outcome-note quiet';note.textContent=''}
 }
 
 /* ---------- Beregning ---------- */
@@ -585,7 +575,7 @@ function render(){
     announce(okMsg);syncBoardJump();syncCalcSub();
     let statsEl=document.querySelector('.stats');if(statsEl){statsEl.classList.remove('flash');void statsEl.offsetWidth;statsEl.classList.add('flash')}
     if(innerWidth<781)$('.result').scrollIntoView({behavior:'smooth',block:'start'});
-  }catch(x){if(!(x instanceof Error)||x instanceof TypeError||x instanceof ReferenceError)console.error(x);let msg=x instanceof Error&&!(x instanceof TypeError||x instanceof ReferenceError)?x.message:'Der opstod en uventet fejl. Kontrollér målene og prøv igen.';e.innerHTML=enrichError(msg);e.classList.add('show');bindErrorFixes();dataPartRows().forEach(validatePartRow);focusFirstInvalid();syncFlow();if(result){$('.result').classList.add('stale');$('#boardCount').textContent='Tegningen er ikke opdateret';syncStaleBar();syncCalcLabel();setExportEnabled(false);syncPriceStat()}else{resetStats();$('#boardCount').textContent='Ingen plan endnu';$('#boards').innerHTML=EMPTY_BOARDS;setExportEnabled(false);updatePrintHeader();syncPriceStat()}e.scrollIntoView({behavior:'smooth',block:'nearest'})}
+  }catch(x){if(!(x instanceof Error)||x instanceof TypeError||x instanceof ReferenceError)console.error(x);let msg=x instanceof Error&&!(x instanceof TypeError||x instanceof ReferenceError)?x.message:'Der opstod en uventet fejl. Kontrollér målene og prøv igen.';e.innerHTML=enrichError(msg);e.classList.add('show');bindErrorFixes();dataPartRows().forEach(validatePartRow);focusFirstInvalid();syncFlow();if(result){$('.result').classList.add('stale');$('#boardCount').textContent='Tegningen er ikke opdateret';syncStaleBar();syncCalcLabel();setExportEnabled(false);syncPriceStat()}else{resetStats();$('#boardCount').textContent='';$('#boards').innerHTML=EMPTY_BOARDS;setExportEnabled(false);updatePrintHeader();syncPriceStat()}e.scrollIntoView({behavior:'smooth',block:'nearest'})}
   finally{finishBusy()}
   }));
 }
