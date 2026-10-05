@@ -638,6 +638,35 @@ function library(){
   if(cloudOn())return Array.isArray(cloudBridge().cache)?cloudBridge().cache:[];
   try{let x=JSON.parse(localStorage.getItem('pladeplan-projects'));return Array.isArray(x)?x:[]}catch{return[]}
 }
+function freeSaveLimit(){
+  if(!cloudOn())return null;
+  let n=cloudBridge().saveLimit;
+  return typeof n==='number'&&n>0?n:null;
+}
+function projectIds(list){
+  let ids=[],seen=new Set();
+  (list||[]).forEach(p=>{if(p&&typeof p.id==='string'&&p.id&&!seen.has(p.id)){seen.add(p.id);ids.push(p.id)}});
+  return ids;
+}
+function replaceAllowed(next){
+  let limit=freeSaveLimit();
+  if(limit==null)return true;
+  let existing=new Set(projectIds(library()));
+  let ids=projectIds(next);
+  if(ids.length<=limit)return true;
+  return ids.every(id=>existing.has(id));
+}
+function showSaveLimitNote(show){
+  let note=$('#saveLimitNote');
+  if(note)note.hidden=!show;
+}
+function syncSaveLimit(){
+  let el=$('#saveLimit'),limit=freeSaveLimit();
+  if(!el)return;
+  if(limit==null){el.hidden=true;showSaveLimitNote(false);return}
+  el.hidden=false;
+  el.textContent=projectIds(library()).length+' af '+limit+' gemte skæresedler';
+}
 function saveLibrary(){
   let name=$('#projectName').value.trim();
   if(!name||name===DEFAULT_NAME||name==='Nyt skæreprojekt'||name==='Nyt projekt'){name='Skæreseddel '+new Date().toLocaleDateString('da-DK');$('#projectName').value=name}
@@ -651,8 +680,12 @@ function persistLibrary(all){
   let b=cloudBridge();
   if(b&&b.signedIn&&!b.degraded){
     if(!b.ready){toast('Dine skæresedler hentes stadig. Prøv igen om et øjeblik.');return false}
+    if(!replaceAllowed(all)){showSaveLimitNote(true);syncSaveLimit();return false}
+    b.previousCache=Array.isArray(b.cache)?b.cache.slice():[];
     b.cache=all.slice();
+    showSaveLimitNote(false);
     if(typeof b.push==='function')b.push(all);
+    syncSaveLimit();
     return true;
   }
   try{localStorage.setItem('pladeplan-projects',JSON.stringify(all));return true}catch{toast('Kunne ikke gemme biblioteket.');return false}
@@ -670,6 +703,7 @@ function syncLibraryChrome(){
         :'Skæresedlerne gemmes kun på denne enhed. Brug «Del» for at sende et link til andre — uden konto eller server.';
   let privacy=$('.privacy');
   if(privacy)privacy.textContent=cloudOn()?'Kladde lokalt · gemte skæresedler på din konto':storageDegraded()?'Kladde lokalt · konto-lagring ikke sat op':'Gemmes lokalt · del via link';
+  syncSaveLimit();
 }
 function deleteCurrentPlan(){
   let name=$('#projectName').value.trim()||'skæreseddel';
@@ -1139,14 +1173,32 @@ function installPush(){
           toast(r.status===401?'Log ind igen for at gemme på din konto. Skæresedlen er gemt på denne enhed.':'Konto-lagring er ikke sat op endnu. Skæresedlen er gemt på denne enhed.');
           return;
         }
-        if(!r.ok)throw Error('save');
+        if(!r.ok){
+          let code='';
+          try{let j=await r.json();code=j&&j.code}catch{}
+          if((r.status===402||r.status===403)&&code==='free_limit'){
+            if(Array.isArray(b.previousCache))b.cache=b.previousCache.slice();
+            showSaveLimitNote(true);
+            syncSaveLimit();
+            if($('#projectsDialog')&&$('#projectsDialog').open)renderLibrary();
+            if($('#saveState')&&$('#saveState').textContent==='Skæreseddel gemt på din konto')$('#saveState').textContent='Ikke gemt på kontoen';
+            return;
+          }
+          throw Error('save');
+        }
       }catch{toast('Kunne ikke gemme skæresedlen på kontoen. Prøv igen.');}
     },250);
   };
 }
 window.__pladeplanOnAuth=async function(){
-  installPush();
   let b=cloudBridge();
+  if(b&&b.preview){
+    b.signedIn=true;b.ready=true;b.degraded=false;
+    if(typeof b.push!=='function')b.push=function(){};
+    syncLibraryChrome();
+    return;
+  }
+  installPush();
   if(!b||!b.signedIn){if(b){b.ready=false;b.degraded=false}syncLibraryChrome();let bar=$('#migrateBar');if(bar)bar.hidden=true;return}
   b.ready=false;
   try{

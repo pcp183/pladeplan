@@ -123,6 +123,45 @@ export function hasProAccess(snapshot: PlanSnapshot): boolean {
   return isProStatus(snapshot.status);
 }
 
+/** Saved skæresedler on the free plan, once Stripe is configured. */
+export const FREE_SAVED_PROJECTS = 3;
+
+export const FREE_LIMIT_MESSAGE =
+  'Den gratis plan kan gemme 3 skæresedler. Opgrader til Pro for ubegrænset antal.';
+
+/**
+ * null means unlimited. The cap stays off until billing is configured, and Pro
+ * (active, trialing, past_due) is never capped.
+ */
+export function savedProjectLimit(pro: boolean, env: NodeJS.ProcessEnv = process.env): number | null {
+  if (!billingConfigured(env)) return null;
+  if (pro) return null;
+  return FREE_SAVED_PROJECTS;
+}
+
+/**
+ * A longer list is allowed when every id is already saved (re-save, rename,
+ * delete). A new id is allowed only when the result is still within the limit.
+ * null limit always allows the replace.
+ */
+export function allowsProjectReplace(
+  existingIds: readonly string[],
+  nextIds: readonly string[],
+  limit: number | null,
+): boolean {
+  if (limit == null || !Number.isFinite(limit)) return true;
+  const existing = new Set(existingIds);
+  const next: string[] = [];
+  const seen = new Set<string>();
+  for (const id of nextIds) {
+    if (!id || seen.has(id)) continue;
+    seen.add(id);
+    next.push(id);
+  }
+  if (next.length <= limit) return true;
+  return next.every((id) => existing.has(id));
+}
+
 export function shouldApplyEvent(previous: number | null | undefined, incoming: number): boolean {
   if (previous == null || !Number.isFinite(previous)) return true;
   return incoming >= previous;
@@ -295,20 +334,20 @@ export function planPill(input: { billingReady: boolean; pro: boolean }): { text
   if (!input.billingReady) {
     return {
       text: 'Gratis · Pro kommer snart',
-      title: 'Alle nuværende funktioner er gratis. Pro kan ikke købes endnu.',
+      title: 'Pro kommer snart og kan ikke købes endnu. Pro vil give ubegrænset gemte skæresedler.',
       pro: false,
     };
   }
   if (input.pro) {
     return {
       text: 'Pro',
-      title: 'Du har Skæreseddel Pro. Administrer abonnementet under Konto.',
+      title: 'Du har Skæreseddel Pro med ubegrænset gemte skæresedler. Administrer abonnementet under Konto.',
       pro: true,
     };
   }
   return {
     text: 'Gratis · Opgrader',
-    title: 'Alle nuværende funktioner er gratis. Pro kan tegnes under Konto.',
+    title: 'Gratisplanen gemmer op til 3 skæresedler. Pro giver ubegrænset.',
     pro: false,
   };
 }

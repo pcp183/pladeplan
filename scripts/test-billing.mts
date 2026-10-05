@@ -1,5 +1,9 @@
 import assert from 'node:assert/strict';
+import { readFileSync } from 'node:fs';
 import {
+  FREE_LIMIT_MESSAGE,
+  FREE_SAVED_PROJECTS,
+  allowsProjectReplace,
   billingConfigured,
   blocksNewCheckout,
   formatDanishDate,
@@ -14,6 +18,7 @@ import {
   planPill,
   priceIdForInterval,
   proBadge,
+  savedProjectLimit,
   shouldApplyEvent,
   snapshotFromMetadata,
   snapshotFromSubscription,
@@ -114,9 +119,56 @@ assert.equal(isCheckoutSessionId('cs_test_abc123'), true);
 assert.equal(isCheckoutSessionId('cs_live_abc123'), true);
 assert.equal(isCheckoutSessionId('sub_123'), false);
 
-assert.deepEqual(planPill({ billingReady: false, pro: false }).text, 'Gratis · Pro kommer snart');
-assert.equal(planPill({ billingReady: true, pro: false }).text, 'Gratis · Opgrader');
-assert.equal(planPill({ billingReady: true, pro: true }).pro, true);
+assert.equal(savedProjectLimit(false, {} as NodeJS.ProcessEnv), null);
+assert.equal(savedProjectLimit(true, {} as NodeJS.ProcessEnv), null);
+assert.equal(savedProjectLimit(false, ready), FREE_SAVED_PROJECTS);
+assert.equal(savedProjectLimit(true, ready), null);
+assert.equal(allowsProjectReplace([], ['a', 'b', 'c', 'd', 'e'], null), true);
+assert.equal(allowsProjectReplace([], ['a', 'b', 'c'], 3), true);
+assert.equal(allowsProjectReplace([], ['a', 'b', 'c', 'd'], 3), false);
+assert.equal(allowsProjectReplace(['a', 'b', 'c', 'd', 'e'], ['a', 'b', 'c', 'd', 'e'], 3), true);
+assert.equal(allowsProjectReplace(['a', 'b', 'c', 'd', 'e'], ['e', 'd', 'c', 'b', 'a'], 3), true);
+assert.equal(allowsProjectReplace(['a', 'b', 'c', 'd', 'e'], ['a', 'b', 'c', 'd'], 3), true);
+assert.equal(allowsProjectReplace(['a', 'b', 'c', 'd', 'e'], ['a', 'b', 'c', 'd', 'e', 'f'], 3), false);
+assert.equal(allowsProjectReplace(['a', 'b', 'c'], ['a', 'b', 'd'], 3), true);
+assert.equal(allowsProjectReplace(['a', 'b', 'c'], ['a', 'a', 'b', 'c'], 3), true);
+assert.match(FREE_LIMIT_MESSAGE, /3 skæresedler/);
+assert.match(FREE_LIMIT_MESSAGE, /ubegrænset/);
+
+const comingSoon = planPill({ billingReady: false, pro: false });
+assert.equal(comingSoon.text, 'Gratis · Pro kommer snart');
+assert.match(comingSoon.title, /kan ikke købes/);
+assert.match(comingSoon.title, /ubegrænset gemte skæresedler/);
+const freePill = planPill({ billingReady: true, pro: false });
+assert.equal(freePill.text, 'Gratis · Opgrader');
+assert.match(freePill.title, /op til 3 skæresedler/);
+assert.match(freePill.title, /ubegrænset/);
+const proPill = planPill({ billingReady: true, pro: true });
+assert.equal(proPill.pro, true);
+assert.match(proPill.title, /ubegrænset gemte skæresedler/);
+
+assert.match(PLANNER_MARKUP, /id="saveLimit"/);
+assert.match(PLANNER_MARKUP, /id="saveLimitNote"/);
+assert.match(PLANNER_MARKUP, /href="\/konto#abonnement"/);
+assert.match(PLANNER_MARKUP, /Opgrader til Pro for ubegrænset antal/);
+
+const panel = readFileSync(new URL('../components/BillingPanel.tsx', import.meta.url), 'utf8');
+assert.match(panel, /Pro kommer snart og kan ikke købes/);
+assert.match(panel, /Pro vil give ubegrænset gemte skæresedler/);
+assert.match(panel, /Gratisplanen gemmer op til 3 skæresedler/);
+assert.match(panel, /Pro giver ubegrænset/);
+assert.equal(panel.includes('Alle nuværende funktioner er gratis, også gemte skæresedler'), false);
+
+const route = readFileSync(new URL('../app/api/projects/route.ts', import.meta.url), 'utf8');
+assert.match(route, /allowsProjectReplace/);
+assert.match(route, /'free_limit'/);
+assert.match(route, /402/);
+assert.match(route, /billingConfigured\(\)/);
+
+const planner = readFileSync(new URL('../public/planner.js', import.meta.url), 'utf8');
+assert.match(planner, /function freeSaveLimit/);
+assert.match(planner, /code==='free_limit'/);
+assert.match(planner, /previousCache/);
 
 const upgraded = applyPlanPill(PLANNER_MARKUP, planPill({ billingReady: true, pro: true }));
 assert.match(upgraded, /class="planpill pro"/);
