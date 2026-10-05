@@ -12,5 +12,10 @@ declare global {
       push?: (all: Array<Record<string, unknown>>) => void;
     };
     __pladeplanOnAuth?: () => Promise<void> | void;
+    __pladeplanOpenPhoto?: () => void;
+    __pladeplanReplaceParts?: (
+      parts: Array<{ name: string; w: number; h: number; q: number }>,
+      name?: string,
+    ) => boolean;
   }
 }

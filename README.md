@@ -41,6 +41,9 @@ npm run build
 | `NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY` | Stripe → API keys | `pk_test_` eller `pk_live_`, samme tilstand som secret |
 | `STRIPE_PRICE_PRO_MONTHLY` | Stripe → Product → Price | `price_…` for et tilbagevendende månedsabonnement. Valgfri, hvis årlig er sat |
 | `STRIPE_PRICE_PRO_YEARLY` | samme sted | `price_…` for et tilbagevendende årsabonnement. Valgfri, hvis månedlig er sat |
+| `AI_GATEWAY_API_KEY` | Vercel AI Gateway | Nøgle til «Foto til skæreseddel». På Vercel kan OIDC (`VERCEL_OIDC_TOKEN`) bruges i stedet. Uden begge dele vises «Foto-funktionen er ikke sat op endnu» |
+| `PHOTO_CABINET_ALLOWLIST` | kommasepareret | Clerk-bruger-id eller e-mail, der må prøve foto, også før Pro kan købes |
+| `PHOTO_CABINET_MODEL` | valgfri | Model-id fra AI Gateway. Standard `google/gemini-3.8-flash` |
 
 Se `.env.example`. Sæt variablerne i Vercel før deploy, og deploy igen hvis de ændres. Next.js indlejrer `NEXT_PUBLIC_*` ved build.
 
@@ -89,6 +92,7 @@ GitHub Pages kan ikke køre Clerk eller API-ruterne. Den tidligere statiske `ind
 - **Første login:** hvis enheden har lokale skæresedler, kan de flyttes til kontoen.
 - **Konto** (`/konto`): profil, log ud, planstatus, opgrader eller administrer Pro når Stripe er sat op, hent data og slet konto.
 - **Uden Stripe-nøgler:** samme kontoside viser «Pro kommer snart» og ingen pris.
+- **Foto til skæreseddel:** ved Emner står «Fra foto (Pro)». Man tager et billede af væggen, skriver ét kendt mål, og retter forslaget, før det bliver til emner. Skæreplanen og butiksprisen er de samme som ellers. Modellen finder ikke priser. Billedet gemmes ikke. Uden login kan funktionen ikke bruges. Uden `PHOTO_CABINET_ALLOWLIST` og uden aktivt Pro (når Stripe er sat op) vises kun indgangen og et link til abonnementet. Uden AI-nøgle eller Vercel OIDC står der «Foto-funktionen er ikke sat op endnu».
 - **Privatliv** (`/privatliv`): hvad der gemmes, formål, retsgrundlag, opbevaring og rettigheder. Link i sidefoden og på kontoen.
 
 ## GDPR og sletning

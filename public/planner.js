@@ -1097,6 +1097,32 @@ $('#nativeShare').onclick=()=>nativeSharePlan();
 $('#exportShareJson').onclick=exportShareJson;
 $('#printFromShare').onclick=()=>{if(shareDialog)shareDialog.close();if(!result||$('.result').classList.contains('stale')){toast('Beregn planen først — derefter kan du udskrive som PDF.');return}print()};
 $('#newProject').onclick=()=>{if(!confirm('Vil du starte en ny skæreseddel? Ikke-gemte ændringer går tabt.'))return;applyState({});$('#saveState').textContent='Ny skæreseddel';$('#projectName').focus()};
+function partsMatchSample(){
+  let rows=dataPartRows();
+  if(rows.length!==DEFAULT_PARTS.length)return false;
+  return rows.every((r,i)=>{
+    let v=[...r.querySelectorAll('input')].map(x=>x.value.trim());
+    let d=DEFAULT_PARTS[i];
+    return v[0]===String(d[0])&&+v[1]===+d[1]&&+v[2]===+d[2]&&+v[3]===+d[3];
+  });
+}
+window.__pladeplanReplaceParts=function(list,name){
+  let parts=cleanParts(list);
+  if(!parts.length)return false;
+  let rows=dataPartRows();
+  if(rows.length&&!partsMatchSample()&&!confirm('Emnelisten erstattes med skabets dele, og skæreplanen beregnes. Fortsæt?'))return false;
+  P.innerHTML='';
+  parts.forEach(p=>add([p.name,p.w,p.h,p.q],false));
+  if(name){
+    let current=$('#projectName').value.trim();
+    if(!current||current===DEFAULT_NAME)$('#projectName').value=String(name).slice(0,80);
+  }
+  change();
+  render();
+  return true;
+};
+let photoBtn=$('#openPhoto');
+if(photoBtn)photoBtn.onclick=()=>{if(typeof window.__pladeplanOpenPhoto==='function')window.__pladeplanOpenPhoto()};
 $('#openAI').onclick=()=>{dlg.showModal();$('#aiText').focus()};
 $('#closeAI').onclick=()=>dlg.close();
 $('#retryAI').onclick=()=>{$('#aiReview').classList.remove('show');$('#aiText').focus()};

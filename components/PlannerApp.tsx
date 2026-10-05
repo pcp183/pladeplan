@@ -3,6 +3,7 @@
 import { useAuth } from '@clerk/nextjs';
 import { useEffect } from 'react';
 import { AuthSlot } from '@/components/AuthSlot';
+import { PhotoCabinet } from '@/components/PhotoCabinet';
 import { applyPlanPill } from '@/lib/plan-pill';
 import { PLANNER_MARKUP } from '@/lib/planner-markup';
 
@@ -75,6 +76,7 @@ export function PlannerApp({
   return (
     <>
       <div dangerouslySetInnerHTML={{ __html: markup }} />
+      <PhotoCabinet />
       {clerkEnabled ? <ClerkBridge /> : <GuestBridge />}
     </>
   );
