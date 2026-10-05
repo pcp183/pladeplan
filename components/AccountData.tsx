@@ -4,7 +4,7 @@ import { useClerk } from '@clerk/nextjs';
 import { useState } from 'react';
 import { confirmationHint, confirmationMatches } from '@/lib/confirm';
 
-const LOCAL_KEYS = ['pladeplan-projects', 'pladeplan', 'pladeplan-sheet-prices'];
+const LOCAL_KEYS = ['pladeplan-projects', 'pladeplan', 'pladeplan-sheet-prices', 'pladeplan-own-sheets'];
 
 export function AccountData({ email }: { email: string | null }) {
   const { signOut } = useClerk();
@@ -96,7 +96,7 @@ export function AccountData({ email }: { email: string | null }) {
       <h3 className="dangerhead">Slet konto</h3>
       <p>
         Sletning fjerner kontoen og alle skæresedler, der er gemt på serveren for denne konto. Der laves ingen
-        sikkerhedskopi. Kladde og gemte skæresedler i denne browser fjernes også. Det kan ikke fortrydes.
+        sikkerhedskopi. Kladde, gemte skæresedler og egne plader i denne browser fjernes også. Det kan ikke fortrydes.
       </p>
       <label className="label" htmlFor="deleteConfirm">
         Skriv {email ? 'din e-mail' : 'SLET'} for at bekræfte

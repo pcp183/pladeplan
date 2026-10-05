@@ -116,8 +116,9 @@ function materialIdFromState(x){
   }
   return loadMaterialPrefId()||'mdf-19-1220x2440';
 }
-function syncCustomHint(){let o=materialOption(),h=$('#customHint');if(h&&o)h.classList.toggle('show',!o.dataset.w);syncSheetNote()}
-function syncSheetNote(){let el=$('#matNote');if(!el)return;let o=materialOption();if(!o||!o.dataset.w){el.textContent='';return}let w=+o.dataset.w,h=+o.dataset.h,lo=Math.min(w,h),hi=Math.max(w,h);if((lo===2070&&hi===2800)||(lo===2070&&hi===2620)){el.textContent=`Butikken sælger pladen som ${dim(hi)} × ${dim(lo)} mm.`;return}el.textContent=''}
+function syncCustomHint(){let o=materialOption(),h=$('#customHint');if(h&&o)h.classList.toggle('show',!o.dataset.w);syncSheetNote();syncOwnTools()}
+function syncSheetNote(){let el=$('#matNote');if(!el)return;let o=materialOption();if(!o||!o.dataset.w||o.dataset.own==='1'){el.textContent='';return}let w=+o.dataset.w,h=+o.dataset.h,lo=Math.min(w,h),hi=Math.max(w,h);if((lo===2070&&hi===2800)||(lo===2070&&hi===2620)){el.textContent=`Butikken sælger pladen som ${dim(hi)} × ${dim(lo)} mm.`;return}el.textContent=''}
+function syncOwnTools(){let el=$('#ownTools');if(el)el.hidden=materialOption()?.dataset.own!=='1'}
 function syncUsable(){let el=$('#usableSize');if(!el)return;let W=+$('#sheetW').value,H=+$('#sheetH').value,t=+$('#trim').value;if(!(W>0&&H>0)||!(t>=0)){el.textContent='—';return}let uw=W-2*t,uh=H-2*t;el.textContent=(uw>0&&uh>0)?(`${dim(uw)} × ${dim(uh)} mm`):'kantfraskær for stort'}
 function loadSawPref(){try{let raw=localStorage.getItem('pladeplan-pref-saw');if(!raw)return null;let o=JSON.parse(raw);if(!o||typeof o!=='object')return null;return o}catch{return null}}
 function saveSawPref(){try{localStorage.setItem('pladeplan-pref-saw',JSON.stringify({k:$('#kerf').value,t:$('#trim').value,r:$('#rotate').checked}))}catch{}}
@@ -158,7 +159,7 @@ function copyCutlist(){
   let mat=materialLabel();
   let lines=[name,`${mat?mat+' · ':''}${dim(result.W)} × ${dim(result.H)} mm · savspor ${dim(+$('#kerf').value)} mm · kantfraskær ${dim(+$('#trim').value)} mm`,`${result.s.length} ${result.s.length===1?'plade':'plader'} · ${result.ps.length} emner · brugt ${(result.ps.reduce((n,a)=>n+a.w*a.h,0)/1e6).toFixed(2).replace('.',',')} m² · udnyttelse ${fmt(result.y)}% · spild ${fmt(100-result.y)}%`];
   let unit=activeUnitPrice();
-  if(unit){let total=unit*result.s.length,used=result.ps.reduce((n,a)=>n+a.w*a.h,0),area=result.W*result.H*result.s.length,q=currentQuote();lines.push(`Pris ${kr(total)} · ${used>0?kr(total/(used/1e6))+' pr. nyttig m² · ':''}${area>0?kr(total*((area-used)/area))+' heraf spild':''} · ${q.offer?q.offer.shop:'butik'}, kan være forældet`)}
+  if(unit!=null){let total=unit*result.s.length,used=result.ps.reduce((n,a)=>n+a.w*a.h,0),area=result.W*result.H*result.s.length,q=currentQuote();let source=q.status==='own'?'Egen pris':(q.offer?q.offer.shop:'butik');lines.push(`Pris ${kr(total)} · ${used>0?kr(total/(used/1e6))+' pr. nyttig m² · ':''}${area>0?kr(total*((area-used)/area))+' heraf spild':''} · ${source}${q.status==='own'?'':', kan være forældet'}`)}
   lines.push('');
   result.s.forEach((s,i)=>{
     lines.push(`Plade ${i+1} (${s.pieces.length} stk.)`);
@@ -172,8 +173,8 @@ function copyCutlist(){
 }
 function copyText(text,done){if(navigator.clipboard&&navigator.clipboard.writeText){navigator.clipboard.writeText(text).then(done).catch(()=>fallbackCopy(text,done))}else fallbackCopy(text,done)}
 function fallbackCopy(text,done){let ta=document.createElement('textarea');ta.value=text;ta.setAttribute('readonly','');ta.style.position='fixed';ta.style.left='-9999px';document.body.append(ta);ta.select();try{document.execCommand('copy');done()}catch{toast('Kunne ikke kopiere — brug CSV i stedet')}ta.remove()}
-function updatePrintHeader(){let t=$('#printTitle'),m=$('#printMeta'),d=$('#printDate');if(!t)return;t.textContent=$('#projectName').value.trim()||'Skæreseddel';if(d)d.textContent='Udskrevet '+new Date().toLocaleString('da-DK',{dateStyle:'medium',timeStyle:'short'});if(!result){m.textContent='';return}let mat=materialLabel(),unit=activeUnitPrice(),price='';if(unit){let total=unit*result.s.length,used=result.ps.reduce((n,a)=>n+a.w*a.h,0),q=currentQuote();price=` · pris ${kr(total)} (${q.offer?q.offer.shop:'butik'})`;if(used>0)price+=` · ${kr(total/(used/1e6))} pr. nyttig m²`}m.textContent=`${mat?mat+' · ':''}${result.s.length} ${result.s.length===1?'plade':'plader'} · ${result.ps.length} emner · ${dim(result.W)} × ${dim(result.H)} mm · savspor ${dim(+$('#kerf').value)} mm · kantfraskær ${dim(+$('#trim').value)} mm · udnyttelse ${fmt(result.y)}% · spild ${fmt(100-result.y)}%${price}`}
-function state(){let o=materialOption();return{id:activeProjectId,n:$('#projectName').value,m:$('#material').selectedIndex,mid:o?o.value:'',w:$('#sheetW').value,h:$('#sheetH').value,k:$('#kerf').value,t:$('#trim').value,r:$('#rotate').checked,p:rows()}}
+function updatePrintHeader(){let t=$('#printTitle'),m=$('#printMeta'),d=$('#printDate');if(!t)return;t.textContent=$('#projectName').value.trim()||'Skæreseddel';if(d)d.textContent='Udskrevet '+new Date().toLocaleString('da-DK',{dateStyle:'medium',timeStyle:'short'});if(!result){m.textContent='';return}let mat=materialLabel(),unit=activeUnitPrice(),price='';if(unit!=null){let total=unit*result.s.length,used=result.ps.reduce((n,a)=>n+a.w*a.h,0),q=currentQuote();price=` · pris ${kr(total)} (${q.status==='own'?'Egen pris':(q.offer?q.offer.shop:'butik')})`;if(used>0)price+=` · ${kr(total/(used/1e6))} pr. nyttig m²`}m.textContent=`${mat?mat+' · ':''}${result.s.length} ${result.s.length===1?'plade':'plader'} · ${result.ps.length} emner · ${dim(result.W)} × ${dim(result.H)} mm · savspor ${dim(+$('#kerf').value)} mm · kantfraskær ${dim(+$('#trim').value)} mm · udnyttelse ${fmt(result.y)}% · spild ${fmt(100-result.y)}%${price}`}
+function state(){let o=materialOption();let out={id:activeProjectId,n:$('#projectName').value,m:$('#material').selectedIndex,mid:o?o.value:'',w:$('#sheetW').value,h:$('#sheetH').value,k:$('#kerf').value,t:$('#trim').value,r:$('#rotate').checked,p:rows()};let own=currentOwnSheet();if(own)out.os=own;let sheets=loadOwnSheets();if(sheets.length)out.sheets=sheets;return out}
 function store(){try{localStorage.setItem('pladeplan',JSON.stringify(state()))}catch{}}
 function markStale(){if(result){$('#resultSubtitle').textContent='Ændret – tryk “Opdater skæreplan” for at opdatere';$('.result').classList.add('stale');syncStaleBar();syncCalcLabel();setExportEnabled(false);syncPriceStat()}}
 function change(){count();ensurePartsEmpty();store();$('#saveState').textContent='Kladde gemt lokalt';markStale();syncUsable();syncFlow();syncExampleChip();syncCalcSub();syncBoardJump();hideOkBar();if(result)updatePrintHeader()}
@@ -182,8 +183,10 @@ function syncStats(){let el=$('#stats');if(el)el.hidden=!result}
 function clearResult(){result=null;resetStats();syncStats();$('#resultSubtitle').textContent='';$('#boardCount').textContent='';$('#boards').innerHTML=EMPTY_BOARDS;$('#error').classList.remove('show');$('.result').classList.remove('stale');syncStaleBar();syncCalcLabel();setExportEnabled(false);renderPrices();updatePrintHeader();hideOkBar();syncFlow();syncExampleChip();syncCalcSub();syncBoardJump()}
 function applyState(x){
   x=x||{};activeProjectId=x.id||null;
+  adoptPlanSheet(x);
   $('#projectName').value=x.n||DEFAULT_NAME;
   let matId=materialIdFromState(x);
+  if(matId==='__add_own')matId='mdf-19-1220x2440';
   if(!selectMaterialById(matId))selectMaterialById(x.mid?'custom':'mdf-19-1220x2440');
   let opt=materialOption();
   if(x.w!=null||x.h!=null){$('#sheetW').value=x.w||1220;$('#sheetH').value=x.h||2440}
@@ -297,6 +300,7 @@ let sheetPriceBook=null;
 let sheetPriceLoad=null;
 function kr(n){return n.toLocaleString('da-DK',{minimumFractionDigits:Math.round(n*100)%100?2:0,maximumFractionDigits:2})+' kr.'}
 function kindFromOption(opt){
+  if(opt?.dataset.own==='1')return '';
   let mat=opt?.dataset.mat||'';
   if(mat==='MDF')return 'mdf';
   if(mat==='spånplade')return 'span';
@@ -370,6 +374,13 @@ function sheetOfferFor(kind,thick,w,h){
 function currentQuote(){
   if(!result)return {status:'idle'};
   let opt=materialOption();
+  if(opt&&opt.dataset.own==='1'){
+    let own=ownFromOption(opt);
+    if(!own)return {status:'custom'};
+    let w=Math.round(result.W),h=Math.round(result.H),ow=Math.round(own.w),oh=Math.round(own.h);
+    if(!((ow===w&&oh===h)||(ow===h&&oh===w)))return {status:'own-size',w:own.w,h:own.h};
+    return {status:'own',price:own.price,name:own.name};
+  }
   let kind=kindFromOption(opt),thick=opt?.dataset.thick;
   if(!kind||!thick)return {status:'custom'};
   if(!sheetPriceBook)return {status:'loading'};
@@ -377,7 +388,7 @@ function currentQuote(){
   let offer=sheetOfferFor(kind,thick,result.W,result.H);
   return offer?{status:'ok',offer}:{status:'missing'};
 }
-function activeUnitPrice(){let q=currentQuote();return q.status==='ok'?q.offer.price:null}
+function activeUnitPrice(){let q=currentQuote();if(q.status==='ok')return q.offer.price;if(q.status==='own')return q.price;return null}
 function syncPriceStat(){paintCosts()}
 function optionTitle(opt){
   let thick=opt.dataset.thick?String(opt.dataset.thick).replace('.',','):'';
@@ -397,6 +408,7 @@ function resultMetrics(){
 }
 function comparePlan(){
   let cur=materialOption();
+  if(cur?.dataset.own==='1')return {rows:[]};
   let mat=cur?.dataset.mat||'',thick=String(cur?.dataset.thick||'');
   let kind=kindFromOption(cur);
   let opts=[...$('#material').options].filter(o=>o.dataset.w);
@@ -431,7 +443,8 @@ function renderPrices(){
   let show=!!result;
   if(panel)panel.hidden=!show;
   if(!show){if(block)block.hidden=true;let more=$('#morePrices');if(more)more.hidden=true;return}
-  if(!$('.result').classList.contains('stale')){
+  if(materialOption()?.dataset.own==='1'){if(list)list.innerHTML=''}
+  else if(!$('.result').classList.contains('stale')){
     let plan=comparePlan();
     let primary=plan.rows.filter(r=>r.group==='primary').sort((a,b)=>Number(b.current)-Number(a.current));
     if(list)list.innerHTML=primary.map(compareRowHtml).join('');
@@ -484,14 +497,16 @@ function paintCosts(){
   let area=result.W*result.H*sheets;
   let waste=Math.max(0,area-used);
   let mat=materialLabel();
-  let unit=quote.status==='ok'?quote.offer.price:null;
-  if(kicker)kicker.textContent=unit?'Billigste plade':'Pladepris';
-  if(shopEl){shopEl.hidden=!unit;shopEl.innerHTML=unit?shopLink(quote.offer,true):''}
-  if(!unit){
+  let unit=quote.status==='ok'?quote.offer.price:quote.status==='own'?quote.price:null;
+  let hasPrice=unit!=null;
+  if(kicker)kicker.textContent=quote.status==='own'?'Egen plade':hasPrice?'Billigste plade':'Pladepris';
+  if(shopEl){if(quote.status==='own'){shopEl.hidden=false;shopEl.textContent='Egen pris'}else if(hasPrice){shopEl.hidden=false;shopEl.innerHTML=shopLink(quote.offer,true)}else{shopEl.hidden=true;shopEl.textContent=''}}
+  if(!hasPrice){
     totalEl.classList.add('unset');
     if(quote.status==='loading'){totalEl.textContent='Henter…';if(sub)sub.textContent='Slår prisen op.'}
     else if(quote.status==='error'){totalEl.textContent='Ikke hentet';if(sub)sub.textContent='Pladeprisen kunne ikke hentes.'}
     else if(quote.status==='custom'){totalEl.textContent='Ikke fundet';if(sub)sub.textContent='Tilpasset mål slås ikke op. Vælg en pladetype med tykkelse.'}
+    else if(quote.status==='own-size'){totalEl.textContent='Ikke fundet';if(sub)sub.textContent=`Egen pris gælder ${dim(quote.w)} × ${dim(quote.h)} mm.`}
     else{totalEl.textContent='Ikke fundet';if(sub)sub.textContent=`Ingen butik har ${mat||'denne plade'} i ${dim(result.W)} × ${dim(result.H)} mm.`}
   }else{
     let total=unit*sheets;
@@ -516,7 +531,7 @@ function paintCosts(){
   let current=priced.find(p=>p.current)||null;
   let alternatives=priced.filter(p=>!p.current);
   let cheaper=alternatives.filter(p=>!current||p.total<current.total-0.001);
-  let showRows=unit?cheaper:(alternatives.length?alternatives:[]);
+  let showRows=hasPrice?cheaper:(alternatives.length?alternatives:[]);
   showRows.forEach(p=>{p.row.hidden=false});
   if(showRows.length>1){
     let best=null;
@@ -533,7 +548,7 @@ function paintCosts(){
       hint.textContent=diff>0.5?kr(diff)+' mindre':'';
     }else hint.textContent='';
   }
-  if(kicker&&unit&&showRows.length)kicker.textContent='Valgt plade';
+  if(kicker&&hasPrice&&showRows.length&&quote.status==='ok')kicker.textContent='Valgt plade';
   if(source){
     if(quote.status==='error'){
       source.innerHTML='<button type="button" class="textbtn" id="retryPrices">Prøv igen</button>';
@@ -571,7 +586,7 @@ function render(){
     dataPartRows().forEach(validatePartRow);
     syncFlow();syncExampleChip();dismissCoach();
     let okUnit=activeUnitPrice();
-    let okMsg=`Plan klar · ${s.length} ${s.length===1?'plade':'plader'} · ${fmt(y)}% udnyttelse`+(okUnit?` · ${kr(okUnit*s.length)}`:'');
+    let okMsg=`Plan klar · ${s.length} ${s.length===1?'plade':'plader'} · ${fmt(y)}% udnyttelse`+(okUnit!=null?` · ${kr(okUnit*s.length)}`:'');
     announce(okMsg);syncBoardJump();syncCalcSub();
     let statsEl=document.querySelector('.stats');if(statsEl){statsEl.classList.remove('flash');void statsEl.offsetWidth;statsEl.classList.add('flash')}
     if(innerWidth<781)$('.result').scrollIntoView({behavior:'smooth',block:'start'});
@@ -597,15 +612,15 @@ function exportCSV(){
     ['Brugt areal',`${(result.ps.reduce((n,a)=>n+a.w*a.h,0)/1e6).toFixed(2).replace('.',',')} m²`].map(csvCell).join(';'),
     ['Udnyttelse',`${fmt(result.y)} %`].map(csvCell).join(';'),
     ['Spild',`${fmt(100-result.y)} %`].map(csvCell).join(';'),
-    ...(activeUnitPrice()?(()=>{let unit=activeUnitPrice(),total=unit*result.s.length,used=result.ps.reduce((n,a)=>n+a.w*a.h,0),area=result.W*result.H*result.s.length,q=currentQuote();return [
+    ...(activeUnitPrice()!=null?(()=>{let unit=activeUnitPrice(),total=unit*result.s.length,used=result.ps.reduce((n,a)=>n+a.w*a.h,0),area=result.W*result.H*result.s.length,q=currentQuote(),own=q.status==='own';return [
       ['Pris pr. plade',kr(unit)].map(csvCell).join(';'),
       ['Pris i alt',kr(total)].map(csvCell).join(';'),
       ['Pris pr. nyttig m²',used>0?kr(total/(used/1e6)):''].map(csvCell).join(';'),
       ['Heraf spild',area>0?kr(total*((area-used)/area)):''].map(csvCell).join(';'),
-      ['Priskilde',q.offer?q.offer.shop:''].map(csvCell).join(';'),
+      ['Priskilde',own?'Egen pris':(q.offer?q.offer.shop:'')].map(csvCell).join(';'),
       ['Prislink',q.offer?q.offer.url:''].map(csvCell).join(';'),
-      ['Prisvare',q.offer?q.offer.productName:''].map(csvCell).join(';'),
-      ['Prisnote','Kan være forældet'].map(csvCell).join(';')
+      ['Prisvare',own?(q.name||''):(q.offer?q.offer.productName:'')].map(csvCell).join(';'),
+      ['Prisnote',own?'':'Kan være forældet'].map(csvCell).join(';')
     ]})():[]),
     '',
     ['Plade','Emne','Bredde (mm)','Længde (mm)','X (mm)','Y (mm)','Roteret'].map(csvCell).join(';')
@@ -708,7 +723,9 @@ function renderLibrary(){
 /* ---------- Del / share (komprimeret URL, uden backend) ---------- */
 function sharePayload(){
   let s=state();
-  return{n:s.n,m:s.m,mid:s.mid||'',w:s.w,h:s.h,k:s.k,t:s.t,r:!!s.r,p:(s.p||[]).map(r=>[String(r[0]||'').slice(0,80),+r[1]||r[1],+r[2]||r[2],+r[3]||1])};
+  let out={n:s.n,m:s.m,mid:s.mid||'',w:s.w,h:s.h,k:s.k,t:s.t,r:!!s.r,p:(s.p||[]).map(r=>[String(r[0]||'').slice(0,80),+r[1]||r[1],+r[2]||r[2],+r[3]||1])};
+  if(s.os)out.os=s.os;
+  return out;
 }
 function bytesToB64url(bytes){
   let bin='',chunk=0x8000;
@@ -875,8 +892,150 @@ function applyDraft(replace){
   toast(`${draft.length} ${draft.length===1?'emnetype':'emnetyper'} ${replace?'indsat':'tilføjet'}. Kontrollér målene.`);
 }
 
+/* ---------- Egne plader ---------- */
+const OWN_SHEETS_KEY='pladeplan-own-sheets';
+const ADD_OWN='__add_own';
+const MAX_OWN_SHEETS=40;
+function parseOwnMoney(value){
+  if(typeof value==='number'&&Number.isFinite(value))return value>=0&&value<1e6?Math.round(value*100)/100:null;
+  let s=String(value??'').trim().replace(/\s/g,'');
+  if(!s)return null;
+  if(s.includes(',')&&s.includes('.'))s=s.replace(/\./g,'').replace(',','.');
+  else if(s.includes(','))s=s.replace(',','.');
+  let n=Number(s);
+  if(!Number.isFinite(n)||n<0||n>=1e6)return null;
+  return Math.round(n*100)/100;
+}
+function parseOwnMm(value,min,max){
+  let n=Number(String(value??'').trim().replace(',','.'));
+  if(!Number.isFinite(n)||n<min||n>max)return null;
+  return Math.round(n*10)/10;
+}
+function normalizeOwn(raw){
+  if(!raw||typeof raw!=='object')return null;
+  let id=String(raw.id||'').trim();
+  if(!/^own-[\w.-]{1,72}$/.test(id))return null;
+  let name=String(raw.name||'').trim().slice(0,60);
+  if(!name)return null;
+  let thick=parseOwnMm(raw.thick,0.1,200),w=parseOwnMm(raw.w,1,20000),h=parseOwnMm(raw.h,1,20000),price=parseOwnMoney(raw.price);
+  if(thick==null||w==null||h==null||price==null)return null;
+  return {id,name,thick,w,h,price};
+}
+function loadOwnSheets(){
+  try{
+    let raw=JSON.parse(localStorage.getItem(OWN_SHEETS_KEY));
+    if(!Array.isArray(raw))return [];
+    let byId=new Map();
+    raw.forEach(item=>{let s=normalizeOwn(item);if(s&&byId.size<MAX_OWN_SHEETS)byId.set(s.id,s)});
+    return [...byId.values()];
+  }catch{return []}
+}
+function saveOwnSheets(list){try{localStorage.setItem(OWN_SHEETS_KEY,JSON.stringify(list.slice(0,MAX_OWN_SHEETS)))}catch{}}
+function currentOwnSheet(){let o=materialOption();if(!o||o.dataset.own!=='1')return null;return loadOwnSheets().find(s=>s.id===o.value)||ownFromOption(o)}
+function ownFromOption(opt){
+  if(!opt||opt.dataset.own!=='1')return null;
+  return normalizeOwn({id:opt.value,name:opt.dataset.mat,thick:opt.dataset.thick,w:opt.dataset.w,h:opt.dataset.h,price:opt.dataset.price});
+}
+function ownOptionLabel(s){return `${String(s.thick).replace('.',',')} mm ${s.name} · ${dim(s.w)} × ${dim(s.h)}`}
+function renderOwnOptions(){
+  let group=$('#ownSheetGroup');if(!group)return;
+  let selected=$('#material').value;
+  let list=loadOwnSheets();
+  group.hidden=false;
+  group.innerHTML=list.map(s=>`<option value="${esc(s.id)}" data-own="1" data-w="${s.w}" data-h="${s.h}" data-thick="${s.thick}" data-mat="${esc(s.name)}" data-price="${s.price}">${esc(ownOptionLabel(s))}</option>`).join('')+`<option value="${ADD_OWN}">＋ Tilføj egen plade…</option>`;
+  if(selected&&selected!==ADD_OWN)selectMaterialById(selected);
+  syncOwnTools();
+}
+function adoptPlanSheet(x){
+  let s=normalizeOwn(x&&x.os);
+  if(!s)return;
+  let list=loadOwnSheets();
+  if(list.some(o=>o.id===s.id))return;
+  list.push(s);
+  saveOwnSheets(list);
+  renderOwnOptions();
+}
+function harvestOwnCatalog(projects){
+  if(loadOwnSheets().length||!Array.isArray(projects))return;
+  let newest=null;
+  projects.forEach(p=>{
+    if(!p||!Array.isArray(p.sheets)||!p.sheets.length)return;
+    if(!newest||Date.parse(p.updatedAt||0)>=Date.parse(newest.updatedAt||0))newest=p;
+  });
+  let list=[];
+  if(newest)newest.sheets.forEach(item=>{let s=normalizeOwn(item);if(s&&list.length<MAX_OWN_SHEETS&&!list.some(o=>o.id===s.id))list.push(s)});
+  else projects.forEach(p=>{let s=normalizeOwn(p&&p.os);if(s&&list.length<MAX_OWN_SHEETS&&!list.some(o=>o.id===s.id))list.push(s)});
+  if(!list.length)return;
+  saveOwnSheets(list);
+  renderOwnOptions();
+}
+function ownNewId(){return 'own-'+Date.now().toString(36)+Math.random().toString(36).slice(2,8)}
+function setOwnError(msg){let el=$('#ownError');if(el)el.textContent=msg||''}
+function openOwnDialog(sheet){
+  let dlg=$('#ownSheetDialog');if(!dlg)return;
+  let editing=!!sheet;
+  $('#ownSheetTitle').textContent=editing?'Ret egen plade':'Egen plade';
+  $('#ownSheetForm').dataset.id=editing?sheet.id:'';
+  $('#ownName').value=editing?sheet.name:'';
+  $('#ownThick').value=editing?String(sheet.thick).replace('.',','):'';
+  $('#ownW').value=editing?String(sheet.w):($('#sheetW').value||'');
+  $('#ownH').value=editing?String(sheet.h):($('#sheetH').value||'');
+  $('#ownPrice').value=editing?String(sheet.price).replace('.',','):'';
+  let del=$('#deleteOwnSheet');if(del)del.hidden=!editing;
+  setOwnError('');
+  dlg.showModal();
+  $('#ownName').focus();
+}
+function readOwnForm(){
+  let name=$('#ownName').value.trim().slice(0,60);
+  if(!name){setOwnError('Skriv et navn.');$('#ownName').focus();return null}
+  let thick=parseOwnMm($('#ownThick').value,0.1,200),w=parseOwnMm($('#ownW').value,1,20000),h=parseOwnMm($('#ownH').value,1,20000);
+  if(thick==null||w==null||h==null){setOwnError('Skriv tykkelse, bredde og længde i mm.');return null}
+  let price=parseOwnMoney($('#ownPrice').value);
+  if(price==null){setOwnError('Skriv prisen i kroner.');$('#ownPrice').focus();return null}
+  let id=$('#ownSheetForm').dataset.id||ownNewId();
+  return {id,name,thick,w,h,price};
+}
+function saveOwnFromForm(event){
+  event.preventDefault();
+  let sheet=readOwnForm();if(!sheet)return;
+  let list=loadOwnSheets();
+  let idx=list.findIndex(s=>s.id===sheet.id);
+  if(idx<0&&list.length>=MAX_OWN_SHEETS){setOwnError('Højst 40 egne plader.');return}
+  if(idx<0)list.push(sheet);else list[idx]=sheet;
+  saveOwnSheets(list);
+  renderOwnOptions();
+  selectMaterialById(sheet.id);
+  saveMaterialPref(sheet.id);
+  $('#sheetW').value=String(sheet.w);
+  $('#sheetH').value=String(sheet.h);
+  $('#ownSheetDialog').close();
+  syncCustomHint();
+  change();
+  toast(idx<0?'Pladen er tilføjet.':'Pladen er opdateret.');
+}
+function deleteOwnFromForm(){
+  let id=$('#ownSheetForm').dataset.id;
+  if(!id)return;
+  let sheet=loadOwnSheets().find(s=>s.id===id);
+  if(!confirm(sheet?`Fjern “${sheet.name}” fra listen?`:'Fjern pladen fra listen?'))return;
+  let selected=materialOption()?.value===id;
+  saveOwnSheets(loadOwnSheets().filter(s=>s.id!==id));
+  renderOwnOptions();
+  $('#ownSheetDialog').close();
+  if(selected){
+    selectMaterialById('mdf-19-1220x2440');
+    let o=materialOption();
+    if(o&&o.dataset.w){$('#sheetW').value=o.dataset.w;$('#sheetH').value=o.dataset.h}
+    saveMaterialPref(o?o.value:'');
+    syncCustomHint();
+    change();
+  }
+  toast('Pladen er fjernet.');
+}
+
 /* ---------- Opstart og hændelser ---------- */
-(async()=>{if(!(await tryLoadShared())&&!load()){let id=loadMaterialPrefId();if(id&&selectMaterialById(id)){let o=materialOption();if(o&&o.dataset.w){$('#sheetW').value=o.dataset.w;$('#sheetH').value=o.dataset.h}}let saw=loadSawPref();if(saw){if(saw.k!=null)$('#kerf').value=saw.k;if(saw.t!=null)$('#trim').value=saw.t;if(typeof saw.r==='boolean')$('#rotate').checked=saw.r}DEFAULT_PARTS.forEach(r=>add(r,false));count();syncCustomHint();syncUsable()}syncFlow();syncExampleChip();syncCalcSub();syncClearParts()})()
+(async()=>{renderOwnOptions();if(!(await tryLoadShared())&&!load()){let id=loadMaterialPrefId();if(id&&selectMaterialById(id)){let o=materialOption();if(o&&o.dataset.w){$('#sheetW').value=o.dataset.w;$('#sheetH').value=o.dataset.h}}let saw=loadSawPref();if(saw){if(saw.k!=null)$('#kerf').value=saw.k;if(saw.t!=null)$('#trim').value=saw.t;if(typeof saw.r==='boolean')$('#rotate').checked=saw.r}DEFAULT_PARTS.forEach(r=>add(r,false));count();syncCustomHint();syncUsable()}syncFlow();syncExampleChip();syncCalcSub();syncClearParts()})()
 loadSheetPrices();
 renderPrices();
 $('#addPart').onclick=()=>{add();P.lastElementChild.querySelector('input').select()};
@@ -884,7 +1043,25 @@ $('#clearParts').onclick=()=>{if(!dataPartRows().length)return;if(!confirm('Ryd 
 ['sheetW','sheetH','projectName'].forEach(id=>$('#'+id).oninput=change);
 ['kerf','trim'].forEach(id=>$('#'+id).oninput=()=>{saveSawPref();change()});
 $('#rotate').onchange=()=>{saveSawPref();change()};
-$('#material').onchange=e=>{let o=e.target.selectedOptions[0];saveMaterialPref(o.value);if(o.dataset.w){$('#sheetW').value=o.dataset.w;$('#sheetH').value=o.dataset.h}else{$('#sheetW').focus();$('#sheetW').select()}syncCustomHint();change()};
+$('#material').addEventListener('focus',()=>{$('#material').dataset.prev=$('#material').value});
+$('#material').onchange=e=>{
+  let o=e.target.selectedOptions[0];
+  if(o&&o.value===ADD_OWN){
+    let prev=$('#material').dataset.prev||'mdf-19-1220x2440';
+    if(!selectMaterialById(prev))selectMaterialById('mdf-19-1220x2440');
+    openOwnDialog(null);
+    return;
+  }
+  $('#material').dataset.prev=o?o.value:'';
+  saveMaterialPref(o.value);if(o.dataset.w){$('#sheetW').value=o.dataset.w;$('#sheetH').value=o.dataset.h}else{$('#sheetW').focus();$('#sheetW').select()}syncCustomHint();change();
+};
+let editOwn=$('#editOwnSheet');if(editOwn)editOwn.onclick=()=>{let sheet=currentOwnSheet();if(sheet)openOwnDialog(sheet)};
+let ownForm=$('#ownSheetForm');if(ownForm)ownForm.onsubmit=saveOwnFromForm;
+let closeOwn=$('#closeOwnSheet');if(closeOwn)closeOwn.onclick=()=>$('#ownSheetDialog').close();
+let cancelOwn=$('#cancelOwnSheet');if(cancelOwn)cancelOwn.onclick=()=>$('#ownSheetDialog').close();
+let deleteOwn=$('#deleteOwnSheet');if(deleteOwn)deleteOwn.onclick=deleteOwnFromForm;
+let ownDlg=$('#ownSheetDialog');if(ownDlg)ownDlg.addEventListener('click',e=>{if(e.target===ownDlg)ownDlg.close()});
+[ownDlg].forEach(d=>d&&d.addEventListener('close',()=>setOwnError('')));
 $('#optimize').onclick=render;
 let restale=$('#restaleOptimize');if(restale)restale.onclick=render;
 function openPriceDetailsForPrint(){document.querySelectorAll('details.moreprices').forEach(d=>{if(d.hidden)return;d.dataset.wasOpen=d.open?'1':'0';d.open=true})}
@@ -982,6 +1159,7 @@ window.__pladeplanOnAuth=async function(){
     if(!r.ok)throw Error('sync');
     let j=await r.json();
     b.cache=Array.isArray(j.projects)?j.projects:[];
+    harvestOwnCatalog(b.cache);
     b.degraded=false;
     b.ready=true;
     syncLibraryChrome();

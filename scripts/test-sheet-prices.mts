@@ -769,6 +769,8 @@ assert.equal(partial.shops.some((shop) => shop.name === '10-4.dk'), false);
 assert.ok(partialCalls > 0);
 
 assert.equal(PLANNER_MARKUP.includes('id="sheetPrice"'), false);
+assert.equal(PLANNER_MARKUP.includes('Tilføj egen plade'), true);
+assert.equal(PLANNER_MARKUP.includes('id="ownPrice"'), true);
 assert.equal(PLANNER_MARKUP.includes('Silvan'), true);
 assert.equal(PLANNER_MARKUP.includes('XL-BYG'), true);
 assert.equal(PLANNER_MARKUP.includes('STARK'), true);

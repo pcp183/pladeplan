@@ -74,8 +74,9 @@ export default function PrivacyPage() {
               Emnelisten sendes ikke til butikkerne. Prisen kan være forældet, og der vises ingen pris, hvis varen ikke findes.
             </li>
             <li>
-              <strong>Kladde på enheden:</strong> browseren kan gemme kladden og lokale skæresedler i localStorage. De sendes
-              ikke til serveren, før du gemmer en skæreseddel på kontoen.
+              <strong>Kladde på enheden:</strong> browseren kan gemme kladden, lokale skæresedler og egne plader i
+              localStorage. Egne plader har det navn, de mål og den pris, du selv har skrevet. De sendes ikke til
+              serveren, før du gemmer en skæreseddel på kontoen. Så følger pladerne med den gemte skæreseddel.
             </li>
             <li>
               <strong>Drift:</strong> Clerk og værten (Vercel) kan kortvarigt logge tekniske oplysninger som tidspunkt
