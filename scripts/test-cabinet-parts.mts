@@ -169,6 +169,18 @@ if (demo.ok) {
   assert.equal(demo.parts.every((item) => fits(item.widthMm, item.lengthMm)), true);
 }
 
+assert.match(PLANNER_MARKUP, /id="dictateParts"/);
+assert.match(PLANNER_MARKUP, /aria-label="Dikter emner"/);
+assert.match(PLANNER_MARKUP, />Tal emnerne</);
+assert.match(PLANNER_MARKUP, /Tal, skriv eller indsæt tekst, og kontrollér emnelisten/);
+assert.match(PLANNER_MARKUP, /Stemme virker i Chrome, Edge og Safari/);
+const voiceJs = readFileSync(new URL('../public/planner.js', import.meta.url), 'utf8');
+assert.match(voiceJs, /webkitSpeechRecognition/);
+assert.match(voiceJs, /da-DK/);
+assert.match(voiceJs, /Mikrofonen er blokeret/);
+assert.equal(voiceJs.includes('onend=()=>analyze'), false);
+assert.equal(voiceJs.includes('finishVoice(){analyze'), false);
+
 assert.match(PLANNER_MARKUP, /id="openPhoto"/);
 assert.match(PLANNER_MARKUP, /Fra foto/);
 assert.match(PLANNER_MARKUP, /protag">Pro</);

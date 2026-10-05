@@ -903,7 +903,8 @@ function smart(text){
 }
 function cleanParts(list){return (Array.isArray(list)?list:[]).map(p=>({name:String(p?.name??'Emne').trim().slice(0,80)||'Emne',w:+p?.w,h:+p?.h,q:Math.round(+(p?.q??p?.qty??1))})).filter(p=>p.w>0&&p.h>0&&p.q>=1&&p.q<=999)}
 async function analyze(){
-  let text=$('#aiText').value.trim();if(!text)return toast('Indsæt tekst med mål først.');
+  silenceVoice();
+  let text=$('#aiText').value.trim();if(!text)return toast('Skriv, indsæt eller dikter tekst med mål først.');
   $('#aiReview').classList.remove('show');$('#aiStatus').classList.add('show');$('#analyzeAI').disabled=true;
   let data=null,fromApi=false;
   if(location.protocol.startsWith('http')){try{let ctl=new AbortController(),tm=setTimeout(()=>ctl.abort(),15000),r=await fetch('/api/ai-import',{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify({text}),signal:ctl.signal});clearTimeout(tm);if(r.ok&&r.headers.get('content-type')?.includes('json')){let j=await r.json();if(Array.isArray(j?.parts)){data=cleanParts(j.parts);fromApi=!!data.length}}}catch{}}
@@ -916,6 +917,105 @@ async function analyze(){
   $('#aiImportMeta').textContent=`${pcs} stk. i alt · ${fromApi?'fortolket via import-tjeneste':'fortolket lokalt i browseren'} · Intet er tilføjet endnu`;
   $('#aiReviewList').innerHTML=data.map(p=>`<div class="reviewrow"><span>${esc(p.name)}</span><span>${fmt(p.w)} × ${fmt(p.h)} mm · ${p.q} stk.</span></div>`).join('');
   $('#aiReview').classList.add('show');
+}
+/* ---------- Dikter emner (Web Speech, da-DK). Tilføjer ikke emner uden gennemsyn. ---------- */
+let voiceRec=null,voiceBase='',voiceFinal='',voiceInterim='',voiceListening=false,voiceError='',silenceTimer=0;
+function speechCtor(){
+  let Ctor=window.SpeechRecognition||window.webkitSpeechRecognition;
+  return typeof Ctor==='function'?Ctor:null;
+}
+function clearSilence(){clearTimeout(silenceTimer);silenceTimer=0}
+function setVoiceNote(text){
+  let note=$('#voiceNote');if(!note)return;
+  note.hidden=!text;note.textContent=text||'';
+}
+function setListening(on){
+  voiceListening=on;
+  let btn=$('#dictateParts'),status=$('#voiceStatus'),stop=$('#dictateStop');
+  if(btn)btn.setAttribute('aria-pressed',on?'true':'false');
+  if(stop)stop.hidden=!on;
+  if(status){
+    if(on){status.hidden=false;status.textContent='Lytter…'}
+    else if(!status.textContent.startsWith('Teksten er klar'))status.hidden=true;
+  }
+}
+function clearAnalyzeReady(){
+  let btn=$('#analyzeAI');if(btn)btn.classList.remove('voice-ready');
+  let status=$('#voiceStatus');
+  if(status&&!voiceListening&&status.textContent.startsWith('Teksten er klar'))status.hidden=true;
+}
+function markAnalyzeReady(){
+  let btn=$('#analyzeAI'),status=$('#voiceStatus');
+  if(btn)btn.classList.add('voice-ready');
+  if(status){status.hidden=false;status.textContent='Teksten er klar. Tryk Analysér.'}
+}
+function composeVoice(){
+  let spoken=(voiceFinal+(voiceInterim?(voiceFinal?' ':'')+voiceInterim:'')).replace(/\s+/g,' ').trim();
+  let prefix=voiceBase.trim(),box=$('#aiText');if(!box)return;
+  box.value=prefix?(spoken?prefix+'\n'+spoken:prefix):spoken;
+}
+function stopDictation(){
+  clearSilence();
+  if(voiceRec){try{voiceRec.stop()}catch{}}
+}
+function silenceVoice(){
+  if(!voiceListening&&!voiceRec){clearAnalyzeReady();return}
+  voiceError='silent';
+  stopDictation();
+  setListening(false);
+}
+function finishVoice(){
+  setListening(false);
+  voiceRec=null;
+  clearSilence();
+  if(voiceInterim){voiceFinal=(voiceFinal?voiceFinal+' ':'')+voiceInterim.trim();voiceInterim='';composeVoice()}
+  let err=voiceError;voiceError='';
+  if(err==='silent')return;
+  if(err==='denied'){setVoiceNote('Mikrofonen er blokeret. Du kan stadig skrive eller indsætte teksten.');return}
+  if(err==='fail'){setVoiceNote('Stemmen kunne ikke bruges lige nu. Skriv eller indsæt teksten i stedet.');return}
+  if(voiceFinal.trim()){setVoiceNote('');markAnalyzeReady();return}
+  if(err==='empty')setVoiceNote('Der blev ikke hørt noget. Prøv igen, eller skriv teksten.');
+}
+function startDictation(){
+  let Ctor=speechCtor();
+  if(!Ctor){setupVoice();return}
+  if(voiceListening){stopDictation();return}
+  let box=$('#aiText');
+  voiceBase=box?box.value:'';
+  voiceFinal='';voiceInterim='';voiceError='';
+  clearAnalyzeReady();setVoiceNote('');
+  let rec=new Ctor();voiceRec=rec;
+  rec.lang='da-DK';rec.continuous=true;rec.interimResults=true;
+  rec.onstart=()=>setListening(true);
+  rec.onresult=ev=>{
+    voiceInterim='';
+    for(let i=ev.resultIndex;i<ev.results.length;i++){
+      let chunk=String(ev.results[i][0]?.transcript||'').trim();if(!chunk)continue;
+      if(ev.results[i].isFinal){voiceFinal=(voiceFinal?voiceFinal+' ':'')+chunk;clearSilence();silenceTimer=setTimeout(()=>{if(voiceListening)stopDictation()},1600)}
+      else voiceInterim=(voiceInterim?voiceInterim+' ':'')+chunk;
+    }
+    composeVoice();
+  };
+  rec.onerror=ev=>{
+    let code=ev&&ev.error;
+    if(code==='not-allowed'||code==='service-not-allowed')voiceError='denied';
+    else if(code==='no-speech')voiceError=voiceError||'empty';
+    else if(code==='aborted')return;
+    else voiceError=voiceError||'fail';
+  };
+  rec.onend=finishVoice;
+  let status=$('#voiceStatus');
+  if(status){status.hidden=false;status.textContent='Browseren spørger om mikrofonen…'}
+  try{rec.start()}catch{setListening(false);voiceRec=null;if(status)status.hidden=true;setVoiceNote('Stemmen kunne ikke bruges lige nu. Skriv eller indsæt teksten i stedet.')}
+}
+function setupVoice(){
+  let btn=$('#dictateParts'),tip=$('#voiceTip'),stop=$('#dictateStop'),box=$('#aiText');
+  if(!btn)return;
+  if(!speechCtor()){btn.hidden=true;if(tip)tip.hidden=false;return}
+  btn.hidden=false;if(tip)tip.hidden=true;
+  btn.onclick=()=>{if(voiceListening)stopDictation();else startDictation()};
+  if(stop)stop.onclick=()=>stopDictation();
+  if(box)box.addEventListener('input',()=>{if(!voiceListening)clearAnalyzeReady()});
 }
 function applyDraft(replace){
   if(!draft.length)return;
@@ -1157,8 +1257,10 @@ window.__pladeplanReplaceParts=function(list,name){
 };
 let photoBtn=$('#openPhoto');
 if(photoBtn)photoBtn.onclick=()=>{if(typeof window.__pladeplanOpenPhoto==='function')window.__pladeplanOpenPhoto()};
+setupVoice();
 $('#openAI').onclick=()=>{dlg.showModal();$('#aiText').focus()};
-$('#closeAI').onclick=()=>dlg.close();
+$('#closeAI').onclick=()=>{silenceVoice();dlg.close()};
+dlg.addEventListener('close',()=>silenceVoice());
 $('#retryAI').onclick=()=>{$('#aiReview').classList.remove('show');$('#aiText').focus()};
 $('#analyzeAI').onclick=analyze;
 $('#applyAI').onclick=()=>applyDraft(false);

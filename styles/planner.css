@@ -610,6 +610,15 @@ body.plan-fresh .toast{bottom:20px}
 .photogate{display:flex;flex-direction:column;gap:8px}
 .photogate p{margin:0;line-height:1.5}
 .photogate a{color:var(--g);font-weight:700}
+/* Smart import: dikter emner. Skjult, indtil browseren kan lytte, eller som et kort tip. */
+.voicerow{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin:10px 0 0}
+.micbtn{border-radius:20px}
+.micbtn[aria-pressed="true"]{background:#e7f0ea;border-color:#9fc2ad;color:var(--g)}
+.micglyph{display:block;flex:none}
+.voicestatus{margin:0;font-size:12px;line-height:1.4;color:var(--muted)}
+.voicetip,.voicenote{margin:8px 0 0;font-size:12px;line-height:1.45;color:#526159}
+.micbtn[hidden],#dictateStop[hidden],.voicestatus[hidden],.voicetip[hidden],.voicenote[hidden]{display:none!important}
+#analyzeAI.voice-ready{box-shadow:0 0 0 3px #f3d98a}
 @media(max-width:640px){
 .parts .section{flex-wrap:wrap}
 .photogrid{grid-template-columns:1fr}
