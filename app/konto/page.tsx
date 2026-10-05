@@ -42,8 +42,39 @@ function badgeTone(snapshot: PlanSnapshot, configured: boolean): 'wait' | 'pro' 
 export default async function AccountPage({
   searchParams,
 }: {
-  searchParams: Promise<{ betaling?: string; session_id?: string }>;
+  searchParams: Promise<{ betaling?: string; session_id?: string; preview?: string }>;
 }) {
+  const query = await searchParams;
+  if (process.env.NODE_ENV === 'development' && (query.preview === 'gratis' || query.preview === 'pro')) {
+    const pro = query.preview === 'pro';
+    return (
+      <div className="authpage">
+        <SiteHeader />
+        <main className="account">
+          <h1>Konto</h1>
+          <p className="lead">Din profil og abonnementsstatus. Skæreplanen kan stadig bruges uden login.</p>
+          <div className="stack">
+            <section className="card pad" id="abonnement">
+              <h2>Abonnement</h2>
+              <BillingPanel
+                configured
+                testMode
+                planName={pro ? 'Pro' : 'Gratis'}
+                badge={pro ? 'Aktiv' : 'Ikke aktivt'}
+                badgeTone={pro ? 'pro' : ''}
+                periodText={null}
+                projectCount={pro ? 5 : 2}
+                offers={pro ? [] : [{ slot: 'month', title: 'Pro månedligt', amountLabel: 'Prisen vises i kassen' }]}
+                canManage={pro}
+                flash={null}
+              />
+            </section>
+          </div>
+        </main>
+      </div>
+    );
+  }
+
   if (!clerkConfigured()) {
     return (
       <div className="authpage">
@@ -58,7 +89,6 @@ export default async function AccountPage({
   const { userId } = await auth();
   if (!userId) redirect('/sign-in');
   const user = await currentUser();
-  const query = await searchParams;
   const name = [user?.firstName, user?.lastName].filter(Boolean).join(' ') || 'Skæreseddel-bruger';
   const email = user?.primaryEmailAddress?.emailAddress || user?.emailAddresses[0]?.emailAddress || '—';
 
