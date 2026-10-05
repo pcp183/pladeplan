@@ -1,4 +1,12 @@
-import { auth } from '@clerk/nextjs/server';
+import { auth, currentUser } from '@clerk/nextjs/server';
+import {
+  FREE_LIMIT_MESSAGE,
+  allowsProjectReplace,
+  billingConfigured,
+  hasProAccess,
+  savedProjectLimit,
+} from '@/lib/billing';
+import { loadPlan } from '@/lib/billing-store';
 import { DatabaseNotConfiguredError } from '@/lib/db';
 import { clerkConfigured } from '@/lib/env';
 import { listProjects, parseProjectList, replaceProjects } from '@/lib/projects';
@@ -53,6 +61,14 @@ export async function PUT(request: Request) {
   const parsed = parseProjectList(body);
   if ('error' in parsed) return problem(parsed.error, 'bad_request', 400);
   try {
+    const limit = await saveLimitFor(gate.userId);
+    if (limit != null) {
+      const existing = await listProjects(gate.userId);
+      const nextIds = parsed.projects.map((project) => project.id);
+      if (!allowsProjectReplace(existing.map((project) => project.id), nextIds, limit)) {
+        return problem(FREE_LIMIT_MESSAGE, 'free_limit', 402);
+      }
+    }
     await replaceProjects(gate.userId, parsed.projects);
     return Response.json({ projects: parsed.projects });
   } catch (error) {
@@ -62,4 +78,18 @@ export async function PUT(request: Request) {
     console.error(error);
     return problem('Kunne ikke gemme skæresedler.', 'server', 500);
   }
+}
+
+/** null while billing is off or the account has Pro. Existing rows are never deleted here. */
+async function saveLimitFor(userId: string): Promise<number | null> {
+  if (!billingConfigured()) return null;
+  let metadata: unknown = null;
+  try {
+    const user = await currentUser();
+    metadata = user?.publicMetadata;
+  } catch (error) {
+    console.error('plan lookup failed', error instanceof Error ? error.name : 'unknown');
+  }
+  const plan = await loadPlan(userId, metadata);
+  return savedProjectLimit(hasProAccess(plan));
 }

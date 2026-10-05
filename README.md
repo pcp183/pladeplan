@@ -110,7 +110,7 @@ Valgfri kontaktmail på privatlivssiden: `PLADEPLAN_CONTACT_EMAIL`. Uden den vis
 
 ## Stripe
 
-Pro er et rigtigt abonnement via Stripe Checkout og kundeportalen. Der er ingen lokal kasse og ingen priser i koden. Alle nuværende funktioner i skæreplanen, inklusive gemte skæresedler, bliver på gratisplanen. `hasProAccess` i `lib/billing.ts` er server-tjekket til senere Pro-funktioner.
+Pro er et rigtigt abonnement via Stripe Checkout og kundeportalen. Der er ingen lokal kasse og ingen priser i koden. Når Stripe er sat op, gemmer gratisplanen op til 3 skæresedler. Pro giver ubegrænset gemte skæresedler og Fra foto. Uden den opsætning er der ingen grænse og intet køb. `hasProAccess` i `lib/billing.ts` er server-tjekket.
 
 Clerk kan stadig være `pk_test_` i produktion. Stripe-nøglerne følger deres egen tilstand: test med test, live med live. En test-nøgle og et live-pris-id dur ikke sammen.
 

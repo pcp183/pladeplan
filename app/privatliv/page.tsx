@@ -108,7 +108,9 @@ export default function PrivacyPage() {
             <li>At foreslå et skab ud fra et foto og ét kendt mål, når du er logget ind og har adgang til funktionen.</li>
             <li>At lade dig gemme skæresedler på kontoen og åbne dem igen.</li>
             <li>At holde styr på login, så kun du kan se og slette dine gemte skæresedler.</li>
-            {billing ? <li>At holde styr på et Pro-abonnement, hvis du selv tegner det.</li> : null}
+            {billing ? (
+              <li>At holde styr på et Pro-abonnement med ubegrænset gemte skæresedler og Fra foto, hvis du selv tegner det.</li>
+            ) : null}
           </ul>
         </section>
 
