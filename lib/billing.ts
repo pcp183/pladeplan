@@ -334,20 +334,20 @@ export function planPill(input: { billingReady: boolean; pro: boolean }): { text
   if (!input.billingReady) {
     return {
       text: 'Gratis · Pro kommer snart',
-      title: 'Pro kommer snart og kan ikke købes endnu. Pro vil give ubegrænset gemte skæresedler.',
+      title: 'Pro kommer snart og kan ikke købes endnu. Pro vil give ubegrænset gemte skæresedler og Fra foto.',
       pro: false,
     };
   }
   if (input.pro) {
     return {
       text: 'Pro',
-      title: 'Du har Skæreseddel Pro med ubegrænset gemte skæresedler. Administrer abonnementet under Konto.',
+      title: 'Du har Skæreseddel Pro med ubegrænset gemte skæresedler og Fra foto. Administrer abonnementet under Konto.',
       pro: true,
     };
   }
   return {
     text: 'Gratis · Opgrader',
-    title: 'Gratisplanen gemmer op til 3 skæresedler. Pro giver ubegrænset.',
+    title: 'Gratisplanen gemmer op til 3 skæresedler. Pro giver ubegrænset gemte skæresedler og Fra foto.',
     pro: false,
   };
 }

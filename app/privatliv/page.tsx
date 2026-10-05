@@ -74,6 +74,10 @@ export default function PrivacyPage() {
               Emnelisten sendes ikke til butikkerne. Prisen kan være forældet, og der vises ingen pris, hvis varen ikke findes.
             </li>
             <li>
+              <strong>Foto til skæreseddel:</strong> hvis du bruger funktionen, sendes billedet og det mål, du har skrevet, til en AI-model for at foreslå et skab.
+              Billedet gemmes ikke. Det behandles og kasseres med det samme. Modellen får ikke til opgave at finde priser. Pladeprisen kommer bagefter fra de samme butikslister.
+            </li>
+            <li>
               <strong>Kladde på enheden:</strong> browseren kan gemme kladden, lokale skæresedler og egne plader i
               localStorage. Egne plader har det navn, de mål og den pris, du selv har skrevet. De sendes ikke til
               serveren, før du gemmer en skæreseddel på kontoen. Så følger pladerne med den gemte skæreseddel.
@@ -101,9 +105,12 @@ export default function PrivacyPage() {
           <h2>Formål</h2>
           <ul>
             <li>At vise og beregne skæreplanen.</li>
+            <li>At foreslå et skab ud fra et foto og ét kendt mål, når du er logget ind og har adgang til funktionen.</li>
             <li>At lade dig gemme skæresedler på kontoen og åbne dem igen.</li>
             <li>At holde styr på login, så kun du kan se og slette dine gemte skæresedler.</li>
-            {billing ? <li>At holde styr på et Pro-abonnement, hvis du selv tegner det.</li> : null}
+            {billing ? (
+              <li>At holde styr på et Pro-abonnement med ubegrænset gemte skæresedler og Fra foto, hvis du selv tegner det.</li>
+            ) : null}
           </ul>
         </section>
 
@@ -128,6 +135,7 @@ export default function PrivacyPage() {
             <li>Clerk — login og konto.</li>
             <li>Neon Postgres via Vercel — gemte skæresedler, når databasen er sat op.</li>
             <li>Vercel — hosting af appen.</li>
+            <li>Vercel AI Gateway — kun når du bruger foto til skæreseddel. Billedet sendes for at lave forslaget og gemmes ikke hos Skæreseddel.</li>
             {billing ? <li>Stripe — betaling, kvitteringer og kundeportal, når Pro er tegnet.</li> : null}
           </ul>
           <p>
@@ -138,6 +146,9 @@ export default function PrivacyPage() {
 
         <section className="card pad">
           <h2>Opbevaring og sletning</h2>
+          <p>
+            Et foto til skæreseddel skrives ikke i databasen, lægges ikke i skæresedlen og gemmes ikke som fil. Det bruges til forslaget og kasseres derefter.
+          </p>
           <p>
             Gemte skæresedler bliver liggende, indtil du sletter den enkelte skæreseddel eller sletter kontoen. Ved
             «Slet konto» slettes alle rækker for dit bruger-id med det samme. Der skrives ingen arkivkopi, papirkurv

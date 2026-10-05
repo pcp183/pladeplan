@@ -75,10 +75,10 @@ export function BillingPanel({
   const saved =
     projectCount !== null ? ` (${projectCount} ${projectCount === 1 ? 'skæreseddel' : 'skæresedler'})` : '';
   const planText = !configured
-    ? `Pro kommer snart og kan ikke købes. Pro vil give ubegrænset gemte skæresedler${saved}.`
+    ? `Pro kommer snart og kan ikke købes. Pro vil give ubegrænset gemte skæresedler${saved} og Fra foto.`
     : planName === 'Pro'
-      ? `Du har Pro med ubegrænset gemte skæresedler${saved}. Beløbet kommer fra Stripe og vises igen i kassen, før der betales.`
-      : `Gratisplanen gemmer op til 3 skæresedler på kontoen${saved}. Pro giver ubegrænset. Beløbet kommer fra Stripe og vises igen i kassen, før der betales.`;
+      ? `Du har Pro med ubegrænset gemte skæresedler${saved} og Fra foto. Beløbet kommer fra Stripe og vises igen i kassen, før der betales.`
+      : `Gratisplanen gemmer op til 3 skæresedler på kontoen${saved}. Pro giver ubegrænset gemte skæresedler og Fra foto. Beløbet kommer fra Stripe og vises igen i kassen, før der betales.`;
 
   return (
     <>
@@ -114,7 +114,7 @@ export function BillingPanel({
       {!configured ? (
         <div className="notice">
           <strong>Pro kommer snart.</strong> Der er intet kasseforløb, intet abonnement og ingen betaling knyttet til
-          kontoen. Pro vil give ubegrænset gemte skæresedler.
+          kontoen. Pro vil give ubegrænset gemte skæresedler og Fra foto.
         </div>
       ) : null}
       {configured && testMode ? (

@@ -139,13 +139,16 @@ const comingSoon = planPill({ billingReady: false, pro: false });
 assert.equal(comingSoon.text, 'Gratis · Pro kommer snart');
 assert.match(comingSoon.title, /kan ikke købes/);
 assert.match(comingSoon.title, /ubegrænset gemte skæresedler/);
+assert.match(comingSoon.title, /Fra foto/);
 const freePill = planPill({ billingReady: true, pro: false });
 assert.equal(freePill.text, 'Gratis · Opgrader');
 assert.match(freePill.title, /op til 3 skæresedler/);
-assert.match(freePill.title, /ubegrænset/);
+assert.match(freePill.title, /ubegrænset gemte skæresedler/);
+assert.match(freePill.title, /Fra foto/);
 const proPill = planPill({ billingReady: true, pro: true });
 assert.equal(proPill.pro, true);
 assert.match(proPill.title, /ubegrænset gemte skæresedler/);
+assert.match(proPill.title, /Fra foto/);
 
 assert.match(PLANNER_MARKUP, /id="saveLimit"/);
 assert.match(PLANNER_MARKUP, /id="saveLimitNote"/);
@@ -156,7 +159,8 @@ const panel = readFileSync(new URL('../components/BillingPanel.tsx', import.meta
 assert.match(panel, /Pro kommer snart og kan ikke købes/);
 assert.match(panel, /Pro vil give ubegrænset gemte skæresedler/);
 assert.match(panel, /Gratisplanen gemmer op til 3 skæresedler/);
-assert.match(panel, /Pro giver ubegrænset/);
+assert.match(panel, /Pro giver ubegrænset gemte skæresedler og Fra foto/);
+assert.match(panel, /Fra foto/);
 assert.equal(panel.includes('Alle nuværende funktioner er gratis, også gemte skæresedler'), false);
 
 const route = readFileSync(new URL('../app/api/projects/route.ts', import.meta.url), 'utf8');

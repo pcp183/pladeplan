@@ -590,3 +590,27 @@ body.plan-fresh .toast{bottom:20px}
 .moreprices summary{display:none!important}
 .compare .cmpuse{display:none!important}
 }
+
+/* Foto til skæreseddel */
+.emnertools{display:flex;flex-wrap:wrap;justify-content:flex-end;gap:6px}
+.protag{display:inline-flex;align-items:center;padding:1px 5px;border-radius:999px;background:#15392a;color:#fff;font-size:9px;font-weight:800;letter-spacing:.04em;line-height:1.5}
+#photoDialog{width:min(560px,calc(100vw - 24px));max-height:calc(100dvh - 24px);overflow:auto}
+#photoDialog .modalbody{overflow:auto}
+#photoDialog .input{font-size:16px}
+.photointro{margin:0 0 14px;color:#526159;font-size:14px;line-height:1.45}
+.photopick{display:flex;flex-direction:column;gap:6px;margin-bottom:12px}
+.photopick input[type=file]{width:100%;font-size:16px}
+.photopreview{display:block;width:100%;max-height:200px;object-fit:contain;border-radius:10px;background:#f3f6f4;border:1px solid var(--line);margin-bottom:12px}
+.photogrid{display:grid;grid-template-columns:1fr 1fr;gap:10px 12px}
+.photoactions{display:flex;flex-wrap:wrap;gap:8px;margin-top:12px}
+.photoactions .btn{flex:1;min-width:140px}
+.photonote{margin:0 0 12px;padding:10px 12px;border-radius:8px;background:#f4f7f5;color:#24352c;font-size:13px;line-height:1.45}
+.photohint{margin:4px 0 0;color:#68766e;font-size:12px;line-height:1.45}
+.photoerror{margin:8px 0 0;color:#8a3b32;font-size:13px;line-height:1.4}
+.photogate{display:flex;flex-direction:column;gap:8px}
+.photogate p{margin:0;line-height:1.5}
+.photogate a{color:var(--g);font-weight:700}
+@media(max-width:640px){
+.parts .section{flex-wrap:wrap}
+.photogrid{grid-template-columns:1fr}
+}
